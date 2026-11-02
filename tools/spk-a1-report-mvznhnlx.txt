@@ -1,0 +1,22 @@
+testnet 2026-11-02T19:28:55.594Z contract=amplop-c-mvznhnlx.testnet
+PASS | test accounts | contract=amplop-c-mvznhnlx.testnet siti=siti.amplop-ppl-mvznhnlx.testnet budi=budi.amplop-ppl-mvznhnlx.testnet buyer=buyer.amplop-ppl-mvznhnlx.testnet
+PASS | contract deployed and initialised | amplop-c-mvznhnlx.testnet
+PASS | A00 contract errors reach the caller with their message | wasm execution failed with error: HostError(GuestPanic { panic_msg: "no such amplop" })
+PASS | A01 Siti opens a hajatan: amplop NFT #1 minted to her, seed 5% | free=0.0421 NEAR from leftover deposit
+PASS | A02 Budi gives 1 NEAR: entry recorded, 5% seed locked in Budi's name | amount=0.9985 seed=0.0499
+PASS | A03 invariant balance = free + seed_locked | balance=1.0407 seed_locked=0.0499
+PASS | A04 no reply pending while Budi has no hajatan
+PASS | A05 Budi opens his own hajatan (#2): Siti's amplop rings for entry 0 | {"entry":0,"giver":"budi.amplop-ppl-mvznhnlx.testnet","amount":"998540000000000000000000","seed":"49927000000000000000000","to_token_id":"2"}
+PASS | A06 a stranger cannot release Budi's seed | state unchanged; reason: only the current holder
+PASS | A07 Budi cannot pull his own seed back | state unchanged; reason: only the current holder
+PASS | A08 one tap: seed + 0.5 NEAR land in Budi's amplop as a reply linked both ways | reply=0.5482 NEAR (seed 0.0499 + top-up 0.5 - storage 0.0017)
+PASS | A09 the same gift cannot be replied twice | state unchanged; reason: already replied
+PASS | A10 Siti withdraws: free money paid out, nothing else | received=0.9902 of free 0.9907
+PASS | A11 amplop #1 transferred to buyer: money and history travel with it | owner=buyer.amplop-ppl-mvznhnlx.testnet balance=0.2985
+PASS | A12 old owner (Siti) cannot withdraw after the sale | state unchanged; reason: only the current holder
+PASS | A13 new holder (buyer) withdraws the free money
+PASS | A14 payout callback cannot be called from outside | state unchanged; reason: is private
+PASS | A15 contract account locked: zero access keys (no admin, no upgrade) | keys left=0
+PASS | A16 the keyless contract still works (gift into Budi's amplop)
+
+SUMMARY: 19 PASS, 0 FAIL

@@ -1,0 +1,5 @@
+# near-sdk-env only routes panics/logs to the NEAR host when built with --cfg near
+# (cargo-near sets it; plain cargo build does not, and every panic becomes a
+# message-less "WasmTrap(Unreachable)" on chain).
+[target.wasm32-unknown-unknown]
+rustflags = ["--cfg", "near"]

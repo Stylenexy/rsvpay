@@ -1,0 +1,9 @@
+{
+  "name": "amplop-balas-tools",
+  "private": true,
+  "type": "module",
+  "description": "Testnet scripts for Amplop Balas (spike SPK-A1, demo seeding)",
+  "dependencies": {
+    "near-api-js": "7.4.0"
+  }
+}
