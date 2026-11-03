@@ -1,0 +1,791 @@
+/* Layout and components. Only var(--...) from theme.css; no literal colors here (hygiene.test.ts). */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+body {
+  background: var(--sky0);
+  color: var(--fg);
+  font: 15px/1.5 var(--f-body);
+  -webkit-tap-highlight-color: transparent;
+}
+html {
+  transition: --sky0 1.6s ease, --sky1 1.6s ease, --sky2 1.6s ease, --sky3 1.6s ease, --glow 1.6s ease;
+}
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+a {
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+
+/* ---- sky ---- */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--sky0);
+}
+.sky-rot {
+  position: absolute;
+  inset: -25%;
+  opacity: 0.82;
+}
+.sky-rot i {
+  position: absolute;
+  border-radius: 50%;
+}
+.sky .b1 {
+  width: 70%;
+  height: 55%;
+  left: 0;
+  top: 5%;
+  background: radial-gradient(closest-side, var(--sky1), transparent);
+  animation: d1 18s ease-in-out infinite alternate;
+}
+.sky .b2 {
+  width: 75%;
+  height: 60%;
+  right: 0;
+  top: 32%;
+  background: radial-gradient(closest-side, var(--sky2), transparent);
+  animation: d2 23s ease-in-out infinite alternate;
+}
+.sky .b3 {
+  width: 90%;
+  height: 55%;
+  left: 5%;
+  bottom: 0;
+  background: radial-gradient(closest-side, var(--sky3), transparent);
+  animation: d3 27s ease-in-out infinite alternate;
+}
+@keyframes d1 {
+  to {
+    transform: translate(18%, 12%) scale(1.15);
+  }
+}
+@keyframes d2 {
+  to {
+    transform: translate(-14%, -10%) scale(0.9);
+  }
+}
+@keyframes d3 {
+  to {
+    transform: translate(8%, -14%) scale(1.1);
+  }
+}
+.sky-amb {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  opacity: var(--star-op);
+  transition: opacity 1.6s ease;
+}
+.sky-night {
+  position: absolute;
+  inset: 0;
+  background: var(--night);
+  opacity: 0;
+}
+.sky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 30%, var(--shade) 100%);
+}
+.sky::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: var(--grain);
+}
+
+/* ---- page frame: a phone-width column, centered on any screen ---- */
+.app {
+  min-height: 100dvh;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: max(14px, env(safe-area-inset-top, 0px)) max(18px, env(safe-area-inset-right, 0px)) max(28px, env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.brand {
+  font: 400 18px/1 var(--f-disp);
+  text-decoration: none;
+}
+.acct {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  min-width: 0;
+}
+.acct select {
+  max-width: 120px;
+  background: var(--sink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 3px 4px;
+  font: 500 11px var(--f-mono);
+}
+.tok {
+  font: 500 10.5px var(--f-mono);
+  color: var(--mut);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.note {
+  font-size: 12px;
+  color: var(--mut);
+  text-align: center;
+  text-wrap: balance;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+/* ---- type ---- */
+.hd {
+  display: grid;
+  gap: 3px;
+  text-align: center;
+  margin-top: 6px;
+}
+.hd small {
+  font-size: 12px;
+  color: var(--mut);
+}
+.hd h1 {
+  margin: 0;
+  font: 400 34px/1.05 var(--f-disp);
+  text-wrap: balance;
+}
+.label {
+  font-size: 12px;
+  color: var(--mut);
+}
+.rp {
+  font: 400 42px/1 var(--f-disp);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.cur {
+  font-style: normal;
+  font-size: 0.56em;
+  color: var(--mut);
+  margin-right: 0.06em;
+  vertical-align: 0.38em;
+}
+.dim {
+  font-style: normal;
+  color: var(--mut);
+}
+
+/* ---- glass (thin, calm) ---- */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: inset 0 1px 0 var(--glass-hi), 0 24px 40px -30px var(--shadow);
+  backdrop-filter: blur(22px) saturate(1.15);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+}
+.card {
+  position: relative;
+  padding: 16px 16px 14px;
+  display: grid;
+  gap: 10px;
+}
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---- the small envelope object ---- */
+.obj {
+  position: absolute;
+  right: 18px;
+  top: 48px;
+  width: 64px;
+  height: 42px;
+  transform: rotate(-9deg);
+  animation: objF 6s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.obj,
+.obj > i {
+  border-radius: 4px;
+  background: linear-gradient(165deg, var(--paper) 30%, var(--paper-2));
+  box-shadow: inset 0 0 0 1px var(--paper-edge), 0 12px 18px -8px var(--shadow);
+}
+.obj > i {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translate(7px, -6px) rotate(10deg);
+  background: linear-gradient(165deg, var(--paper-3) 30%, var(--paper-4));
+}
+.obj::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, transparent 47%, var(--paper-fold) 50%, transparent 53%) left top / 50% 64% no-repeat,
+    linear-gradient(to bottom left, transparent 47%, var(--paper-fold) 50%, transparent 53%) right top / 50% 64% no-repeat;
+}
+.obj::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 13px;
+  height: 13px;
+  margin: -6.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--seal-1), var(--seal-2) 50%, var(--seal-3));
+}
+@keyframes objF {
+  to {
+    transform: rotate(-6deg) translateY(-3px);
+  }
+}
+
+/* ---- controls ---- */
+.seg {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 12px;
+  background: var(--sink);
+  border: 1px solid var(--line);
+}
+.seg button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  border-radius: 9px;
+  padding: 9px 0;
+  color: var(--mut);
+  font: 500 13px var(--f-mono);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.seg button.on {
+  background: var(--glass-on);
+  color: var(--fg);
+  box-shadow: inset 0 1px 0 var(--glass-hi);
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
+.input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line-soft);
+  padding: 8px 2px;
+  outline: 0;
+}
+.input.wish {
+  font: 400 18px var(--f-disp);
+  text-align: center;
+}
+.input:focus {
+  border-bottom-color: var(--fg);
+}
+.btn {
+  border: 0;
+  border-radius: 999px;
+  padding: 15px 22px;
+  background: var(--go);
+  color: var(--go-ink);
+  font: 700 15px var(--f-body);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: transform 0.25s var(--pop), opacity 0.3s;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--line-soft);
+}
+.row {
+  display: flex;
+  gap: 8px;
+}
+.row > * {
+  flex: 1;
+}
+
+/* ---- slide to give ---- */
+.slide {
+  position: relative;
+  height: 58px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  touch-action: none;
+  user-select: none;
+}
+.slide span {
+  font-weight: 600;
+  color: var(--mut);
+  animation: shim 2.6s ease-in-out infinite;
+}
+.slide.off {
+  opacity: 0.5;
+}
+@keyframes shim {
+  50% {
+    opacity: 0.5;
+  }
+}
+.knob {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 46px;
+  height: 46px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--go);
+  box-shadow: 0 4px 10px var(--shadow);
+  cursor: grab;
+  z-index: 2;
+  transition: transform 0.45s var(--pop);
+}
+.knob::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  width: 12px;
+  height: 12px;
+  border-top: 2.5px solid var(--go-ink);
+  border-right: 2.5px solid var(--go-ink);
+  transform: rotate(45deg);
+}
+
+/* ---- giving card shrinks into a star ---- */
+.give-card {
+  transition: transform 0.8s var(--em), opacity 0.6s var(--em) 0.2s;
+}
+.sent .give-card {
+  transform: scale(0.06);
+  opacity: 0;
+}
+.star-rise {
+  position: fixed;
+  left: 50%;
+  top: var(--sy, 50%);
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 50%;
+  background: var(--star);
+  box-shadow: 0 0 10px 3px var(--star), 0 0 34px 10px var(--glow);
+  pointer-events: none;
+  z-index: 5;
+  animation: starUp 1.6s var(--eo) 0.3s both, tw 2.4s ease-in-out 2.2s infinite alternate;
+}
+.star-rise::before,
+.star-rise::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+.star-rise::before {
+  width: 44px;
+  height: 1px;
+  margin: -0.5px 0 0 -22px;
+  background: linear-gradient(90deg, transparent, var(--star), transparent);
+}
+.star-rise::after {
+  width: 1px;
+  height: 44px;
+  margin: -22px 0 0 -0.5px;
+  background: linear-gradient(180deg, transparent, var(--star), transparent);
+}
+@keyframes starUp {
+  0% {
+    opacity: 0;
+    transform: scale(3);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(var(--up, -300px)) scale(1);
+  }
+}
+@keyframes tw {
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* ---- results ---- */
+.done {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+  animation: rise 0.6s var(--eo) both;
+}
+.done p {
+  margin: 0;
+}
+.done .seedline {
+  font-size: 13px;
+  color: var(--mut);
+}
+.txlink {
+  font: 500 12px var(--f-mono);
+  color: var(--seed);
+  text-decoration: none;
+}
+.err {
+  font-size: 13px;
+  color: var(--warn);
+  text-align: center;
+}
+.busy {
+  font-size: 13px;
+  color: var(--mut);
+  text-align: center;
+  animation: shim 1.6s ease-in-out infinite;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* ---- host book ---- */
+.field-stars {
+  position: relative;
+  height: 210px;
+  margin: -6px -18px 0;
+  pointer-events: none;
+}
+.field-stars .free,
+.field-stars .seed {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  transition: opacity 1.6s var(--em);
+}
+.field-stars .seed {
+  filter: drop-shadow(0 0 4px var(--seed));
+}
+.withdrawn .field-stars .free {
+  opacity: 0.1;
+}
+.withdrawn .field-stars .seed {
+  animation: seedGlow 1.2s ease-in-out infinite alternate;
+}
+@keyframes seedGlow {
+  to {
+    filter: drop-shadow(0 0 10px var(--seed)) brightness(1.5);
+  }
+}
+.new-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  margin: -1.5px;
+  border-radius: 50%;
+  background: var(--star);
+  box-shadow: 0 0 6px 2px var(--star);
+  animation: popIn 0.6s var(--pop) both;
+}
+.shoot {
+  position: absolute;
+  width: 110px;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--star));
+  transform-origin: 100% 50%;
+  animation: shoot 0.7s var(--em) forwards;
+}
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: translate(130px, -75px) rotate(150deg);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(150deg);
+  }
+}
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+.total {
+  display: grid;
+  gap: 4px;
+}
+.total .rp {
+  font-size: 46px;
+}
+.delta {
+  font: 500 12px var(--f-mono);
+  color: var(--ok);
+  min-height: 16px;
+}
+.delta.on {
+  animation: rise 0.5s var(--eo) both;
+}
+.split {
+  display: flex;
+  gap: 3px;
+  height: 8px;
+}
+.split .fr {
+  background: var(--fg);
+  border-radius: 999px;
+  transform-origin: left;
+  transition: transform 1.4s var(--em);
+}
+.split .sd {
+  background: var(--seed);
+  border-radius: 999px;
+}
+.withdrawn .split .fr {
+  transform: scaleX(0);
+}
+.legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--mut);
+}
+.legend span {
+  display: grid;
+  gap: 1px;
+}
+.legend span:last-child {
+  text-align: right;
+}
+.legend b {
+  font: 500 13px var(--f-mono);
+  color: var(--fg);
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 14px;
+}
+.list li {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 1fr auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 36px;
+  font-size: 14px;
+}
+.list li i {
+  border-bottom: 1px dotted var(--line-soft);
+  transform: translateY(3px);
+}
+.list li b {
+  font: 500 13px var(--f-mono);
+  color: var(--mut);
+}
+.list li small {
+  grid-column: 1 / -1;
+  margin-top: -6px;
+  padding-bottom: 6px;
+  color: var(--mut);
+  font-size: 12.5px;
+  font-style: italic;
+}
+.list li.new {
+  animation: rise 0.7s var(--eo) both;
+}
+.list .empty {
+  display: block;
+  padding: 14px 0;
+  color: var(--mut);
+  text-align: center;
+}
+.share {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 18px;
+  text-align: center;
+}
+.share p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--mut);
+}
+.qr {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.qr svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.gate {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: var(--sink);
+  border: 1px solid var(--line);
+}
+.gate button {
+  border: 0;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font: 600 12px var(--f-body);
+  color: var(--mut);
+  cursor: pointer;
+}
+.gate button.on {
+  background: var(--go);
+  color: var(--go-ink);
+}
+.locked {
+  display: grid;
+  gap: 8px;
+  padding: 28px 22px;
+  text-align: center;
+}
+.locked b {
+  font: 400 24px/1.15 var(--f-disp);
+}
+.locked p {
+  margin: 0;
+  color: var(--mut);
+  font-size: 13.5px;
+}
+
+/* ---- ring card (a past giver now has a hajatan) ---- */
+.ring-card {
+  animation: rise 0.6s var(--eo) both;
+}
+.ring-card p {
+  margin: 0;
+}
+.ring-card .muted {
+  color: var(--mut);
+  padding-right: 70px;
+}
+.ring-card .big {
+  font: 400 22px/1.15 var(--f-disp);
+}
+.ring-card .obj {
+  top: 16px;
+  right: 16px;
+  width: 52px;
+  height: 34px;
+}
+
+/* ---- home ---- */
+.hero {
+  display: grid;
+  gap: 12px;
+  text-align: center;
+  padding: 30px 4px 6px;
+}
+.hero h1 {
+  margin: 0;
+  font: 400 40px/1.02 var(--f-disp);
+  text-wrap: balance;
+}
+.hero p {
+  margin: 0;
+  color: var(--mut);
+  text-wrap: balance;
+}
+.mine {
+  display: grid;
+  gap: 10px;
+}
+.mine a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+.mine a b {
+  font: 400 20px var(--f-disp);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,90 @@
+/* Amplop Balas, gaya D2+ "Langit Amplop, dipoles" (keputusan Dex 3 Nov 2026).
+   SEMUA warna, huruf, dan easing ada di file ini; base.css hanya memakai var(--...).
+   Langit ikut waktu cerita: data-langit="fajar" (tamu memberi) → "senja" (buku amplop) → "malam" (balasan, riwayat). */
+
+@property --sky0 { syntax: '<color>'; inherits: true; initial-value: #0A2148; }
+@property --sky1 { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --sky2 { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --sky3 { syntax: '<color>'; inherits: true; initial-value: transparent; }
+@property --glow { syntax: '<color>'; inherits: true; initial-value: transparent; }
+
+:root {
+  color-scheme: dark;
+  /* langit: Fajar */
+  --sky0: #0A2148;
+  --sky1: rgba(0, 191, 255, 0.85);
+  --sky2: rgba(255, 150, 120, 0.8);
+  --sky3: rgba(70, 80, 200, 0.85);
+  --glow: rgba(140, 220, 255, 0.75);
+  --go-ink: #0A2148;
+  --star-op: 0.2;
+
+  /* teks dan permukaan */
+  --fg: #FFF7F0;
+  --mut: rgba(255, 244, 236, 0.72);
+  --line: rgba(255, 255, 255, 0.13);
+  --line-soft: rgba(255, 255, 255, 0.3);
+  --glass: rgba(255, 255, 255, 0.07);
+  --glass-hi: rgba(255, 255, 255, 0.1);
+  --glass-on: rgba(255, 255, 255, 0.16);
+  --sink: rgba(0, 0, 0, 0.18);
+  --shade: rgba(3, 6, 18, 0.5);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --night: rgba(2, 3, 10, 0.86);
+  --go: #FFF7F0;
+
+  /* arti */
+  --seed: #7FDBFF;
+  --acc: #00BFFF;
+  --ok: #8FE3B5;
+  --warn: #FFB38A;
+  --star: #FFFFFF;
+
+  /* amplop kecil di pojok kartu */
+  --paper: #FFFFFF;
+  --paper-2: #E2E9F1;
+  --paper-3: #EEF3F8;
+  --paper-4: #CFD9E5;
+  --paper-edge: rgba(10, 26, 43, 0.06);
+  --paper-fold: rgba(10, 26, 43, 0.18);
+  --seal-1: #8FE1FF;
+  --seal-2: #00BFFF;
+  --seal-3: #0079B8;
+
+  /* QR kode (library butuh hex 8 digit) */
+  --qr-dark: #0A1A2Bff;
+  --qr-light: #FFFFFFff;
+
+  /* huruf */
+  --f-disp: 'Gloock', Georgia, serif;
+  --f-body: 'Karla', system-ui, sans-serif;
+  --f-mono: 'DM Mono', ui-monospace, monospace;
+
+  /* gerak */
+  --eo: cubic-bezier(0.16, 1, 0.3, 1);
+  --em: cubic-bezier(0.65, 0, 0.35, 1);
+  --pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* butiran film di atas langit */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+[data-langit='senja'] {
+  --sky0: #0B1440;
+  --sky1: rgba(255, 122, 69, 0.9);
+  --sky2: rgba(122, 63, 160, 0.95);
+  --sky3: rgba(42, 35, 128, 0.95);
+  --glow: rgba(255, 170, 120, 0.75);
+  --go-ink: #16124A;
+  --star-op: 0.45;
+}
+
+[data-langit='malam'] {
+  --sky0: #05070D;
+  --sky1: rgba(0, 110, 255, 0.55);
+  --sky2: rgba(123, 92, 255, 0.5);
+  --sky3: rgba(0, 191, 255, 0.35);
+  --glow: rgba(0, 191, 255, 0.7);
+  --go-ink: #05070D;
+  --star-op: 0.85;
+}

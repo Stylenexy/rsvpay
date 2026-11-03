@@ -1,0 +1,25 @@
+
+ RUN  v5.1.0 amplop-balas/web
+
+stdout | src/chain/near.live.test.ts > web client on testnet > opens, gives, rings, replies, withdraws
+open   #5 by siti-oighzb5.testnet tx=9cDvqFm9hBvdZgxFrHdL5PViAvGEtev5F1ZYYnhrwdxk
+
+stdout | src/chain/near.live.test.ts > web client on testnet > opens, gives, rings, replies, withdraws
+give   entry 0 by budi-oimtgcp.testnet amount=1001660000000000000000000 seed=50083000000000000000000 tx=23fkWd22hwQKgFJc8aFxJrLpQJg42PbDaX3PwL5Ci71u
+
+stdout | src/chain/near.live.test.ts > web client on testnet > opens, gives, rings, replies, withdraws
+ring   pending {"entry":0,"giver":"budi-oimtgcp.testnet","amount":"1001660000000000000000000","seed":"50083000000000000000000","to_token_id":"6"}
+
+stdout | src/chain/near.live.test.ts > web client on testnet > opens, gives, rings, replies, withdraws
+reply  entry 0 in #6 amount=1003140000000000000000000 tx=53gPm5NADLhf6xq56p7A1Z7VmCVrkc9rvV1UCxtnuAxV
+
+stdout | src/chain/near.live.test.ts > web client on testnet > opens, gives, rings, replies, withdraws
+withdraw tx=CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45 free=0 seed_locked=0
+
+ ✓ src/chain/near.live.test.ts > web client on testnet > opens, gives, rings, replies, withdraws 31676ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  19:43:36
+   Duration  31.86s (tests 100%)
+
