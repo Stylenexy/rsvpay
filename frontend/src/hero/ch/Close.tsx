@@ -46,7 +46,7 @@ export function Close({ lang }: { lang: Lang }) {
     <footer className="ch-footer">
       <div className="footer-grid ch-grid"><div className="footer-note"><img className="footer-emblem" src={asset('logo-kaca')} alt="" loading="lazy" /><p data-lines>{c.line}</p></div><div className="footer-column"><h3>{u.try}</h3><a href={link.beri(DEMO)}>{u.guest}</a><a href={link.buka()}>{u.host}</a><button type="button" onClick={replay}>{u.replay}</button></div><div className="footer-column footer-check"><h3>{u.check}</h3><a href={CONTRACT} target="_blank" rel="noreferrer">{CHAPTERS[lang].proof.link} ↗</a><button type="button" className="footer-hash" onClick={copyHash}>{copied === false ? <code>{CH_DATA.hash}</code> : copied ? u.copied : u.copyHash}</button><a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></div><div className="footer-column footer-languages"><h3>{u.languages}</h3>{LANGS.map((l, i) => <button type="button" lang={l.id} key={l.id} aria-pressed={lang === l.id} onClick={() => onLanguage(l.id)}>{CH_DATA.languages[i]}</button>)}</div></div>
       <div className="footer-bottom"><span>{c.built}</span><span>{u.trial}</span><span>{CH_DATA.author}</span></div>
-      <p className="footer-wordmark" aria-label={CH_DATA.brand} style={{ backgroundImage: `url(${asset('fajar')})` }}><span data-wordmark aria-hidden="true">{CH_DATA.brand}</span></p>
+      <p className="footer-wordmark" aria-label={CH_DATA.brand} style={{ backgroundImage: `url(${new URL(asset('fajar'), document.baseURI).href})` }}><span data-wordmark aria-hidden="true">{CH_DATA.brand}</span></p>
     </footer>
   </section>;
 }
