@@ -2,6 +2,19 @@
    SEMUA warna, huruf, dan easing ada di file ini; base.css hanya memakai var(--...).
    Langit ikut waktu cerita: data-langit="fajar" (tamu memberi) → "senja" (buku amplop) → "malam" (balasan, riwayat). */
 
+@font-face {
+  font-family: 'Zodiak';
+  src: url('/huruf/Zodiak-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Satoshi';
+  src: url('/huruf/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-display: swap;
+}
+
 @property --sky0 { syntax: '<color>'; inherits: true; initial-value: #0A2148; }
 @property --sky1 { syntax: '<color>'; inherits: true; initial-value: transparent; }
 @property --sky2 { syntax: '<color>'; inherits: true; initial-value: transparent; }
@@ -56,8 +69,8 @@
   --qr-light: #FFFFFFff;
 
   /* huruf */
-  --f-disp: 'Gloock', Georgia, serif;
-  --f-body: 'Karla', system-ui, sans-serif;
+  --f-disp: 'Zodiak', Georgia, serif;
+  --f-body: 'Satoshi', 'Figtree', system-ui, sans-serif;
   --f-mono: 'DM Mono', ui-monospace, monospace;
 
   /* gerak */

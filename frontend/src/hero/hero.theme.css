@@ -52,9 +52,9 @@
 }
 
 .hz-page {
-  --f-hz: 'Kalnia', var(--f-disp);
-  /* tombol: Avenir kalau perangkat punya (Mac, iPhone), selain itu Nunito Sans yang gratis dan sebangun */
-  --f-ui: 'Avenir Next', 'Avenir', 'Nunito Sans', var(--f-body);
+  --f-hz: var(--f-disp);
+  /* tombol: Avenir kalau perangkat punya (Mac, iPhone), selain itu Satoshi yang gratis dan sebangun */
+  --f-ui: 'Avenir Next', 'Avenir', var(--f-body);
   --hz-on: rgba(255, 255, 255, 0.92);
   --hz-on-ink: #08162f;
   --hz-mark-glow: color-mix(in srgb, rgba(255, 150, 60, 0.6) calc(var(--ink) * 100%), rgba(0, 150, 255, 0.28));
@@ -74,9 +74,11 @@
 .hz-page[data-lang='ja'] {
   --f-hz: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
 }
-/* Kalnia has no Vietnamese marks */
+/* Zodiak and Satoshi have no Vietnamese marks */
 .hz-page[data-lang='vi'] {
   --f-hz: 'Noto Serif Display', serif;
+  --f-body: 'Figtree', system-ui, sans-serif;
+  --f-ui: 'Figtree', system-ui, sans-serif;
 }
 
 .hz-page {
