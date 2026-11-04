@@ -30,11 +30,7 @@ if (PARENT) {
 }
 await ctx.addInitScript(() => localStorage.setItem('amplop-lang', 'id'));
 const page = await ctx.newPage();
-await page.goto(URL_BASE);
-await page.getByRole('link', { name: 'Coba jadi tamu' }).waitFor({ timeout: 20_000 });
-await page.waitForTimeout(600);
-await page.screenshot({ path: `${OUT}0-home.png` });
-await page.getByRole('link', { name: 'Coba jadi tamu' }).tap();
+await page.goto(`${URL_BASE}/#/beri/${process.env.DEMO ?? '14'}`);
 await page.getByText('Kamu memberi').waitFor({ timeout: 20_000 });
 if (!PARENT) await page.getByPlaceholder('Budi').fill('Juri');
 const t0 = Date.now();
@@ -45,7 +41,7 @@ await page.mouse.down();
 await page.mouse.move(box.x + 300, box.y + box.height / 2, { steps: 14 });
 await page.mouse.up();
 await page.getByText('Terkirim.').waitFor({ timeout: 60_000 });
-console.log(`PASS | home, try as guest, slide to give, sent | ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+console.log(`PASS | guest page, slide to give, sent | ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 await page.waitForTimeout(2300);
 await page.screenshot({ path: `${OUT}2-guest-sent.png` });
 await browser.close();
