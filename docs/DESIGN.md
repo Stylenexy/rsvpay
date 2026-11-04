@@ -14,7 +14,7 @@
 
 Colour carries meaning: seed stars are `#7FDBFF`, change lines are green `#8FE3B5`, and everything else stays calm over the sky.
 
-**Type in the app.** Gloock for names and amounts, because it feels like a celebration. Karla for text. DM Mono for small numbers and chain details.
+**Type.** Zodiak for names, amounts and headlines: high contrast, warm, it feels like a printed invitation. Satoshi for text and buttons, close to the geometric humanist faces the owner prefers (Avenir, Proxima Nova). DM Mono for chain details. Figtree stands in for Vietnamese marks.
 
 **Rules we held to:**
 - no glow on buttons, no emoji as icons, no pills for decoration;
@@ -26,4 +26,6 @@ Colour carries meaning: seed stars are `#7FDBFF`, change lines are green `#8FE3B
 
 **Motion explains something.** A card shrinks into a star because a gift became part of the sky. Stars dim on withdrawal because the money left, and seeds stay because they did not.
 
-**Weak spots.** The app pages still use the older look and the older word for the seed. The star metaphor needs one line of text the first time. The sky video is upscaled to 1080p, not native. The translations were written with AI help and checked by a second AI, not by native speakers.
+**The page is one long take.** Below the time story there are no sections, only moves: fall through cloud to the wedding, zoom through the light of the phone into the orbit, the disc tilts edge-on and becomes the ruler of the proof, an amber drop wipes into the five cultures, cloud lifts into dawn. Scroll drives everything through one GSAP timeline per chapter, with sticky stages.
+
+**Weak spots.** The orbit disc is a metaphor that needs the line of text beside it. The sky video is upscaled to 1080p, not native. The translations were written with AI help and checked by a second AI, not by native speakers. Performance on low-end phones is not measured.
