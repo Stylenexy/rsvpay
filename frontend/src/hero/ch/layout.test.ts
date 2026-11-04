@@ -22,10 +22,10 @@ describe('orbit composition', () => {
     }
   });
 
-  it('opens at 56%, 47% with a 14 degree inclination', () => {
+  it('opens at 56%, 42% with a 14 degree inclination', () => {
     const frame = orbitFrame(1600, 800, 0);
     expect(frame.centerX).toBe(.56);
-    expect(frame.centerY).toBe(.47);
+    expect(frame.centerY).toBe(.42);
     expect(frame.angle * 180 / Math.PI).toBeCloseTo(76);
   });
 

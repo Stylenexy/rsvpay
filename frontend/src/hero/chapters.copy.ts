@@ -47,7 +47,7 @@ type ChapterUI = {
   ask: string; asking: string; idle: string; failed: string; received: string; unexpected: string;
   keys: string; hash: string; block: string; elapsed: string; receipt: string;
   refused: string; tests: string; fixed: string; threat: string;
-  try: string; check: string; languages: string; guest: string; host: string; replay: string;
+  try: string; check: string; languages: string; copyHash: string; copied: string; guest: string; host: string; replay: string;
   trial: string; customs: string[];
 };
 
@@ -61,7 +61,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     keys: 'Access keys', hash: 'Code hash', block: 'Block', elapsed: 'Round trip', receipt: 'Live network receipt',
     refused: '12 of 12 refused on the live contract. Full list in the threat model.', tests: '45 contract tests pass.',
     fixed: 'Set once. Held for good.', threat: 'Threat model', try: 'Try', check: 'Check', languages: 'Languages',
-    guest: 'Be a guest', host: 'Make an envelope', replay: 'Replay the story',
+    copyHash: 'Copy code hash', copied: 'Copied', guest: 'Be a guest', host: 'Make an envelope', replay: 'Replay the story',
     trial: 'Trial version on NEAR testnet. Play money.',
     customs: ['A gift today. A return at their celebration.', 'A red envelope carries a wish for good fortune.', 'A wedding gift, remembered between families.', 'A knot tied around a wish for the couple.', 'A gift of joy, returned when the time comes.'],
   },
@@ -74,7 +74,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     keys: 'Kunci akses', hash: 'Hash kode', block: 'Blok', elapsed: 'Waktu tempuh', receipt: 'Bukti langsung dari jaringan',
     refused: '12 dari 12 ditolak di kontrak yang berjalan. Daftar lengkap di model ancaman.', tests: '45 tes kontrak lulus.',
     fixed: 'Sekali ditentukan. Selamanya tetap.', threat: 'Model ancaman', try: 'Coba', check: 'Periksa', languages: 'Bahasa',
-    guest: 'Jadi tamu', host: 'Buat amplop', replay: 'Putar ulang cerita', trial: 'Versi uji di NEAR testnet. Uang mainan.',
+    copyHash: 'Salin hash kode', copied: 'Tersalin', guest: 'Jadi tamu', host: 'Buat amplop', replay: 'Putar ulang cerita', trial: 'Versi uji di NEAR testnet. Uang mainan.',
     customs: ['Memberi hari ini. Membalas di hajatan mereka.', 'Amplop merah membawa doa keberuntungan.', 'Pemberian pernikahan yang diingat antarkeluarga.', 'Simpul yang mengikat doa untuk pengantin.', 'Tanda sukacita, dibalas saat waktunya tiba.'],
   },
   zh: {
@@ -85,7 +85,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     keys: '访问密钥', hash: '代码哈希', block: '区块', elapsed: '往返时间', receipt: '网络实时回执',
     refused: '线上合约拒绝了全部 12 次检查。完整清单见威胁模型。', tests: '45 项合约测试通过。',
     fixed: '设定一次，永远不变。', threat: '威胁模型', try: '体验', check: '核查', languages: '语言',
-    guest: '成为宾客', host: '创建红包', replay: '重看故事', trial: 'NEAR 测试网试用版。仅使用测试币。',
+    copyHash: '复制代码哈希', copied: '已复制', guest: '成为宾客', host: '创建红包', replay: '重看故事', trial: 'NEAR 测试网试用版。仅使用测试币。',
     customs: ['今天送礼，在对方的喜事上回礼。', '一封红包，寄托美好的祝愿。', '一份贺礼，两家人铭记。', '一结水引，系住对新人的祝福。', '一份喜悦，待来日相报。'],
   },
   ko: {
@@ -97,7 +97,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     keys: '접근 키', hash: '코드 해시', block: '블록', elapsed: '왕복 시간', receipt: '네트워크 실시간 영수증',
     refused: '실제 컨트랙트에서 12건 모두 거부했습니다. 전체 목록은 위협 모델에 있습니다.', tests: '컨트랙트 테스트 45개 통과.',
     fixed: '한 번 정하면 영원히 그대로.', threat: '위협 모델', try: '체험', check: '확인', languages: '언어',
-    guest: '하객 되기', host: '봉투 만들기', replay: '이야기 다시 보기', trial: 'NEAR 테스트넷 체험판. 실제 돈이 아닙니다.',
+    copyHash: '코드 해시 복사', copied: '복사됨', guest: '하객 되기', host: '봉투 만들기', replay: '이야기 다시 보기', trial: 'NEAR 테스트넷 체험판. 실제 돈이 아닙니다.',
     customs: ['오늘의 선물, 그들의 잔칫날에 답례로.', '붉은 봉투에 행운을 빕니다.', '두 가족이 기억하는 결혼 축하의 마음.', '신랑 신부를 위한 소망을 매듭에 담아.', '기쁨을 나누고, 때가 되면 돌려줍니다.'],
   },
   ja: {
@@ -109,7 +109,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     keys: 'アクセスキー', hash: 'コードハッシュ', block: 'ブロック', elapsed: '往復時間', receipt: 'ネットワークの受信記録',
     refused: '稼働中のコントラクトで全12件を拒否。全一覧は脅威モデルに。', tests: '45件のコントラクトテストに合格。',
     fixed: '一度決めたら、ずっとそのまま。', threat: '脅威モデル', try: '体験', check: '確認', languages: '言語',
-    guest: 'ゲストになる', host: '袋をつくる', replay: '物語をもう一度', trial: 'NEAR テストネットの試用版。テスト用のお金です。',
+    copyHash: 'コードハッシュをコピー', copied: 'コピーしました', guest: 'ゲストになる', host: '袋をつくる', replay: '物語をもう一度', trial: 'NEAR テストネットの試用版。テスト用のお金です。',
     customs: ['今日の贈り物を、相手のお祝いでお返し。', '紅い包みに、幸運への願いを。', '両家の記憶に残る、お祝いの気持ち。', '水引の結びに、新郎新婦への願いを。', '喜びを贈り、時が来たらお返しを。'],
   },
   vi: {
@@ -121,7 +121,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     keys: 'Khóa truy cập', hash: 'Mã băm', block: 'Khối', elapsed: 'Thời gian khứ hồi', receipt: 'Biên nhận trực tiếp từ mạng',
     refused: 'Cả 12 kiểm tra đều bị từ chối trên hợp đồng đang chạy. Xem đủ trong mô hình đe dọa.', tests: '45 bài kiểm tra hợp đồng đạt.',
     fixed: 'Đặt một lần. Giữ mãi mãi.', threat: 'Mô hình đe dọa', try: 'Thử', check: 'Kiểm tra', languages: 'Ngôn ngữ',
-    guest: 'Làm khách', host: 'Tạo phong bì', replay: 'Xem lại câu chuyện', trial: 'Bản thử trên NEAR testnet. Tiền thử nghiệm.',
+    copyHash: 'Sao chép mã băm', copied: 'Đã sao chép', guest: 'Làm khách', host: 'Tạo phong bì', replay: 'Xem lại câu chuyện', trial: 'Bản thử trên NEAR testnet. Tiền thử nghiệm.',
     customs: ['Mừng hôm nay, đáp lại vào ngày vui của họ.', 'Phong bao đỏ mang lời chúc may mắn.', 'Món quà cưới được hai gia đình ghi nhớ.', 'Nút thắt gửi lời chúc đến đôi uyên ương.', 'Trao niềm vui, đáp lại khi đến lúc.'],
   },
 };

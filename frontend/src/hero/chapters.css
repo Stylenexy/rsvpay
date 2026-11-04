@@ -68,7 +68,7 @@
 .cp-no { position: absolute; z-index: 3; left: 24px; right: 24px; top: 24px; display: flex; justify-content: space-between; overflow: clip; }
 .cp-no span { display: block; transform: translateY(calc((1 - var(--open)) * 12px)); }
 .cp-no i { font-style: normal; opacity: var(--open); }
-.cp-text { position: absolute; z-index: 3; left: 32px; right: 32px; bottom: 40px; min-width: min(28vw, 460px); display: grid; gap: 16px; pointer-events: none; opacity: var(--open); }
+.cp-text { position: absolute; z-index: 3; left: 32px; right: 32px; bottom: 40px; min-width: min(28vw, 460px); display: grid; gap: 16px; pointer-events: none; opacity: clamp(0, calc((var(--open) - .62) * 2.6), 1); }
 .cp-text strong { display: block; font: 500 var(--ch-title)/1.15 var(--f-hz); letter-spacing: -.02em; max-width: 13em; }
 .cp-description { display: block; max-width: 28em; color: var(--ch-soft); font: 400 var(--ch-text)/1.5 var(--f-body); }
 .cp-fold-title { position: absolute; z-index: 2; bottom: 32px; left: 24px; writing-mode: vertical-rl; transform: rotate(180deg); opacity: calc(1 - var(--open)); font: 500 var(--ch-text)/1.3 var(--f-ui); letter-spacing: -.02em; }
@@ -86,7 +86,7 @@
 .ch-phone-light i { position: absolute; width: 32vw; height: 32vw; border-radius: 50%; top: calc(52% - 16vw); left: 66%; background: radial-gradient(circle, var(--ch-white), var(--ch-zero) 65%); }
 
 /* 03: the glass cards share the WebGL camera's projection. */
-.ch-round { height: 380svh; background: var(--ch-deep); }
+.ch-round { height: 320svh; background: var(--ch-deep); }
 .orbit-stage { background: var(--ch-deep); }
 .orbit-entry-light { position: absolute; z-index: 11; left: -25%; top: -50svh; width: 150%; height: 100svh; opacity: 0; pointer-events: none; background: radial-gradient(ellipse, var(--ch-white), var(--ch-ice) 25%, var(--ch-blue-haze) 55%, transparent 75%); mix-blend-mode: screen; }
 .orbit-sky, .orbit-vignette { position: absolute; inset: -8%; width: 116%; height: 116%; max-width: none; object-fit: cover; }
@@ -477,7 +477,7 @@
 .ch-cloud-gate .ch-cloud-back,.close-cloud-gate .ch-cloud:last-child { top: 0; width: 150%; left: -25%; }
 .close-cloud-gate { top: -40svh; }
 .ch-handoff-rule { position: fixed; z-index: 14; left: 0; right: 0; top: 96px; height: 1px; background: var(--ch-ice); box-shadow: 0 0 8px var(--ch-blue),0 0 32px var(--ch-blue); opacity: 0; pointer-events: none; }
-.hz-page.ch-close-on ~ .story-entry { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+.hz-page.ch-close-on ~ .story-entry, .hz-page.ch-stage-on ~ .story-entry { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
 .wedding-stage { display: block; padding: 112px var(--hz-gutter) 64px; }
 .wedding-heading { height: auto; margin: 0; }
 .wedding-heading .ch-heading { grid-column: 1/9; }
@@ -699,4 +699,32 @@
 }
 @media (min-width: 761px) {
   .proof-live { padding-inline: calc((100% + 24px) / 12 * 2.4) calc((100% + 24px) / 12); }
+}
+
+/* the way back into the whole story stays quiet: glass, small, never the loudest thing on stage */
+.story-entry {
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.hz-page ~ .btn.story-entry {
+  padding: 10px 16px;
+  border: 1px solid var(--ch-glass-rim);
+  background: var(--ch-bar);
+  color: var(--ch-fg);
+  box-shadow: none;
+  font-size: 13px;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.footer-hash {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.footer-hash code {
+  user-select: all;
+  word-break: break-all;
 }

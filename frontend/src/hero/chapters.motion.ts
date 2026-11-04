@@ -21,6 +21,7 @@ export function mountChapters(root: HTMLElement) {
     const page = root.closest<HTMLElement>('.hz-page')!;
     ScrollTrigger.create({ trigger: '.ch-close', start: 'top bottom', end: 'bottom top', toggleClass: { targets: page, className: 'ch-close-on' } });
     ScrollTrigger.create({ trigger: '.ch-footer', start: 'top 88px', end: 'bottom top', toggleClass: { targets: page, className: 'ch-footer-on' } });
+    ScrollTrigger.create({ trigger: '.ch-round', start: 'top 60%', endTrigger: '.ch-names', end: 'bottom bottom', toggleClass: { targets: page, className: 'ch-stage-on' } });
     let active = -1;
     const selectIndex = (n: number, progress: number) => {
       $('.ch-index-track i').style.transform = `scaleY(${progress})`;
@@ -80,10 +81,10 @@ export function mountChapters(root: HTMLElement) {
       let weddingProgress = 0;
       const control = { selected: 0, mix: 0 };
       const drawPanels = () => {
-        const auto = seg(weddingProgress, .18, .85) * 3;
+        const auto = seg(weddingProgress, .2, .85) * 3;
         const position = auto * (1 - control.mix) + control.selected * control.mix;
         const exit = ease(seg(weddingProgress, .85, .96));
-        const rise = ease(seg(weddingProgress, 0, .18));
+        const rise = ease(seg(weddingProgress, .09, .2));
         const row = $('.cp-row');
         const column = (row.clientWidth - 11 * 24) / 12;
         // The copy measure comes from the open panel, never the moving shutter.
@@ -91,9 +92,9 @@ export function mountChapters(root: HTMLElement) {
         row.style.top = `${(desktop ? 47 : 44) * (1 - rise) + 96 / $('.wedding-stage').clientHeight * 100 * rise * (1 - exit)}%`;
         row.style.left = row.style.right = `calc(var(--hz-gutter) * ${1 - exit})`;
         row.style.bottom = `${64 * (1 - exit)}px`;
-        $('.wedding-heading').style.clipPath = `inset(0 0 ${ease(seg(weddingProgress, .08, .18)) * 100}% 0)`;
+        $('.wedding-heading').style.clipPath = `inset(0 0 ${ease(seg(weddingProgress, .02, .09)) * 100}% 0)`;
         const entry = ease(seg(wedding.getBoundingClientRect().top, window.innerHeight * .2, 0));
-        $('.wedding-heading').style.opacity = String(entry * (1 - seg(weddingProgress, .08, .18)));
+        $('.wedding-heading').style.opacity = String(entry * (1 - seg(weddingProgress, .02, .08)));
         $('.cp-row').style.setProperty('--panel-gap', `${(desktop ? 24 : 4) * (1 - exit)}px`);
         panels.forEach((panel, i) => {
           const opening = ease(clamp(1 - Math.abs(position - i)));
@@ -178,8 +179,8 @@ export function mountChapters(root: HTMLElement) {
         }
       };
       gsap.to(orbitState, { p: 1, ease: 'none', scrollTrigger: { trigger: orbit, start: 'top top', end: 'bottom bottom', scrub: .6 }, onUpdate: updateOrbit });
-      gsap.timeline({ scrollTrigger: { trigger: orbit, start: '78% bottom', end: 'bottom bottom', scrub: .6 } })
-        .to('.orbit-heading, .orbit-thread, .orbit-year, .orbit-static, .orbit-cards', { opacity: 0, duration: .35, ease: 'power3.out' }, 0);
+      gsap.timeline({ scrollTrigger: { trigger: orbit, start: '90% bottom', end: '97% bottom', scrub: .4 } })
+        .to('.orbit-heading, .orbit-year, .orbit-static, .orbit-cards', { opacity: 0, duration: .35, ease: 'power3.out' }, 0);
       // One fixed rule bridges the two sticky stages, without a one-frame jump.
       const ruleState = { orbit: 0, proof: 0 };
       const rule = $('.ch-handoff-rule');
@@ -227,10 +228,11 @@ export function mountChapters(root: HTMLElement) {
           instrument.style.transform = `translateY(${(i > slot ? 1 : -1) * (1 - weights[i]) * 24}px)`;
         });
         const local = counters.map((_, i) => seg(p, .04 + i * .17, .159 + i * .17));
-        reels[0](1 - Math.round(local[0]));
-        reels[1](Math.round(local[1] * 12));
-        reels[2](Math.round(local[2] * 45));
-        reels[3](Math.round(Math.min(10, local[3] * 20)));
+        const landed = counters.map((_, i) => seg(p, .04 + (i - .3) * .17, .04 + (i + .12) * .17));
+        reels[0](1 - Math.round(landed[0]));
+        reels[1](Math.round(landed[1] * 12));
+        reels[2](Math.round(landed[2] * 45));
+        reels[3](Math.round(landed[3] * 10));
         const crack = ease(seg(local[0], .18, .72));
         $('.proof-key > img').style.opacity = String(1 - ease(seg(local[0], .15, .35)));
         shards.forEach((shard, i) => { shard.style.opacity = String(crack * (1 - .55 * seg(local[0], .75, 1))); shard.style.transform = `translate(${Math.sin(i * 8) * crack * 100}px,${Math.cos(i * 4) * crack * 96}px) rotate(${(i - 3) * crack * 12}deg)`; });
@@ -258,7 +260,7 @@ export function mountChapters(root: HTMLElement) {
         const attempt = seg(local[3], .3, .95);
         const bounce = Math.sin(attempt * Math.PI * 4) * (1 - attempt) * 13;
         $('.seal-handle').style.transform = `rotate(${36 + Math.max(0, bounce)}deg)`;
-        $('.seal-arc').style.setProperty('--seal-amount', String(Math.min(10, local[3] * 20)));
+        $('.seal-arc').style.setProperty('--seal-amount', String(landed[3] * 10));
         $$('.proof-steps i').forEach((el, i) => { el.style.background = i <= slot ? 'var(--ch-blue)' : 'var(--ch-line)'; });
       } }, 0).to('.proof-amber-wipe', { clipPath: 'circle(150% at 75% 45%)', duration: .06, ease: 'expo.inOut' }, .90).to('.proof-amber-wipe', { '--culture-fill': 1, duration: .018, ease: 'expo.inOut' }, .982);
       gsap.to('.proof-grid', { yPercent: -8, ease: 'none', scrollTrigger: { trigger: proof, start: 'top bottom', end: 'bottom top', scrub: .6 } });
