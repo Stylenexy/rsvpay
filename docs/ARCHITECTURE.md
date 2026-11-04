@@ -46,7 +46,7 @@ Views: `hajatan`, `hajatan_of`, `entries`, `pending_replies`, `is_locked`, plus 
 
 Logs: `amplop:open`, `amplop:give`, `amplop:reply`, `amplop:withdraw`, `amplop:paid`, `amplop:payout_failed_refunded`, plus NEP-171 events.
 
-Invariants, checked after each step in `contracts/src/tests.rs`:
+Invariants, enforced by the tests in `contracts/src/tests.rs`:
 
 1. `balance = free + seed_locked`.
 2. The sum of unreplied seeds equals `seed_locked`.

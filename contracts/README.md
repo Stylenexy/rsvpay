@@ -8,4 +8,4 @@ set AWS_LC_SYS_PREBUILT_NASM=1        # Windows only (avoids needing NASM)
 cargo test                            # 44 unit tests
 cargo build --target wasm32-unknown-unknown --release   # .cargo/config.toml adds --cfg near
 ```
-Without `--cfg near` every on-chain panic loses its message (`WasmTrap(Unreachable)`). On-chain cycle: `../tools/spk-a1.mjs` (needs `npm i` in `../tools`). Design: `../SPEC.md`.
+Without `--cfg near` every on-chain panic loses its message (`WasmTrap(Unreachable)`). On-chain cycle: `../scripts/spk-a1.mjs` (needs `npm ci` in `../scripts`). Design: `../docs/ARCHITECTURE.md`.

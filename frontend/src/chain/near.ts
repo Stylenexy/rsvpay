@@ -195,7 +195,13 @@ export class NearAmplopClient implements AmplopClient {
   }
 
   async pendingReplies(tokenId: TokenId): Promise<PendingReply[]> {
-    return (await this.view<PendingReply[]>('pending_replies', { token_id: tokenId })) ?? [];
+    const h = await this.hajatan(tokenId);
+    const out: PendingReply[] = [];
+    // the contract reads 50 entries unless told otherwise, so walk the whole book in pages
+    for (let from = 0; h && from < h.entries; from += 100) {
+      out.push(...((await this.view<PendingReply[]>('pending_replies', { token_id: tokenId, from, limit: 100 })) ?? []));
+    }
+    return out;
   }
 
   explorerTx(hash: string): string {

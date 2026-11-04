@@ -653,3 +653,28 @@ fn seed_rounding_on_tiny_gifts_never_breaks_the_books() {
     let _ = c.withdraw(a.clone());
     check_invariants(&c, &a);
 }
+
+#[test]
+fn sale_during_a_payout_in_flight_keeps_every_coin_with_the_token() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let before = c.hajatan(a.clone()).unwrap();
+    testing_env!(ctx(siti(), 0).build());
+    let _ = c.withdraw(a.clone());
+    // the amplop is sold while the payout is still in flight, then the payout fails
+    testing_env!(ctx(siti(), 1).build());
+    c.nft_transfer(buyer(), a.clone(), None, None);
+    testing_env!(ctx(accounts(0), 0).build());
+    c.apply_withdraw_result(&a, before.free.0, false);
+    let after = c.hajatan(a.clone()).unwrap();
+    assert_eq!(after.owner_id, buyer());
+    assert_eq!(after.balance.0, before.balance.0);
+    assert_eq!(after.free.0, before.free.0);
+    check_invariants(&c, &a);
+    // the refund now belongs to the new holder, and only to them
+    testing_env!(ctx(buyer(), 0).build());
+    let _ = c.withdraw(a.clone());
+    assert_eq!(c.hajatan(a.clone()).unwrap().free.0, 0);
+    check_invariants(&c, &a);
+}

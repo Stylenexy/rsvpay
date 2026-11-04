@@ -35,14 +35,14 @@ export function Buku({ id }: { id: string }) {
     const hh = await client.hajatan(id);
     setH(hh);
     if (!hh) return;
-    const es = await client.entries(id, 0, 300);
-    if (known.current >= 0 && es.length > known.current) {
-      const added = es.slice(known.current);
+    const es = await client.entries(id, Math.max(0, hh.entries - 300), 300);
+    if (known.current >= 0 && hh.entries > known.current) {
+      const added = es.filter((e) => e.index >= known.current);
       setFresh(added.map((e) => e.index));
       const last = added[added.length - 1];
       setDelta(t.buku.arrived(formatRp(chainRp(last.amount)), shortName(last.giver)));
     }
-    known.current = es.length;
+    known.current = hh.entries;
     setEntries(es);
     setPending(await client.pendingReplies(id));
   }, [client, id]);
