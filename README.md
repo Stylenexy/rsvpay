@@ -29,8 +29,6 @@ Each completed transaction has a receipt link and a measured duration. The end s
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Budi's opening receipt.
 
-These changes have not been deployed. The existing public deployment is https://amplop-balas.vercel.app; its availability does not establish that this route is deployed.
-
 To inspect the fixed deployment's keys:
 
 ```bash
