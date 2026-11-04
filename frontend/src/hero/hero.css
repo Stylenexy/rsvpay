@@ -11,6 +11,7 @@
   overflow: hidden;
   background: var(--sky0);
   color: var(--fg);
+  font: 15px/1.5 var(--f-body);
   cursor: grab;
   touch-action: pan-y;
   user-select: none;
