@@ -35,6 +35,6 @@ Written from the point of view of someone trying to keep or steal money.
 - **A seller can empty free money before selling.** A buyer must read `hajatan(token_id)` first. Seeds are safe; free money is the seller's until the sale.
 - **Guest keys live in the browser.** Clear the browser or change phones and that account is gone, so the old amplop can no longer find the guest. See [Roadmap](ROADMAP.md).
 - **Script on the page could read test keys.** The Content Security Policy narrows this. It does not remove it.
-- **The testnet helper is a dependency.** If it is down or rate-limits, new guests cannot get an account.
+- **The testnet helper is a dependency.** If it is down or rate-limits, new guests cannot get an account. The limit is per IP (we hit "retry in 11 hours" after about a dozen accounts), so many guests on one Wi-Fi would run into it.
 - **Unused seeds stay locked.** If a guest never hosts, the seed never leaves. There is no expiry.
 - **A host can ignore the ring.** "Later" changes nothing, and nothing forces a reply. The seed is a promise of the first step, not of the whole amount.

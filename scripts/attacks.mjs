@@ -1,7 +1,9 @@
 // Attacks run for real against the deployed, keyless Amplop Balas contract on NEAR TESTNET.
 // A rejection counts only if the call failed AND the money did not move.
 // Throwaway accounts with random in-memory keys; nothing secret is written to disk.
-// Run: node serangan.mjs [contract-id]
+// Run: node attacks.mjs [contract-id]
+// The public helper rate-limits by IP. If it refuses, set ATTACK_ROOT to a JSON file holding
+// { accountId, secret } of a testnet account with about 3 NEAR, and the accounts start under it.
 import fs from "node:fs";
 import { Account, JsonRpcProvider, KeyPair, nearToYocto, teraToGas } from "near-api-js";
 
@@ -42,7 +44,7 @@ async function helperAccount(prefix) {
 }
 async function sub(parent, name, near) {
   const kp = KeyPair.fromRandom("ed25519");
-  const id = `${name}.${parent.accountId}`;
+  const id = `${name}-${run}.${parent.accountId}`;
   await parent.createAccount({ newAccountId: id, publicKey: kp.getPublicKey(), nearToTransfer: nearToYocto(near) });
   return new Account(id, provider, kp.toString());
 }
@@ -69,15 +71,17 @@ async function refused(name, attack, mustContain, stateOf) {
 const keys = await provider.viewAccessKeyList({ accountId: CONTRACT });
 say(keys.keys.length === 0, "L1 contract has zero access keys: no admin, cannot be changed", `${keys.keys.length} keys`);
 
-const root = await helperAccount("uji-serang");
-const siti = await sub(root, "siti", "2.5");
-const budi = await sub(root, "budi", "2.5");
-const maling = await sub(root, "maling", "1.5");
-const pembeli = await sub(root, "pembeli", "0.5");
+const rootFile = process.env.ATTACK_ROOT;
+const rootKeys = rootFile ? JSON.parse(fs.readFileSync(rootFile, "utf8")) : null;
+const root = rootKeys ? new Account(rootKeys.accountId, provider, rootKeys.secret) : await helperAccount("attack-root");
+const siti = await sub(root, "siti", "0.7");
+const budi = await sub(root, "budi", "1");
+const maling = await sub(root, "maling", "0.7");
+const pembeli = await sub(root, "pembeli", "0.3");
 const open = async (who, title) => (await call(who, "open_hajatan", { title, date: "uji", seed_bps: 500 }, nearToYocto("0.05"))).token_id;
 
 const A = await open(siti, `Uji serangan ${run}`);
-await call(budi, "give", { token_id: A, message: "selamat" }, nearToYocto("1"));
+await call(budi, "give", { token_id: A, message: "selamat" }, nearToYocto("0.2"));
 const state = () => view("hajatan", { token_id: A });
 
 await refused("L2 stranger withdraws from someone else's amplop", () => call(maling, "withdraw", { token_id: A }), "only the current holder", state);

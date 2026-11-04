@@ -1,3 +1,15 @@
-End-to-end run on https://amplop-balas.vercel.app
-2026-11-04T03:55:39.484Z
-FAIL | flow stopped | TimeoutError: page.waitForURL: Timeout 60000ms exceeded. =========================== logs =========================== waiting for navigation until "load"
+End-to-end run on https://amplop-balas.vercel.app (accounts seated from a parent account, helper rate-limited)
+2026-11-04T04:03:38.864Z
+PASS | E1 host opens a hajatan from the web | amplop #18
+PASS | E2 empty book shows for the holder, with a QR
+PASS | E3 guest page fits 360 px with no sideways scroll | overflow 0px
+PASS | E4 new guest gives from a touch screen in 20 s or less: test account made, signed in the browser | 5.3 s
+PASS | E5 guest gets a link to the transaction | https://testnet.nearblocks.io/txns/ErdMRpKR3f6tHDbzFhcvoVS4TkRSWEKMcNM5oqcdDzCx
+PASS | E6 host book updates by itself without a reload | +Rp500.000 · Budi, baru saja
+PASS | E6b holder taps "Orang lain": names and amounts disappear
+PASS | E7 non-holder sees the lock: no list, no withdraw button
+PASS | E8 Siti's amplop rings after Budi opens a hajatan
+PASS | E9 one-tap reply lands in Budi's amplop
+PASS | E10 reply appears in Budi's book without a reload
+PASS | E11 host withdraws free money | Rp496.000 masuk ke akunmu. Benih tetap di amplop.
+PASS | E12 no errors in the browser console

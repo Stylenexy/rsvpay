@@ -33,6 +33,13 @@ Each reply is itself an entry with its own seed, so the chain of giving back can
 - **The rights move with the NFT.** Pass the amplop to a child and the money, the book and the promises go with it. The previous holder is locked out.
 - **The seed is a promise kept by code.** It can only ever go to the guest who gave it. Nobody can quietly withdraw it.
 
+## Why NEAR
+
+- **A contract can give up every key.** The account behind this contract has none, so the rules cannot change. That is what makes a 20-year promise believable.
+- **Whoever adds data pays for its storage.** Each gift covers the storage of its own entry, so a long guest list does not fall on the host, and spam pays for itself.
+- **Accounts have names.** A guest is `budi-….testnet`, not a hex string, which matters when a family reads its own book.
+- **The missing pieces are native.** Google login (NEAR Auth) and sponsored gas (NEP-366) are the next steps on the [roadmap](docs/ROADMAP.md), not add-ons from elsewhere.
+
 ## Try it
 
 No install. Works on a phone. Amounts in rupiah use a demo rate, marked on screen (1 NEAR = Rp500.000); testnet NEAR has no price. The app speaks Indonesian: *Coba jadi tamu* = try as a guest, *Buka hajatan* = open a celebration.
@@ -68,7 +75,7 @@ cd frontend && npm run dev
 ```
 See a local site on http://localhost:5173, talking to the same testnet contract. Add `?mock` before the `#` to work without the network.
 
-Live checks. These use the network and make throwaway testnet accounts through the public helper, which rate-limits, so run them a minute apart.
+Live checks. These use the network and make throwaway testnet accounts through NEAR's public helper. The helper rate-limits by IP: after about a dozen accounts in a morning it answered `retry in 11 hours`. If that happens, set `E2E_PARENT` or `ATTACK_ROOT` to a JSON file with `{ accountId, secret }` of a funded testnet account; the scripts explain how.
 
 ```bash
 cd frontend && LIVE=1 npx vitest run src/chain/near.live.test.ts
@@ -83,7 +90,7 @@ See 12 `PASS` lines, one per attack, against the deployed contract. Report: [`do
 ```bash
 cd frontend && node e2e/alur.e2e.mjs
 ```
-See 13 `PASS` lines: the whole story on the deployed site in a real browser engine, the guest on a 360 px touch screen. Set `CHROME` to your browser's path if it is not the Windows default. Report and screenshots: [`docs/evidence/`](docs/evidence/).
+See `PASS` on every line: the whole story on the deployed site in a real browser engine, the guest on a 360 px touch screen. Set `CHROME` to your browser's path if it is not the Windows default. Report and screenshots: [`docs/evidence/`](docs/evidence/).
 
 Rebuild the wasm (optional, the deployed contract already matches this source):
 

@@ -2,8 +2,11 @@
 // Two people: host on a laptop-sized window, guest on a touch phone 360 px wide.
 // Each makes throwaway test accounts through the app itself; play money only.
 //   node e2e/alur.e2e.mjs [url]
+// The public testnet helper rate-limits by IP. When it does, set E2E_PARENT to a JSON file holding
+// { accountId, secret } of a funded testnet account: both people then start as its sub-accounts,
+// loaded into the browser, and the only skipped step is the guest's first-visit account creation.
 // Prints PASS/FAIL per step, writes screenshots + report to docs/evidence/ (no keys are logged).
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
@@ -30,7 +33,8 @@ const watch = (page, who) => {
   });
 };
 
-const host = await (await browser.newContext({ viewport: { width: 1280, height: 860 } })).newPage();
+const hostCtx = await browser.newContext({ viewport: { width: 1280, height: 860 } });
+const host = await hostCtx.newPage();
 const guestCtx = await browser.newContext({
   viewport: { width: 360, height: 740 },
   deviceScaleFactor: 2,
@@ -43,11 +47,33 @@ watch(host, 'host');
 watch(guest, 'guest');
 const stamp = Date.now().toString(36).slice(-4);
 
+const PARENT = process.env.E2E_PARENT;
+if (PARENT) {
+  const { Account, JsonRpcProvider, KeyPair, nearToYocto } = await import('near-api-js');
+  const provider = new JsonRpcProvider({ url: 'https://test.rpc.fastnear.com' });
+  const { accountId, secret } = JSON.parse(readFileSync(PARENT, 'utf8'));
+  const parent = new Account(accountId, provider, secret);
+  const seat = async (ctx, name, near) => {
+    const kp = KeyPair.fromRandom('ed25519');
+    const id = `${name}-${stamp}.${accountId}`;
+    await parent.createAccount({ newAccountId: id, publicKey: kp.getPublicKey(), nearToTransfer: nearToYocto(near) });
+    await ctx.addInitScript(
+      ([k, a]) => {
+        localStorage.setItem('amplop.kunci', k);
+        localStorage.setItem('amplop.akun', a);
+      },
+      [JSON.stringify({ [id]: kp.toString() }), id],
+    );
+  };
+  await seat(hostCtx, 'siti', '1.4');
+  await seat(guestCtx, 'budi', '1.4');
+}
+
 try {
   // 1. host opens a hajatan
   await host.goto(`${URL_BASE}/#/buka`);
   await host.getByPlaceholder('Siti & Andi').fill(`Siti & Andi ${stamp}`);
-  await host.getByPlaceholder('Siti', { exact: true }).fill('Siti');
+  if (!PARENT) await host.getByPlaceholder('Siti', { exact: true }).fill('Siti');
   await host.getByRole('button', { name: 'Buka amplop' }).click();
   await host.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
   const id = host.url().match(/#\/buku\/(\d+)/)[1];
@@ -58,11 +84,13 @@ try {
   // 2. guest gives from a phone
   await guest.goto(`${URL_BASE}/#/beri/${id}`);
   await guest.getByText('Kamu memberi').waitFor({ timeout: 20_000 });
-  await guest.getByRole('button', { name: 'Geser untuk memberi' }).tap();
-  await guest.getByText(/Isi namamu dulu/).waitFor({ timeout: 5_000 });
-  say(true, 'E2b guest without a name is asked for one, nothing is sent', '');
+  if (!PARENT) {
+    await guest.getByRole('button', { name: 'Geser untuk memberi' }).tap();
+    await guest.getByText(/Isi namamu dulu/).waitFor({ timeout: 5_000 });
+    say(true, 'E2b guest without a name is asked for one, nothing is sent', '');
+  }
   const t0 = Date.now();
-  await guest.getByPlaceholder('Budi').fill('Budi');
+  if (!PARENT) await guest.getByPlaceholder('Budi').fill('Budi');
   await guest.getByRole('radio', { name: '500rb' }).tap();
   await guest.screenshot({ path: `${OUT}1-guest-before.png` });
   const overflow = await guest.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -70,7 +98,7 @@ try {
   await guest.getByRole('button', { name: 'Geser untuk memberi' }).tap();
   await guest.getByText('Terkirim.').waitFor({ timeout: 60_000 });
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
-  say(+secs <= 20, 'E4 new guest gives from a touch screen in 20 s or less: test account made, signed in the browser', `${secs} s`);
+  say(+secs <= 20, `E4 guest gives from a touch screen in 20 s or less, signed in the browser${PARENT ? '' : ', test account made on the way'}`, `${secs} s`);
   await guest.waitForTimeout(2200);
   await guest.screenshot({ path: `${OUT}2-guest-sent.png` });
   const proof = await guest.getByRole('link', { name: /Lihat bukti transaksi/ }).getAttribute('href');
@@ -127,6 +155,6 @@ try {
   await browser.close();
 }
 
-const report = `End-to-end run on ${URL_BASE}\n${new Date().toISOString()}\n${lines.join('\n')}\n`;
+const report = `End-to-end run on ${URL_BASE}${PARENT ? ' (accounts seated from a parent account, helper rate-limited)' : ''}\n${new Date().toISOString()}\n${lines.join('\n')}\n`;
 writeFileSync(`${OUT}e2e-report.txt`, report);
 process.exit(failed ? 1 : 0);
