@@ -5,7 +5,7 @@ import { link, useAsync } from '../lib/app';
 import { formatRp, chainRp } from '../lib/rupiah';
 
 /** demo amplop seeded on testnet by tools/seed-demo.mjs */
-const DEMO: string | undefined = import.meta.env.VITE_DEMO_TOKEN;
+const DEMO: string = import.meta.env.VITE_DEMO_TOKEN ?? '14';
 
 export function Beranda() {
   const { client, account } = useAmplop();
