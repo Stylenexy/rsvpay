@@ -12,8 +12,6 @@ import { Buku } from './pages/Buku';
 function Page() {
   const route = useRoute();
   switch (route.name) {
-    case 'beranda':
-      return <Beranda />;
     case 'buka':
       return <Buka />;
     case 'beri':
@@ -32,20 +30,29 @@ function Page() {
   }
 }
 
+/** The landing page runs full screen; every other page keeps the phone-width column. */
+function Shell({ mode }: { mode: string }) {
+  const route = useRoute();
+  if (route.name === 'beranda') return <Beranda />;
+  return (
+    <div className="app">
+      <header className="topbar">
+        <a className="brand" href={link.beranda()}>
+          {t.appName}
+        </a>
+        <AccountChip />
+      </header>
+      <Page />
+      <p className="note">{mode === 'mock' ? 'Mode tiruan (?mock): tidak menyentuh jaringan.' : t.testnetNote}</p>
+    </div>
+  );
+}
+
 export function App() {
   const client = useMemo(() => createClient(), []);
   return (
     <AmplopProvider client={client}>
-      <div className="app">
-        <header className="topbar">
-          <a className="brand" href={link.beranda()}>
-            {t.appName}
-          </a>
-          <AccountChip />
-        </header>
-        <Page />
-        <p className="note">{client.mode === 'mock' ? 'Mode tiruan (?mock): tidak menyentuh jaringan.' : t.testnetNote}</p>
-      </div>
+      <Shell mode={client.mode} />
     </AmplopProvider>
   );
 }

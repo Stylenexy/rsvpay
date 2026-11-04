@@ -1,0 +1,61 @@
+/* Warna beranda. Satu-satunya tempat warna harfiah untuk hero. */
+
+:root {
+  --hz-black: #000;
+  --hz-c1: #ffd9a6;
+  --hz-c2: #0659d6;
+  --hz-c3: #ffb765;
+  --hz-c4: #009ef5;
+  --hz-c5: #ff8f4d;
+  --hz-c6: #18c2ff;
+  --hz-c7: #ffc184;
+  --hz-c8: #d85f0a;
+  --hz-white-9: rgba(255, 255, 255, 0.09);
+  --hz-white-22: rgba(255, 255, 255, 0.22);
+  --hz-white-30: rgba(255, 255, 255, 0.3);
+  --hz-tint12-60: rgba(2, 4, 18, 0.6);
+  --hz-cream-80: rgba(255, 247, 238, 0.8);
+  --hz-c14: #06122c;
+  --hz-white: #fff;
+  --hz-c16: #dcecff;
+  --hz-tint17-20: rgba(10, 40, 90, 0.2);
+  --hz-tint18-35: rgba(0, 120, 255, 0.35);
+  --hz-white-28: rgba(255, 255, 255, 0.28);
+  --hz-white-8: rgba(255, 255, 255, 0.08);
+  --hz-cream-74: rgba(255, 247, 238, 0.74);
+  --hz-c22: #fff7ee;
+  --hz-tint23-70: rgba(3, 8, 30, 0.7);
+  --hz-white-26: rgba(255, 255, 255, 0.26);
+  --hz-c25: #00bfff;
+  --hz-c26: #7a6cff;
+  --hz-c27: #ff9a4d;
+  --hz-white-34: rgba(255, 255, 255, 0.34);
+  --hz-cream-82: rgba(255, 247, 238, 0.82);
+  --hz-white-50: rgba(255, 255, 255, 0.5);
+  --hz-white-90: rgba(255, 255, 255, 0.9);
+}
+
+.hz {
+  --dawn-ink: 8, 22, 54;
+  --ink: 0;
+}
+
+/* the ink crossfades with the sky: dark on the pale morning, light once the sun is down */
+.hz {
+  --hz-fg: color-mix(in srgb, #fff7ee calc(var(--ink) * 100%), rgb(var(--dawn-ink)));
+  --hz-mut: color-mix(in srgb, rgba(255, 247, 238, 0.78) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.78));
+  --hz-line: color-mix(in srgb, rgba(255, 255, 255, 0.22) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.16));
+  --hz-pane: color-mix(in srgb, rgba(255, 255, 255, 0.09) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.3));
+  --hz-rim: color-mix(in srgb, rgba(255, 255, 255, 0.28) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.6));
+  --hz-cast: color-mix(in srgb, rgba(2, 4, 18, 0.5) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.16));
+}
+
+.hz {
+  --f-hz: 'Kalnia', var(--f-disp);
+  --hz-mark-glow: color-mix(in srgb, rgba(255, 150, 60, 0.6) calc(var(--ink) * 100%), rgba(0, 150, 255, 0.28));
+  --hz-warm: rgba(255, 178, 92, 0.85);
+  --hz-tint: #7fbfff;
+  --hz-edge: color-mix(in srgb, rgba(255, 255, 255, 0.0) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.55));
+  --hz-near: color-mix(in srgb, rgba(3, 6, 26, 0.55) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.12));
+  --hz-far: color-mix(in srgb, rgba(3, 6, 26, 0.65) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.42));
+}

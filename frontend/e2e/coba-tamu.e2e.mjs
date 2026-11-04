@@ -10,7 +10,7 @@ const CHROME = process.env.CHROME ?? 'C:/Program Files/Google/Chrome/Application
 const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.launch({ executablePath: CHROME, headless: true });
+const browser = await chromium.connectOverCDP('http://127.0.0.1:9333').catch(() => chromium.launch({ executablePath: CHROME, headless: true }));
 const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
 const PARENT = process.env.E2E_PARENT;
 if (PARENT) {

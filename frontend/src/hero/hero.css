@@ -1,0 +1,432 @@
+/* Beranda; colors live in hero.theme.css. Sky frames sit behind everything; every value that moves is written per frame by mount.ts. */
+
+.hz-pin {
+  height: 640vh;
+  position: relative;
+}
+.hz {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--sky0);
+  color: var(--fg);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.hz.hz-held {
+  cursor: grabbing;
+}
+.hz a {
+  color: inherit;
+}
+.hz-gl {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hz-load {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  background: var(--sky0);
+  font: 400 clamp(56px, 9vw, 120px) / 1 var(--f-hz);
+  transition: opacity 0.7s ease, visibility 0.7s;
+}
+.hz-load.done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ---- top ---- */
+.hz-nav {
+  position: absolute;
+  z-index: 6;
+  inset: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 22px clamp(20px, 3.4vw, 56px);
+  color: var(--hz-fg);
+}
+.hz-brand {
+  font: 500 19px / 1 var(--f-hz);
+  font-stretch: 118%;
+  text-decoration: none;
+}
+.hz-what {
+  font-size: 13.5px;
+  opacity: 0.8;
+}
+.hz-navr {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hz-lang {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--hz-line);
+  background: none;
+  font: 500 11.5px var(--f-mono);
+  cursor: pointer;
+}
+.hz-cta {
+  padding: 10px 17px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--hz-pane);
+  border: 1px solid var(--hz-line);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  backdrop-filter: blur(16px) saturate(150%);
+  box-shadow: inset 0 1px 0 var(--hz-rim), 0 8px 24px var(--hz-cast);
+}
+
+
+/* ---- the big line ---- */
+.hz-beats {
+  position: absolute;
+  z-index: 3;
+  left: clamp(20px, 5.2vw, 96px);
+  top: clamp(96px, 17vh, 170px);
+  width: min(64vw, 1040px);
+  pointer-events: none;
+}
+.hz-beat {
+  position: absolute;
+  inset: 0 0 auto;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+.hz-big {
+  margin: 0;
+  font: 400 clamp(44px, 4.9vw, 88px) / 1.06 var(--f-hz);
+  font-stretch: 125%;
+  letter-spacing: -0.024em;
+  text-wrap: balance;
+  color: transparent;
+  background-image:
+    radial-gradient(circle 34vw at var(--lx, 80%) var(--ly, 40%), var(--hz-warm) 0, transparent 72%),
+    linear-gradient(176deg, var(--hz-fg) 26%, color-mix(in srgb, var(--hz-fg) 74%, var(--hz-tint)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: blur(var(--soft, 0px)) drop-shadow(0 1px 0 var(--hz-edge)) drop-shadow(0 3px 3px var(--hz-near))
+    drop-shadow(0 22px 42px var(--hz-far));
+  -webkit-mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
+  mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
+  padding-bottom: 0.12em;
+}
+.hz-mark {
+  color: transparent;
+  filter: drop-shadow(0 0 22px var(--hz-mark-glow));
+  background-image: linear-gradient(
+    100deg,
+    color-mix(in srgb, var(--hz-c1) calc(var(--ink) * 100%), var(--hz-c2)),
+    color-mix(in srgb, var(--hz-c3) calc(var(--ink) * 100%), var(--hz-c4)) 58%,
+    color-mix(in srgb, var(--hz-c5) calc(var(--ink) * 100%), var(--hz-c6))
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  padding-right: 0.08em;
+}
+.hz-beat[data-beat='3'] .hz-big {
+  font-size: clamp(40px, 4.4vw, 80px);
+}
+.hz-beat[data-beat='4'] .hz-big {
+  font-size: clamp(44px, 7.4vw, 136px);
+}
+.hz-small {
+  max-width: 34em;
+  margin: 22px 0 0;
+  font-size: clamp(17px, 1.42vw, 21px);
+  line-height: 1.5;
+  color: var(--hz-mut);
+  text-shadow: 0 1px 14px var(--hz-far);
+}
+
+/* ---- glass cards ---- */
+.hz-cards {
+  position: absolute;
+  z-index: 4;
+  right: clamp(20px, 3.4vw, 56px);
+  bottom: 118px;
+  display: flex;
+  gap: 12px;
+  pointer-events: none;
+}
+.hz-card {
+  min-width: 190px;
+  padding: 14px 18px 15px;
+  border-radius: 18px;
+  color: var(--hz-fg);
+  background: var(--hz-pane);
+  border: 1px solid var(--hz-line);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  box-shadow: inset 0 1px 0 var(--hz-rim), 0 18px 44px var(--hz-cast);
+  visibility: hidden;
+}
+.hz-card span {
+  display: block;
+  font-size: 13px;
+  color: var(--hz-mut);
+}
+.hz-card b {
+  display: block;
+  margin-top: 4px;
+  font: 400 30px / 1.1 var(--f-hz);
+  font-stretch: 112%;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.hz-card.seed b {
+  color: color-mix(in srgb, var(--hz-c7) calc(var(--ink) * 100%), var(--hz-c8));
+}
+[data-card='gift'] {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+/* ---- ring ---- */
+.hz-ring {
+  position: absolute;
+  z-index: 5;
+  left: clamp(20px, 5.2vw, 96px);
+  bottom: 112px;
+  width: min(380px, 40vw);
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: var(--hz-white-9);
+  border: 1px solid var(--hz-white-22);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  backdrop-filter: blur(26px) saturate(170%);
+  box-shadow: inset 0 1px 0 var(--hz-white-30), 0 26px 60px var(--hz-tint12-60);
+  visibility: hidden;
+}
+.hz-ring strong {
+  font-size: 18px;
+}
+.hz-ring p {
+  margin: 4px 0 16px;
+  color: var(--hz-cream-80);
+}
+.hz a.hz-go,
+.hz-go {
+  display: inline-block;
+  padding: 13px 20px;
+  border: 0;
+  border-radius: 13px;
+  font: 700 15.5px var(--f-body);
+  text-decoration: none;
+  color: var(--hz-c14);
+  background: linear-gradient(180deg, var(--hz-white), var(--hz-c16));
+  box-shadow: inset 0 -1px 0 var(--hz-tint17-20), 0 10px 30px var(--hz-tint18-35);
+  cursor: pointer;
+}
+.hz-ring .hz-go {
+  width: 100%;
+  text-align: center;
+}
+
+/* ---- end ---- */
+.hz-end {
+  position: absolute;
+  z-index: 5;
+  left: clamp(20px, 5.2vw, 96px);
+  bottom: 124px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  visibility: hidden;
+}
+.hz-ghost {
+  padding: 13px 20px;
+  border-radius: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--hz-white-28);
+  background: var(--hz-white-8);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+.hz-text {
+  border: 0;
+  background: none;
+  padding: 10px;
+  color: var(--hz-cream-74);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---- timeline ---- */
+.hz-rail {
+  position: absolute;
+  z-index: 5;
+  left: clamp(20px, 3.4vw, 56px);
+  right: clamp(20px, 3.4vw, 56px);
+  bottom: 26px;
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  align-items: center;
+  column-gap: 26px;
+  color: var(--hz-c22);
+  text-shadow: 0 1px 10px var(--hz-tint23-70);
+}
+.hz-date {
+  font: 400 16px var(--f-hz);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.hz-track {
+  position: relative;
+  height: 44px;
+  cursor: ew-resize;
+}
+.hz-track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 13px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--hz-white-26);
+}
+.hz-fill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 13px;
+  height: 3px;
+  border-radius: 3px;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--hz-c25), var(--hz-c26) 62%, var(--hz-c27));
+}
+.hz-stop {
+  position: absolute;
+  top: 10px;
+  width: 9px;
+  height: 9px;
+  margin-left: -4.5px;
+  border-radius: 50%;
+  background: var(--hz-white-34);
+  transition: background 0.2s;
+}
+.hz-stop.on {
+  background: var(--hz-white);
+}
+.hz-stop em {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12.5px;
+  font-style: normal;
+  white-space: nowrap;
+  color: var(--hz-cream-82);
+}
+.hz-stop:last-of-type em {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+.hz-knob {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 23px;
+  height: 23px;
+  margin-left: -11.5px;
+  border-radius: 50%;
+  background: var(--hz-white-50);
+  border: 1px solid var(--hz-white-90);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px var(--hz-cast), inset 0 1px 0 var(--hz-white);
+}
+.hz.hz-held .hz-knob {
+  transform: scale(1.18);
+}
+.hz-hint {
+  position: absolute;
+  right: 0;
+  bottom: 58px;
+  font-size: 12.5px;
+  color: var(--hz-cream-82);
+  transition: opacity 0.5s;
+}
+
+/* ---- phone ---- */
+@media (max-width: 760px) {
+  .hz-what {
+    display: none;
+  }
+  .hz-nav {
+    grid-template-columns: 1fr auto;
+    padding: 14px 16px;
+  }
+  .hz-beats {
+    left: 16px;
+    width: calc(100vw - 32px);
+    top: 45svh;
+  }
+  .hz-big {
+    font-size: 36px;
+  }
+  .hz-beat[data-beat='3'] .hz-big {
+    font-size: 32px;
+  }
+  .hz-beat[data-beat='4'] .hz-big {
+    font-size: 44px;
+  }
+  .hz-small {
+    margin-top: 12px;
+    font-size: 15.5px;
+  }
+  .hz-cards {
+    left: 16px;
+    right: 16px;
+    bottom: 76px;
+  }
+  .hz-card {
+    min-width: 0;
+    flex: 1;
+    padding: 10px 12px;
+  }
+  .hz-card b {
+    font-size: 21px;
+  }
+  .hz-ring,
+  .hz-end {
+    left: 16px;
+    right: 16px;
+    width: auto;
+    top: auto;
+    bottom: 76px;
+  }
+  .hz-rail {
+    grid-template-columns: 1fr;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+  .hz-stop em {
+    display: none;
+  }
+  .hz-hint {
+    display: none;
+  }
+}
