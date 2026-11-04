@@ -394,9 +394,9 @@ export function createScene(canvas: HTMLCanvasElement, lowPower: boolean) {
     const hop = Math.abs(Math.sin(ringT * Math.PI * 5)) * (1 - ringT * 0.55) * (ringT > 0 && ringT < 1 ? 0.34 : 0);
 
     const xShift = narrow ? 0 : fx;
-    glass.position.set(xShift * box.hw, (narrow ? fy * 0.9 + 0.22 : fy) * box.hh + bob + hop, depth);
+    glass.position.set(xShift * box.hw, (narrow ? fy * 0.5 + 0.46 : fy) * box.hh + bob + hop, depth);
     glass.rotation.set(rx + my * 0.05, ry + mx * 0.09, rz + Math.sin(ringT * Math.PI * 14) * 0.05 * (1 - ringT));
-    const s = narrow ? 0.62 : 1;
+    const s = narrow ? 0.56 : 1;
     glass.scale.setScalar(s);
 
     // flap opens to release the gift, closes over what is kept; opens again for the reply

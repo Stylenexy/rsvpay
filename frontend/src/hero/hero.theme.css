@@ -36,6 +36,7 @@
 }
 
 .hz {
+  --hz-gutter: clamp(20px, 4.4vw, 72px);
   --dawn-ink: 8, 22, 54;
   --ink: 0;
 }
@@ -52,10 +53,28 @@
 
 .hz {
   --f-hz: 'Kalnia', var(--f-disp);
+  /* tombol: Avenir kalau perangkat punya (Mac, iPhone), selain itu Nunito Sans yang gratis dan sebangun */
+  --f-ui: 'Avenir Next', 'Avenir', 'Nunito Sans', var(--f-body);
+  --hz-on: rgba(255, 255, 255, 0.92);
+  --hz-on-ink: #08162f;
   --hz-mark-glow: color-mix(in srgb, rgba(255, 150, 60, 0.6) calc(var(--ink) * 100%), rgba(0, 150, 255, 0.28));
   --hz-warm: rgba(255, 178, 92, 0.85);
   --hz-tint: #7fbfff;
   --hz-edge: color-mix(in srgb, rgba(255, 255, 255, 0.0) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.55));
   --hz-near: color-mix(in srgb, rgba(3, 6, 26, 0.55) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.12));
   --hz-far: color-mix(in srgb, rgba(3, 6, 26, 0.65) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.42));
+}
+
+.hz[data-lang='zh'] {
+  --f-hz: 'Noto Serif SC', 'Songti SC', serif;
+}
+.hz[data-lang='ko'] {
+  --f-hz: 'Noto Serif KR', 'Batang', serif;
+}
+.hz[data-lang='ja'] {
+  --f-hz: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+}
+/* Kalnia has no Vietnamese marks */
+.hz[data-lang='vi'] {
+  --f-hz: 'Noto Serif Display', serif;
 }

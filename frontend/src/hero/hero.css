@@ -1,7 +1,7 @@
 /* Beranda; colors live in hero.theme.css. Sky frames sit behind everything; every value that moves is written per frame by mount.ts. */
 
 .hz-pin {
-  height: 640vh;
+  height: 760vh;
   position: relative;
 }
 .hz {
@@ -53,17 +53,16 @@
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 22px clamp(20px, 3.4vw, 56px);
+  padding: 22px var(--hz-gutter);
   color: var(--hz-fg);
 }
 .hz-brand {
   font: 500 19px / 1 var(--f-hz);
-  font-stretch: 118%;
   text-decoration: none;
 }
 .hz-what {
-  font-size: 13.5px;
-  opacity: 0.8;
+  font-size: 15.5px;
+  font-weight: 600;
 }
 .hz-navr {
   justify-self: end;
@@ -71,26 +70,46 @@
   align-items: center;
   gap: 10px;
 }
-.hz-lang {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  border: 1px solid var(--hz-line);
-  background: none;
-  font: 500 11.5px var(--f-mono);
-  cursor: pointer;
-}
-.hz-cta {
-  padding: 10px 17px;
+.hz-langs {
+  display: flex;
+  padding: 3px;
   border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
   background: var(--hz-pane);
   border: 1px solid var(--hz-line);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   backdrop-filter: blur(16px) saturate(150%);
   box-shadow: inset 0 1px 0 var(--hz-rim), 0 8px 24px var(--hz-cast);
+}
+.hz-langs button {
+  min-width: 36px;
+  height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: 600 13px var(--f-ui);
+  color: var(--hz-fg);
+  opacity: 0.82;
+  cursor: pointer;
+}
+.hz-langs button:hover {
+  opacity: 1;
+}
+.hz-langs button.on {
+  opacity: 1;
+  color: var(--hz-on-ink);
+  background: var(--hz-on);
+}
+.hz-cta {
+  padding: 10px 17px;
+  border-radius: 999px;
+  font: 600 14.5px var(--f-ui);
+  text-decoration: none;
+  white-space: nowrap;
+  background: var(--hz-on);
+}
+.hz a.hz-cta {
+  color: var(--hz-on-ink);
 }
 
 
@@ -98,7 +117,7 @@
 .hz-beats {
   position: absolute;
   z-index: 3;
-  left: clamp(20px, 5.2vw, 96px);
+  left: var(--hz-gutter);
   top: clamp(96px, 17vh, 170px);
   width: min(64vw, 1040px);
   pointer-events: none;
@@ -109,27 +128,38 @@
   visibility: hidden;
   will-change: transform, opacity;
 }
-.hz-big {
+.hz-head {
+  position: relative;
+  filter: blur(var(--soft, 0px));
+  -webkit-mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
+  mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
+}
+.hz-big,
+.hz-under {
   margin: 0;
-  font: 400 clamp(44px, 4.9vw, 88px) / 1.06 var(--f-hz);
-  font-stretch: 125%;
-  letter-spacing: -0.024em;
+  font: 500 clamp(54px, 6.3vw, 116px) / 1.02 var(--f-hz);
+  letter-spacing: -0.03em;
   text-wrap: balance;
+  padding-bottom: 0.12em;
+}
+/* the shadow is its own layer: a filter on clipped text paints a box behind it at dusk */
+.hz-under {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  text-shadow: 0 1px 1px var(--hz-near), 0 4px 16px var(--hz-near);
+}
+.hz-big {
+  position: relative;
   color: transparent;
   background-image:
     radial-gradient(circle 34vw at var(--lx, 80%) var(--ly, 40%), var(--hz-warm) 0, transparent 72%),
     linear-gradient(176deg, var(--hz-fg) 26%, color-mix(in srgb, var(--hz-fg) 74%, var(--hz-tint)) 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  filter: blur(var(--soft, 0px)) drop-shadow(0 1px 0 var(--hz-edge)) drop-shadow(0 3px 3px var(--hz-near))
-    drop-shadow(0 22px 42px var(--hz-far));
-  -webkit-mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
-  mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
-  padding-bottom: 0.12em;
 }
 .hz-mark {
   color: transparent;
-  filter: drop-shadow(0 0 22px var(--hz-mark-glow));
   background-image: linear-gradient(
     100deg,
     color-mix(in srgb, var(--hz-c1) calc(var(--ink) * 100%), var(--hz-c2)),
@@ -138,13 +168,14 @@
   );
   -webkit-background-clip: text;
   background-clip: text;
-  padding-right: 0.08em;
 }
-.hz-beat[data-beat='3'] .hz-big {
-  font-size: clamp(40px, 4.4vw, 80px);
+.hz-beat[data-beat='3'] .hz-big,
+.hz-beat[data-beat='3'] .hz-under {
+  font-size: clamp(46px, 5.2vw, 96px);
 }
-.hz-beat[data-beat='4'] .hz-big {
-  font-size: clamp(44px, 7.4vw, 136px);
+.hz-beat[data-beat='4'] .hz-big,
+.hz-beat[data-beat='4'] .hz-under {
+  font-size: clamp(60px, 9.4vw, 176px);
 }
 .hz-small {
   max-width: 34em;
@@ -152,14 +183,15 @@
   font-size: clamp(17px, 1.42vw, 21px);
   line-height: 1.5;
   color: var(--hz-mut);
-  text-shadow: 0 1px 14px var(--hz-far);
+  font-weight: 600;
+  text-shadow: 0 0 2px var(--hz-near), 0 1px 10px var(--hz-near), 0 1px 22px var(--hz-far);
 }
 
 /* ---- glass cards ---- */
 .hz-cards {
   position: absolute;
   z-index: 4;
-  right: clamp(20px, 3.4vw, 56px);
+  right: var(--hz-gutter);
   bottom: 118px;
   display: flex;
   gap: 12px;
@@ -168,7 +200,7 @@
 .hz-card {
   min-width: 190px;
   padding: 14px 18px 15px;
-  border-radius: 18px;
+  border-radius: 16px;
   color: var(--hz-fg);
   background: var(--hz-pane);
   border: 1px solid var(--hz-line);
@@ -186,8 +218,18 @@
   display: block;
   margin-top: 4px;
   font: 400 30px / 1.1 var(--f-hz);
-  font-stretch: 112%;
   font-variant-numeric: tabular-nums lining-nums;
+}
+.hz-card b span {
+  display: inline;
+  font: inherit;
+  color: inherit;
+}
+.hz-card b i {
+  font-style: normal;
+  opacity: 0.56;
+  font-size: 0.72em;
+  margin-right: 0.08em;
 }
 .hz-card.seed b {
   color: color-mix(in srgb, var(--hz-c7) calc(var(--ink) * 100%), var(--hz-c8));
@@ -202,11 +244,11 @@
 .hz-ring {
   position: absolute;
   z-index: 5;
-  left: clamp(20px, 5.2vw, 96px);
+  left: var(--hz-gutter);
   bottom: 112px;
   width: min(380px, 40vw);
   padding: 20px 22px;
-  border-radius: 22px;
+  border-radius: 16px;
   background: var(--hz-white-9);
   border: 1px solid var(--hz-white-22);
   -webkit-backdrop-filter: blur(26px) saturate(170%);
@@ -221,17 +263,23 @@
   margin: 4px 0 16px;
   color: var(--hz-cream-80);
 }
+.hz-ring small {
+  display: block;
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: var(--hz-cream-74);
+}
 .hz a.hz-go,
 .hz-go {
   display: inline-block;
   padding: 13px 20px;
   border: 0;
-  border-radius: 13px;
-  font: 700 15.5px var(--f-body);
+  border-radius: 12px;
+  font: 600 16px var(--f-ui);
+  letter-spacing: 0.002em;
   text-decoration: none;
   color: var(--hz-c14);
-  background: linear-gradient(180deg, var(--hz-white), var(--hz-c16));
-  box-shadow: inset 0 -1px 0 var(--hz-tint17-20), 0 10px 30px var(--hz-tint18-35);
+  background: var(--hz-on);
   cursor: pointer;
 }
 .hz-ring .hz-go {
@@ -243,7 +291,7 @@
 .hz-end {
   position: absolute;
   z-index: 5;
-  left: clamp(20px, 5.2vw, 96px);
+  left: var(--hz-gutter);
   bottom: 124px;
   display: flex;
   align-items: center;
@@ -253,8 +301,8 @@
 }
 .hz-ghost {
   padding: 13px 20px;
-  border-radius: 13px;
-  font-weight: 600;
+  border-radius: 12px;
+  font: 600 16px var(--f-ui);
   text-decoration: none;
   border: 1px solid var(--hz-white-28);
   background: var(--hz-white-8);
@@ -265,6 +313,7 @@
   border: 0;
   background: none;
   padding: 10px;
+  font: 600 15px var(--f-ui);
   color: var(--hz-cream-74);
   text-decoration: underline;
   cursor: pointer;
@@ -274,8 +323,8 @@
 .hz-rail {
   position: absolute;
   z-index: 5;
-  left: clamp(20px, 3.4vw, 56px);
-  right: clamp(20px, 3.4vw, 56px);
+  left: var(--hz-gutter);
+  right: var(--hz-gutter);
   bottom: 26px;
   display: grid;
   grid-template-columns: 112px 1fr;
@@ -383,14 +432,17 @@
     width: calc(100vw - 32px);
     top: 45svh;
   }
-  .hz-big {
+  .hz-big,
+  .hz-under {
+    font-size: 40px;
+  }
+  .hz-beat[data-beat='3'] .hz-big,
+.hz-beat[data-beat='3'] .hz-under {
     font-size: 36px;
   }
-  .hz-beat[data-beat='3'] .hz-big {
-    font-size: 32px;
-  }
-  .hz-beat[data-beat='4'] .hz-big {
-    font-size: 44px;
+  .hz-beat[data-beat='4'] .hz-big,
+.hz-beat[data-beat='4'] .hz-under {
+    font-size: 54px;
   }
   .hz-small {
     margin-top: 12px;
@@ -415,7 +467,7 @@
     right: 16px;
     width: auto;
     top: auto;
-    bottom: 76px;
+    bottom: 96px;
   }
   .hz-rail {
     grid-template-columns: 1fr;
@@ -429,4 +481,48 @@
   .hz-hint {
     display: none;
   }
+}
+
+/* ---- other languages ---- */
+.hz-words {
+  flex-basis: 100%;
+  margin: 8px 0 0;
+  font-size: 15px;
+  color: var(--hz-cream-74);
+}
+@media (max-width: 1180px) {
+  .hz-what {
+    display: none;
+  }
+  .hz-nav {
+    grid-template-columns: 1fr auto;
+  }
+}
+@media (max-width: 760px) {
+  .hz-navr {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+  .hz-langs button {
+    min-width: 30px;
+    height: 28px;
+    padding: 0 7px;
+    font-size: 12px;
+  }
+}
+
+/* no WebGL: a still sky, the first line and the way in */
+.hz-nogl {
+  background-size: cover;
+  background-position: center;
+  cursor: auto;
+}
+.hz-nogl .hz-gl,
+.hz-nogl .hz-rail {
+  display: none;
+}
+.hz-nogl [data-beat='0'],
+.hz-nogl [data-end] {
+  visibility: visible;
 }

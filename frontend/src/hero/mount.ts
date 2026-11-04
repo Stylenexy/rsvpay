@@ -3,8 +3,8 @@ import { BEAT, clamp, ease, lerp, seg, win } from './math';
 import { createScene } from './scene';
 import type { HeroCopy } from './copy';
 
-const HD = 95;
-const PHONE = 48;
+const HD = 188;
+const PHONE = 94;
 
 /** Fade windows of each big line: [in from, in to, out from, out to]. */
 const BEATS = [
@@ -21,9 +21,9 @@ function videoAt(p: number) {
   return lerp(0.3, 1, seg(p, 0.44, 0.72));
 }
 
-/** Dark ink on the pale morning sky turns to light text as the sky goes dark. */
+/** Dark ink on the pale morning, light text after it. The swap happens between two lines, so no line is read mid-change. */
 function inkAt(p: number) {
-  return ease(seg(p, 0.46, 0.6));
+  return ease(seg(p, 0.445, 0.475));
 }
 
 const START = new Date(2026, 10, 21).getTime();
@@ -72,6 +72,8 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     scene = createScene(canvas, low);
   } catch {
     root.classList.add('hz-nogl');
+    root.style.backgroundImage = `url(${base}langit/${folder}/${String(Math.round(count * 0.7)).padStart(3, '0')}.webp)`;
+    root.querySelector('[data-load]')?.classList.add('done');
     return () => frames.dispose();
   }
 
@@ -170,7 +172,8 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
   const fill = $<HTMLElement>('[data-fill]');
   const knob = $<HTMLElement>('[data-knob]');
   const date = $<HTMLElement>('[data-date]');
-  const hint = $<HTMLElement>('[data-hint]');
+  const hintA = $<HTMLElement>('[data-hint-a]');
+  const hintB = $<HTMLElement>('[data-hint-b]');
   const dots = $$('[data-dot]');
   const load = $<HTMLElement>('[data-load]');
   const loadNum = $<HTMLElement>('[data-count]');
@@ -199,7 +202,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     el.style.pointerEvents = v > 0.6 ? 'auto' : 'none';
   };
 
-  const rp = (n: number) => `Rp${Math.round(n / 100) * 100 === 0 ? 0 : (Math.round(n / 100) * 100).toLocaleString(copy().locale)}`;
+  const rp = (n: number) => (Math.round(n / 100) * 100).toLocaleString(copy().locale);
 
   function paint(p: number, envX: number, envY: number) {
     const c = copy();
@@ -218,7 +221,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
       el.style.opacity = v.toFixed(3);
       el.style.transform = `translate3d(0,${((1 - inn) * 34 - out * 34).toFixed(2)}px,0)`;
       el.style.setProperty('--wipe', `${(inn * 130).toFixed(1)}%`);
-      el.style.setProperty('--soft', `${((1 - v) * 10).toFixed(2)}px`);
+      el.style.setProperty('--soft', `${((1 - v) * 8).toFixed(2)}px`);
       const r = bigs[i].getBoundingClientRect();
       bigs[i].style.setProperty('--lx', `${(envX * W - r.left).toFixed(0)}px`);
       bigs[i].style.setProperty('--ly', `${(envY * H - r.top).toFixed(0)}px`);
@@ -232,8 +235,8 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
 
     const split = ease(seg(p, 0.27, 0.37));
     const paid = ease(seg(p, 0.87, 0.92));
-    // on a phone the reply card takes their place
-    const room = small ? 1 - win(p, 0.73, 0.76, 2, 3) : 1;
+    // the reply card takes the stage alone
+    const room = 1 - win(p, 0.73, 0.76, 2, 3);
     show(cards.siti, win(p, 0.26, 0.31, 0.95, 0.98) * room);
     show(cards.kept, win(p, 0.26, 0.31, 0.95, 0.98) * room);
     put(nums.siti, 'siti', rp(95000 * split * (1 - paid)));
@@ -247,8 +250,11 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     dots.forEach((d, i) => d.classList.toggle('on', p >= [BEAT.GIVE, BEAT.KEEP, BEAT.YEARS, BEAT.RING, BEAT.END][i] - 0.002));
 
     const when = new Date(lerp(START, WEDDING, ease(seg(p, 0.44, 0.72))));
-    put(date, 'date', `${when.getDate()} ${c.months[when.getMonth()]} ${when.getFullYear()}`);
-    hint.style.opacity = touched ? '0' : '';
+    put(date, 'date', when.toLocaleDateString(c.locale, { day: 'numeric', month: 'short', year: 'numeric' }));
+    if (touched && hintB.hidden) {
+      hintA.hidden = true;
+      hintB.hidden = false;
+    }
   }
 
   // ---- frame loop

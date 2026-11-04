@@ -1,6 +1,7 @@
 /** Sky image sequence. Compressed frames stay in memory; only those near the playhead are decoded. */
 
-const KEEP = 24;
+const KEEP = 30;
+const DECODING = 5;
 
 export class Frames {
   readonly count: number;
@@ -41,7 +42,7 @@ export class Frames {
 
   private decode(i: number) {
     const blob = this.blobs[i];
-    if (!blob || this.pending.has(i) || this.decoded.has(i) || this.pending.size > 2) return;
+    if (!blob || this.pending.has(i) || this.decoded.has(i) || this.pending.size >= DECODING) return;
     this.pending.add(i);
     createImageBitmap(blob, { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' })
       .then((b) => {
@@ -55,8 +56,10 @@ export class Frames {
   /** Keeps frames around index decoded, drops those furthest away. */
   want(index: number, direction: number) {
     const dir = direction >= 0 ? 1 : -1;
-    for (const o of [0, 1, dir * 2, -dir, dir * 3, dir * 4, dir * 6]) {
-      const i = Math.round(index) + o;
+    // nearest first, then ahead in the direction of travel, so the next frame is ready before it is needed
+    const at = Math.round(index);
+    for (const o of [0, 1, -1, dir * 2, dir * 3, -dir * 2, dir * 4, dir * 6, dir * 8, dir * 10, dir * 12]) {
+      const i = at + o;
       if (i >= 0 && i < this.count) this.decode(i);
     }
     if (this.decoded.size > KEEP) {
