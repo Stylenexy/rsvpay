@@ -1,5 +1,131 @@
 import type { Lang } from './copy';
 
+export const CH_DATA = {
+  brand: 'Amplop Balas',
+  author: 'Dex Bennett',
+  total: '06',
+  digits: ['0', '1', '2', '3', '4', '5', '6'],
+  steps: ['01', '02', '03', '04'],
+  cultureSteps: ['01', '02', '03', '04', '05'],
+  splitAmounts: ['Rp95,000', 'Rp5,000'],
+  milliseconds: 'ms',
+  years: ['2026', '2028', '2031'],
+  amounts: ['Rp100,000', 'Rp100,000', 'Rp100,000'],
+  names: ['Budi', 'Siti'],
+  words: ['amplop', '礼金', '축의금', 'ご祝儀', 'tiền mừng'],
+  languages: ['English', 'Bahasa Indonesia', '中文', '한국어', '日本語', 'Tiếng Việt'],
+  figures: ['0', '12/12', '45', '10%'],
+  account: 'amplop-c-mvznhnlx.testnet',
+  hash: '4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U',
+  methods: ['view_access_key_list', 'view_account'],
+  attacks: [
+    'Seller keeps withdrawing after the sale',
+    'Buyer drains during the transfer',
+    'Receiver never resolves',
+    "Host takes the guests' seeds",
+    'Host sends a seed to a friend',
+    'Reply twice from one seed',
+    'Forged payout callback',
+    'Payout fails and money vanishes',
+    'Developer changes the rules later',
+  ],
+  tests: [
+    'old_owner_cannot_withdraw_after_transfer',
+    'withdraw_blocked_while_sale_settles',
+    'stale_lock_releases_after_lock_max_blocks',
+    'withdraw_pays_only_free_money_and_never_touches_seeds',
+    'reply_cannot_be_redirected_to_someone_else',
+    'a_gift_can_be_replied_only_once',
+    'failed_payout_refunds_into_the_amplop',
+    'sale_during_a_payout_in_flight_keeps_every_coin_with_the_token',
+  ],
+};
+
+type ChapterUI = {
+  matches: string; mismatch: string;
+  index: string; continue: string; forSiti: string; kept: string;
+  ask: string; asking: string; idle: string; failed: string; received: string; unexpected: string;
+  keys: string; hash: string; block: string; elapsed: string; receipt: string;
+  refused: string; tests: string; fixed: string; threat: string;
+  try: string; check: string; languages: string; guest: string; host: string; replay: string;
+  trial: string; customs: string[];
+};
+
+export const CH_UI: Record<Lang, ChapterUI> = {
+  en: {
+    matches: 'Matches the published record', mismatch: 'Does not match the published record',
+    index: 'Chapter', continue: 'Scroll to follow the promise', forSiti: 'for Siti', kept: 'kept for the reply',
+    ask: 'Ask the network now', asking: 'Asking the network…', idle: 'A direct answer, from your browser.',
+    failed: 'The network did not answer. Try again or check the contract.', received: 'Answer received',
+    unexpected: 'The answer differs from the published record. Check the contract.',
+    keys: 'Access keys', hash: 'Code hash', block: 'Block', elapsed: 'Round trip', receipt: 'Live network receipt',
+    refused: '12 of 12 refused on the live contract. Full list in the threat model.', tests: '45 contract tests pass.',
+    fixed: 'Set once. Held for good.', threat: 'Threat model', try: 'Try', check: 'Check', languages: 'Languages',
+    guest: 'Be a guest', host: 'Make an envelope', replay: 'Replay the story',
+    trial: 'Trial version on NEAR testnet. Play money.',
+    customs: ['A gift today. A return at their celebration.', 'A red envelope carries a wish for good fortune.', 'A wedding gift, remembered between families.', 'A knot tied around a wish for the couple.', 'A gift of joy, returned when the time comes.'],
+  },
+  id: {
+    matches: 'Cocok dengan catatan terbit', mismatch: 'Tidak cocok dengan catatan terbit',
+    index: 'Bab', continue: 'Gulir mengikuti janji', forSiti: 'untuk Siti', kept: 'disimpan untuk membalas',
+    ask: 'Tanya jaringan sekarang', asking: 'Menunggu jawaban jaringan…', idle: 'Jawaban langsung, dari perambanmu.',
+    failed: 'Jaringan tidak menjawab. Coba lagi atau periksa kontraknya.', received: 'Jawaban diterima',
+    unexpected: 'Jawabannya berbeda dari catatan terbit. Periksa kontraknya.',
+    keys: 'Kunci akses', hash: 'Hash kode', block: 'Blok', elapsed: 'Waktu tempuh', receipt: 'Bukti langsung dari jaringan',
+    refused: '12 dari 12 ditolak di kontrak yang berjalan. Daftar lengkap di model ancaman.', tests: '45 tes kontrak lulus.',
+    fixed: 'Sekali ditentukan. Selamanya tetap.', threat: 'Model ancaman', try: 'Coba', check: 'Periksa', languages: 'Bahasa',
+    guest: 'Jadi tamu', host: 'Buat amplop', replay: 'Putar ulang cerita', trial: 'Versi uji di NEAR testnet. Uang mainan.',
+    customs: ['Memberi hari ini. Membalas di hajatan mereka.', 'Amplop merah membawa doa keberuntungan.', 'Pemberian pernikahan yang diingat antarkeluarga.', 'Simpul yang mengikat doa untuk pengantin.', 'Tanda sukacita, dibalas saat waktunya tiba.'],
+  },
+  zh: {
+    matches: '与公布记录一致', mismatch: '与公布记录不一致',
+    index: '篇章', continue: '滚动，追随承诺', forSiti: '给 Siti', kept: '留作回礼',
+    ask: '现在询问网络', asking: '正在询问网络…', idle: '从你的浏览器直接获取答案。',
+    failed: '网络没有回应。请重试或查看合约。', received: '已收到答案', unexpected: '答案与公布的记录不同。请查看合约。',
+    keys: '访问密钥', hash: '代码哈希', block: '区块', elapsed: '往返时间', receipt: '网络实时回执',
+    refused: '线上合约拒绝了全部 12 次检查。完整清单见威胁模型。', tests: '45 项合约测试通过。',
+    fixed: '设定一次，永远不变。', threat: '威胁模型', try: '体验', check: '核查', languages: '语言',
+    guest: '成为宾客', host: '创建红包', replay: '重看故事', trial: 'NEAR 测试网试用版。仅使用测试币。',
+    customs: ['今天送礼，在对方的喜事上回礼。', '一封红包，寄托美好的祝愿。', '一份贺礼，两家人铭记。', '一结水引，系住对新人的祝福。', '一份喜悦，待来日相报。'],
+  },
+  ko: {
+    matches: '공개 기록과 일치', mismatch: '공개 기록과 불일치',
+    index: '장', continue: '스크롤로 약속을 따라가세요', forSiti: 'Siti에게', kept: '답례를 위해 보관',
+    ask: '지금 네트워크에 물어보기', asking: '네트워크에 묻는 중…', idle: '브라우저에서 직접 받는 답입니다.',
+    failed: '네트워크가 응답하지 않았습니다. 다시 시도하거나 컨트랙트를 확인하세요.', received: '응답을 받았습니다',
+    unexpected: '공개된 기록과 다른 응답입니다. 컨트랙트를 확인하세요.',
+    keys: '접근 키', hash: '코드 해시', block: '블록', elapsed: '왕복 시간', receipt: '네트워크 실시간 영수증',
+    refused: '실제 컨트랙트에서 12건 모두 거부했습니다. 전체 목록은 위협 모델에 있습니다.', tests: '컨트랙트 테스트 45개 통과.',
+    fixed: '한 번 정하면 영원히 그대로.', threat: '위협 모델', try: '체험', check: '확인', languages: '언어',
+    guest: '하객 되기', host: '봉투 만들기', replay: '이야기 다시 보기', trial: 'NEAR 테스트넷 체험판. 실제 돈이 아닙니다.',
+    customs: ['오늘의 선물, 그들의 잔칫날에 답례로.', '붉은 봉투에 행운을 빕니다.', '두 가족이 기억하는 결혼 축하의 마음.', '신랑 신부를 위한 소망을 매듭에 담아.', '기쁨을 나누고, 때가 되면 돌려줍니다.'],
+  },
+  ja: {
+    matches: '公開記録と一致', mismatch: '公開記録と不一致',
+    index: '章', continue: 'スクロールして約束をたどる', forSiti: 'Siti へ', kept: 'お返しのために残す',
+    ask: '今、ネットワークに聞く', asking: 'ネットワークに問い合わせ中…', idle: 'ブラウザから直接、答えを受け取ります。',
+    failed: 'ネットワークから返答がありません。再試行するか、コントラクトをご確認ください。', received: '回答を受信しました',
+    unexpected: '公開記録と異なる回答です。コントラクトをご確認ください。',
+    keys: 'アクセスキー', hash: 'コードハッシュ', block: 'ブロック', elapsed: '往復時間', receipt: 'ネットワークの受信記録',
+    refused: '稼働中のコントラクトで全12件を拒否。全一覧は脅威モデルに。', tests: '45件のコントラクトテストに合格。',
+    fixed: '一度決めたら、ずっとそのまま。', threat: '脅威モデル', try: '体験', check: '確認', languages: '言語',
+    guest: 'ゲストになる', host: '袋をつくる', replay: '物語をもう一度', trial: 'NEAR テストネットの試用版。テスト用のお金です。',
+    customs: ['今日の贈り物を、相手のお祝いでお返し。', '紅い包みに、幸運への願いを。', '両家の記憶に残る、お祝いの気持ち。', '水引の結びに、新郎新婦への願いを。', '喜びを贈り、時が来たらお返しを。'],
+  },
+  vi: {
+    matches: 'Khớp với bản ghi công bố', mismatch: 'Không khớp với bản ghi công bố',
+    index: 'Chương', continue: 'Cuộn theo lời hứa', forSiti: 'cho Siti', kept: 'giữ lại để mừng đáp',
+    ask: 'Hỏi mạng ngay', asking: 'Đang hỏi mạng…', idle: 'Câu trả lời trực tiếp từ trình duyệt của bạn.',
+    failed: 'Mạng chưa trả lời. Hãy thử lại hoặc xem hợp đồng.', received: 'Đã nhận câu trả lời',
+    unexpected: 'Câu trả lời khác với bản ghi công bố. Hãy xem hợp đồng.',
+    keys: 'Khóa truy cập', hash: 'Mã băm', block: 'Khối', elapsed: 'Thời gian khứ hồi', receipt: 'Biên nhận trực tiếp từ mạng',
+    refused: 'Cả 12 kiểm tra đều bị từ chối trên hợp đồng đang chạy. Xem đủ trong mô hình đe dọa.', tests: '45 bài kiểm tra hợp đồng đạt.',
+    fixed: 'Đặt một lần. Giữ mãi mãi.', threat: 'Mô hình đe dọa', try: 'Thử', check: 'Kiểm tra', languages: 'Ngôn ngữ',
+    guest: 'Làm khách', host: 'Tạo phong bì', replay: 'Xem lại câu chuyện', trial: 'Bản thử trên NEAR testnet. Tiền thử nghiệm.',
+    customs: ['Mừng hôm nay, đáp lại vào ngày vui của họ.', 'Phong bao đỏ mang lời chúc may mắn.', 'Món quà cưới được hai gia đình ghi nhớ.', 'Nút thắt gửi lời chúc đến đôi uyên ương.', 'Trao niềm vui, đáp lại khi đến lúc.'],
+  },
+};
+
 /** Everything below the time story. One idea per screen, so few words. */
 export type ChaptersCopy = {
   table: { kicker: string; big: string; panels: { t: string; d: string }[] };

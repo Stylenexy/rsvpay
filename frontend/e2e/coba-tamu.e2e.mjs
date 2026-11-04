@@ -35,12 +35,14 @@ await page.getByText('Kamu memberi').waitFor({ timeout: 20_000 });
 if (!PARENT) await page.getByPlaceholder('Budi').fill('Juri');
 const t0 = Date.now();
 // a real slide, not a tap: press the round button and drag it to the end of the track
+await page.getByRole('button', { name: 'Geser untuk memberi' }).scrollIntoViewIfNeeded();
+await page.waitForTimeout(300);
 const box = await page.getByRole('button', { name: 'Geser untuk memberi' }).boundingBox();
 await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
 await page.mouse.down();
 await page.mouse.move(box.x + 300, box.y + box.height / 2, { steps: 14 });
 await page.mouse.up();
-await page.getByText('Terkirim.').waitFor({ timeout: 60_000 });
+await page.getByText('Terkirim.').waitFor({ timeout: 45_000 }).catch(async (e) => { await page.screenshot({ path: `${OUT}gagal-tamu.png` }); throw e; });
 console.log(`PASS | guest page, slide to give, sent | ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 await page.waitForTimeout(2300);
 await page.screenshot({ path: `${OUT}2-guest-sent.png` });

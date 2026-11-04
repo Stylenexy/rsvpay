@@ -1,0 +1,84 @@
+import { useEffect, useRef, useState } from 'react';
+import { CHAPTERS, CH_DATA, CH_UI } from '../chapters.copy';
+import type { Lang } from '../copy';
+import { askNetwork, type Receipt } from './network';
+import { gsap } from './animation';
+import { asset, CONTRACT, THREAT, THREAT_DOWNLOAD, Title } from './shared';
+
+function NetworkReceipt({ lang }: { lang: Lang }) {
+  const u = CH_UI[lang];
+  const [status, setStatus] = useState<'idle' | 'pending' | 'received' | 'failed'>('idle');
+  const [receipt, setReceipt] = useState<Receipt | null>(null);
+  const controller = useRef<AbortController | null>(null);
+  const output = useRef<HTMLDListElement>(null);
+  useEffect(() => () => { controller.current?.abort(); controller.current = null; }, [lang]);
+  useEffect(() => {
+    if (!receipt || !output.current) return;
+    const values = [...output.current.querySelectorAll<HTMLElement>('[data-receipt-value]')];
+    const text = values.map(value => value.textContent || '');
+    const context = gsap.context(() => {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const typing = gsap.timeline({ delay: .3 });
+      gsap.set(output.current!.children, { opacity: 0 });
+      values.forEach((value, i) => {
+        value.textContent = '';
+        const cursor = { n: 0 };
+        typing.to(value.closest('.network-values > div'), { opacity: 1, duration: .1 })
+          .to(cursor, { n: text[i].length, duration: Math.max(.25, text[i].length / 65), ease: 'none', onUpdate: () => { value.textContent = text[i].slice(0, Math.round(cursor.n)); } });
+      });
+    }, output);
+    return () => { context.revert(); values.forEach((value, i) => { value.textContent = text[i]; }); };
+  }, [receipt]);
+  const ask = async () => {
+    controller.current?.abort();
+    const request = new AbortController();
+    controller.current = request;
+    setStatus('pending');
+    setReceipt(null);
+    const timeout = window.setTimeout(() => request.abort(), 14000);
+    try {
+      const answer = await askNetwork(request.signal);
+      if (controller.current === request) { setReceipt(answer); setStatus('received'); }
+    } catch {
+      if (controller.current === request) setStatus('failed');
+    } finally { window.clearTimeout(timeout); }
+  };
+  return <div className="network-receipt" data-status={status}>
+    <div className="network-top"><span className="ch-label"><i className={status === 'received' ? 'is-live' : ''} />{u.receipt}</span><span className="ch-label">{CH_DATA.account}</span></div>
+    <p className="network-account">{CH_DATA.account}</p>
+    <div className="network-action"><button className="ch-button" type="button" onClick={() => void ask()} disabled={status === 'pending'}><span>{status === 'pending' ? u.asking : u.ask}</span><i aria-hidden="true">↗</i></button><p role="status" aria-live="polite">{status === 'failed' ? u.failed : status === 'received' ? receipt?.matches ? u.received : u.unexpected : u.idle}</p></div>
+    <div className="network-result"><div>{receipt && <dl className="network-values" ref={output}>
+      <div><dt>{u.keys}</dt><dd><span data-receipt-value>{receipt.keys}</span></dd></div>
+      <div className="network-hash"><dt>{u.hash}</dt><dd><code data-receipt-value>{receipt.hash}</code><span className="network-match">{receipt.hash === CH_DATA.hash ? u.matches : u.mismatch}</span></dd></div>
+      <div><dt>{u.block}</dt><dd><span data-receipt-value>{receipt.block.toLocaleString(lang)}</span></dd></div>
+      <div><dt>{u.elapsed}</dt><dd><span data-receipt-value>{receipt.milliseconds} {CH_DATA.milliseconds}</span></dd></div>
+    </dl>}</div></div>
+    <a className="network-contract" href={CONTRACT} target="_blank" rel="noreferrer">{CHAPTERS[lang].proof.link}<span aria-hidden="true">↗</span></a>
+  </div>;
+}
+
+export function Proof({ lang }: { lang: Lang }) {
+  const c = CHAPTERS[lang].proof;
+  const u = CH_UI[lang];
+  return <section className="ch-proof ch-chapter" data-chapter="4" aria-label={c.kicker}>
+    <div className="ch-stage proof-stage">
+      <div className="proof-grid" aria-hidden="true" />
+      <div className="proof-rule" aria-hidden="true"><i /></div>
+      <div className="proof-heading ch-grid"><Title text={c.big} /><p className="ch-label">{c.kicker}</p></div>
+      <div className="proof-instruments">
+        {c.rows.map((row, i) => <article className={`proof-instrument proof-instrument-${i}`} key={i} data-proof={i}>
+          <div className="proof-description"><span className="ch-label">{CH_DATA.steps[i]}</span><strong className="proof-figure" data-counter={i}>{CH_DATA.figures[i]}</strong><p data-lines>{row}</p>{i === 1 && <p className="proof-caption">{u.refused} <a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></p>}{i === 2 && <p className="proof-caption">{u.tests}</p>}{i === 3 && <p className="proof-caption">{u.fixed}</p>}</div>
+          <div className="proof-object">
+            {i === 0 && <div className="proof-key" aria-hidden="true"><img src={asset('kunci')} alt="" loading="lazy" />{Array.from({ length: 7 }, (_, n) => <span className="key-shard" key={n}><img src={asset('kunci')} alt="" loading="lazy" /></span>)}</div>}
+            {i === 1 && <><div className="proof-shield" aria-hidden="true"><img src={asset('perisai')} alt="" loading="lazy" /><div className="proof-strikes">{Array.from({ length: 12 }, (_, n) => <i key={n}><b /></i>)}</div><div className="proof-ripples">{Array.from({ length: 12 }, (_, n) => <i key={n} />)}</div></div><div className="proof-attack-window"><ol>{CH_DATA.attacks.map(a => <li key={a}><i aria-hidden="true">↳</i><code>{a}</code><span aria-hidden="true">×</span></li>)}</ol></div></>}
+            {i === 2 && <div className="proof-test-window"><div className="proof-test-scan" aria-hidden="true" /><ol>{CH_DATA.tests.map(test => <li key={test}><span aria-hidden="true">✓</span><code>{test}</code></li>)}</ol></div>}
+            {i === 3 && <div className="proof-seal" aria-hidden="true"><img src={asset('segel')} alt="" loading="lazy" /><svg viewBox="0 0 400 400"><circle className="seal-track" cx="200" cy="200" r="160" /><circle className="seal-arc" cx="200" cy="200" r="160" pathLength="100" /></svg><i className="seal-handle"><b /></i><span className="ch-label">{CH_DATA.figures[3]}</span></div>}
+          </div>
+        </article>)}
+        <article className="proof-instrument proof-live" data-proof="4"><NetworkReceipt lang={lang} /><p className="ch-honesty">{c.note}</p></article>
+      </div>
+      <div className="proof-steps ch-label" aria-hidden="true">{CH_DATA.cultureSteps.map(s => <span key={s}><i />{s}</span>)}</div>
+      <div className="proof-amber-wipe" aria-hidden="true" />
+    </div>
+  </section>;
+}
