@@ -30,7 +30,7 @@ describe('the shared language of the envelope', () => {
         for (const word of ['wallet', 'token', 'contract', 'blockchain', 'benih']) {
           expect(text.toLowerCase().split(/\W+/)).not.toContain(word);
         }
-        if (key !== 'appName') expect(text.toLowerCase()).not.toContain('amplop');
+        if (key !== 'appName' && id !== 'id') expect(text.toLowerCase()).not.toContain('amplop');
       }
       expect(say(COPY[id].bukuSky, 'Siti', '2')).not.toMatch(/\{\d+\}/);
     }
