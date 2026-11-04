@@ -54,6 +54,7 @@ function bell() {
 
 export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
   const pin = root.parentElement as HTMLElement;
+  const page = pin.parentElement as HTMLElement;
   const canvas = root.querySelector('canvas') as HTMLCanvasElement;
   const $ = <T extends HTMLElement>(s: string) => root.querySelector(s) as T;
   const $$ = (s: string) => [...root.querySelectorAll<HTMLElement>(s)];
@@ -89,21 +90,23 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     window.scrollTo({ top: selfTop, behavior: 'instant' });
   };
   const onScroll = () => {
+    // while the story plays it owns the scroll position; only a real gesture hands it back
+    if (auto) return;
     const y = window.scrollY;
     if (Math.abs(y - selfTop) < 3) return;
-    auto = null;
     target = clamp((y - pinTop()) / range());
   };
 
-  // ---- autoplay: walks to each beat, holds so it can be read, stops at the ring
+  // ---- autoplay: walks through every beat to the end, holds so each can be read, longest at the ring
   type Auto = { from: number; to: number; t: number; dur: number; hold: number; next: number[] };
   let auto: Auto | null = null;
   const walk = (from: number, stops: number[]): Auto | null => {
     if (!stops.length) return null;
     const to = stops[0];
-    return { from, to, t: 0, dur: 1.2 + Math.abs(to - from) * 11, hold: 1.5, next: stops.slice(1) };
+    return { from, to, t: 0, dur: 1.2 + Math.abs(to - from) * 11, hold: to === BEAT.RING ? 3.4 : 1.5, next: stops.slice(1) };
   };
-  if (!reduced) auto = walk(0, [BEAT.GIVE, BEAT.KEEP, BEAT.YEARS, BEAT.RING]);
+  const STORY = [BEAT.GIVE, BEAT.KEEP, BEAT.YEARS, BEAT.RING, BEAT.END];
+  if (!reduced) auto = walk(0, STORY);
   const stepAuto = (dt: number) => {
     if (!auto) return;
     auto.t += dt;
@@ -143,6 +146,14 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
   };
   const onGesture = () => {
     touched = true;
+    auto = null;
+  };
+  const onKey = (e: KeyboardEvent) => {
+    if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End', ' '].includes(e.key)) onGesture();
+  };
+  const onBar = (e: MouseEvent) => {
+    // a press on the page itself, not on any element, is the scrollbar
+    if (e.target === document.documentElement) onGesture();
   };
 
   const onClick = (e: MouseEvent) => {
@@ -153,7 +164,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     if (b.dataset.do === 'replay') {
       setTarget(0);
       cur = 0;
-      auto = walk(0, [BEAT.GIVE, BEAT.KEEP, BEAT.YEARS, BEAT.RING]);
+      auto = walk(0, STORY);
     }
   };
 
@@ -206,7 +217,6 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
 
   function paint(p: number, envX: number, envY: number) {
     const c = copy();
-    root.style.setProperty('--ink', inkAt(p).toFixed(3));
 
     beats.forEach((el, i) => {
       const [a, b, x, y] = BEATS[i];
@@ -272,6 +282,11 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     cur += (target - cur) * (1 - Math.exp(-dt * 11));
     if (Math.abs(target - cur) < 0.00005) cur = target;
 
+    const close = page.querySelector<HTMLElement>('[data-close]')?.getBoundingClientRect().top ?? 1e6;
+    page.style.setProperty('--ink', (close < 44 ? 0 : inkAt(cur)).toFixed(3));
+    // past the story the sky stops drawing, so the chapters below get the whole frame
+    if (pin.getBoundingClientRect().bottom < 0) return;
+
     eased.x += (mouse.x - eased.x) * (1 - Math.exp(-dt * 3));
     eased.y += (mouse.y - eased.y) * (1 - Math.exp(-dt * 3));
 
@@ -312,6 +327,9 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('wheel', onGesture, { passive: true });
+  window.addEventListener('touchmove', onGesture, { passive: true });
+  window.addEventListener('keydown', onKey);
+  window.addEventListener('mousedown', onBar);
   root.addEventListener('pointerdown', onDown);
   window.addEventListener('pointermove', onMove);
   window.addEventListener('pointerup', onUp);
@@ -349,6 +367,9 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     ro.disconnect();
     window.removeEventListener('scroll', onScroll);
     window.removeEventListener('wheel', onGesture);
+    window.removeEventListener('touchmove', onGesture);
+    window.removeEventListener('keydown', onKey);
+    window.removeEventListener('mousedown', onBar);
     root.removeEventListener('pointerdown', onDown);
     window.removeEventListener('pointermove', onMove);
     window.removeEventListener('pointerup', onUp);

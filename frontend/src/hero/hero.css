@@ -48,8 +48,8 @@
 
 /* ---- top ---- */
 .hz-nav {
-  position: absolute;
-  z-index: 6;
+  position: fixed;
+  z-index: 30;
   inset: 0 0 auto;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -58,6 +58,9 @@
   color: var(--hz-fg);
 }
 .hz-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font: 500 19px / 1 var(--f-hz);
   text-decoration: none;
 }
@@ -109,7 +112,7 @@
   white-space: nowrap;
   background: var(--hz-on);
 }
-.hz a.hz-cta {
+.hz-nav a.hz-cta {
   color: var(--hz-on-ink);
 }
 
@@ -506,10 +509,22 @@
     gap: 6px;
   }
   .hz-langs button {
-    min-width: 30px;
+    min-width: 28px;
     height: 28px;
-    padding: 0 7px;
+    padding: 0 6px;
     font-size: 12px;
+    white-space: nowrap;
+  }
+  .hz-brand {
+    white-space: nowrap;
+    font-size: 16px;
+  }
+  .hz-brand svg {
+    width: 26px;
+  }
+  .hz-cta {
+    padding: 7px 13px;
+    font-size: 13px;
   }
 }
 
@@ -526,4 +541,22 @@
 .hz-nogl [data-beat='0'],
 .hz-nogl [data-end] {
   visibility: visible;
+}
+
+.hz-brand svg {
+  width: 30px;
+  height: auto;
+}
+.hz-nav a {
+  color: inherit;
+}
+.hz-load {
+  grid-auto-flow: row;
+  align-content: center;
+  gap: 14px;
+}
+.hz-load svg {
+  width: 88px;
+  height: auto;
+  color: var(--ch-fg);
 }

@@ -35,14 +35,14 @@
   --hz-white-90: rgba(255, 255, 255, 0.9);
 }
 
-.hz {
+.hz-page {
   --hz-gutter: clamp(20px, 4.4vw, 72px);
   --dawn-ink: 8, 22, 54;
   --ink: 0;
 }
 
 /* the ink crossfades with the sky: dark on the pale morning, light once the sun is down */
-.hz {
+.hz-page {
   --hz-fg: color-mix(in srgb, #fff7ee calc(var(--ink) * 100%), rgb(var(--dawn-ink)));
   --hz-mut: color-mix(in srgb, rgba(255, 247, 238, 0.78) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.78));
   --hz-line: color-mix(in srgb, rgba(255, 255, 255, 0.22) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.16));
@@ -51,7 +51,7 @@
   --hz-cast: color-mix(in srgb, rgba(2, 4, 18, 0.5) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.16));
 }
 
-.hz {
+.hz-page {
   --f-hz: 'Kalnia', var(--f-disp);
   /* tombol: Avenir kalau perangkat punya (Mac, iPhone), selain itu Nunito Sans yang gratis dan sebangun */
   --f-ui: 'Avenir Next', 'Avenir', 'Nunito Sans', var(--f-body);
@@ -65,16 +65,34 @@
   --hz-far: color-mix(in srgb, rgba(3, 6, 26, 0.65) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.42));
 }
 
-.hz[data-lang='zh'] {
+.hz-page[data-lang='zh'] {
   --f-hz: 'Noto Serif SC', 'Songti SC', serif;
 }
-.hz[data-lang='ko'] {
+.hz-page[data-lang='ko'] {
   --f-hz: 'Noto Serif KR', 'Batang', serif;
 }
-.hz[data-lang='ja'] {
+.hz-page[data-lang='ja'] {
   --f-hz: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
 }
 /* Kalnia has no Vietnamese marks */
-.hz[data-lang='vi'] {
+.hz-page[data-lang='vi'] {
   --f-hz: 'Noto Serif Display', serif;
+}
+
+.hz-page {
+  --ch-bg: #060b1a;
+  --ch-deep: #03060f;
+  --ch-panel: #0d1730;
+  --ch-fg: #fff7ee;
+  --ch-soft: rgba(255, 247, 238, 0.86);
+  --ch-mut: rgba(255, 247, 238, 0.66);
+  --ch-line: rgba(255, 255, 255, 0.2);
+  --ch-scrim: rgba(3, 6, 18, 0.86);
+  --ch-amber: #ff9a4d;
+  --ch-paper: #fbfaf6;
+  --ch-ink: #0a2a5e;
+  --ch-cast: rgba(0, 0, 0, 0.55);
+}
+.logo-dot {
+  fill: #ff8a3d;
 }

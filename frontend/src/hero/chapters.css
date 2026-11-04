@@ -1,0 +1,448 @@
+/* Below the time story. One idea per screen, words at the corners, one real thing in the middle. No card grids. */
+
+.ch {
+  position: relative;
+  z-index: 2;
+  color: var(--ch-fg);
+  background: var(--ch-bg);
+  font: 16px/1.5 var(--f-body);
+}
+.ch section {
+  position: relative;
+  padding-inline: var(--hz-gutter);
+}
+.ch-corner {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ch-mut);
+}
+.ch-no {
+  font: 400 clamp(26px, 2.6vw, 40px) / 1 var(--f-hz);
+  color: var(--ch-fg);
+}
+.ch-big {
+  margin: 0;
+  max-width: 15em;
+  font: 500 clamp(44px, 6.3vw, 116px) / 1.02 var(--f-hz);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  -webkit-mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
+  mask-image: linear-gradient(100deg, var(--hz-black) calc(var(--wipe, 130%) - 30%), transparent var(--wipe, 130%));
+}
+
+/* ---- 02: panels, the next one grows and loads by itself ---- */
+.ch-table {
+  padding-block: clamp(96px, 12vh, 132px) clamp(64px, 10vh, 110px);
+}
+.ch-table .ch-big {
+  margin-top: 36px;
+}
+.cp-row {
+  display: flex;
+  gap: 10px;
+  height: clamp(420px, 66svh, 680px);
+  margin-top: 48px;
+}
+.cp {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--ch-panel);
+  color: var(--ch-fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: flex-grow 0.95s cubic-bezier(0.22, 0.8, 0.2, 1);
+}
+.cp.on {
+  flex-grow: 4.6;
+  cursor: default;
+}
+.cp img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.92) brightness(0.62);
+  transition: filter 0.9s ease, transform 7s linear;
+}
+.cp.on img {
+  filter: none;
+  transform: scale(1.05);
+}
+.cp::after {
+  content: '';
+  position: absolute;
+  inset: 45% 0 0;
+  pointer-events: none;
+  background: linear-gradient(transparent, var(--ch-scrim));
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+.cp.on::after {
+  opacity: 1;
+}
+.cp-no {
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  top: 16px;
+  font: 400 clamp(26px, 2.6vw, 40px) / 1 var(--f-hz);
+}
+.cp-text {
+  position: absolute;
+  z-index: 2;
+  left: 24px;
+  right: 24px;
+  bottom: 26px;
+  display: grid;
+  gap: 6px;
+  max-width: 34em;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.cp.on .cp-text {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.55s ease 0.4s, transform 0.55s ease 0.4s;
+}
+.cp-text strong {
+  font: 500 clamp(26px, 2.8vw, 46px) / 1.08 var(--f-hz);
+  letter-spacing: -0.02em;
+}
+.cp-text span {
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 600;
+  color: var(--ch-soft);
+}
+.cp-load {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  transform-origin: 0 50%;
+  background: var(--ch-amber);
+  animation: cp-load 6.5s linear;
+}
+@keyframes cp-load {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* ---- 03: one full rotation ---- */
+.ch-round {
+  height: 420vh;
+  padding-inline: 0 !important;
+  background: var(--ch-deep);
+}
+.ch-stick {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  padding: clamp(96px, 12vh, 132px) var(--hz-gutter) 40px;
+}
+.ch-huge {
+  position: absolute;
+  z-index: 0;
+  left: var(--hz-gutter);
+  right: var(--hz-gutter);
+  top: 29%;
+  margin: 0;
+  text-align: center;
+  font: 500 clamp(52px, 8.6vw, 168px) / 1 var(--f-hz);
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.ob {
+  position: absolute;
+  left: 13%;
+  right: 13%;
+  top: 60%;
+  height: 32%;
+}
+.ob-ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.ob-ring ellipse {
+  fill: none;
+  stroke: var(--ch-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.ob-glass {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  width: min(36vw, 560px);
+  max-width: none;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+  -webkit-mask-image: radial-gradient(closest-side, var(--hz-black) 62%, transparent 92%);
+  mask-image: radial-gradient(closest-side, var(--hz-black) 62%, transparent 92%);
+}
+.ob-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: grid;
+  gap: 2px;
+  min-width: 210px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--ch-paper);
+  color: var(--ch-ink);
+  box-shadow: 0 22px 50px var(--ch-cast);
+  will-change: transform;
+}
+.ob-card em {
+  font: 500 24px / 1.1 var(--f-hz);
+  font-style: normal;
+}
+.ob-card span {
+  font-size: 15px;
+  font-weight: 700;
+}
+.ch-line {
+  position: absolute;
+  left: var(--hz-gutter);
+  top: clamp(132px, 17.5vh, 172px);
+  max-width: 34em;
+  margin: 0;
+  font-size: clamp(16px, 1.25vw, 19px);
+  font-weight: 600;
+  color: var(--ch-soft);
+}
+
+/* ---- 04: proof, ruled like a ledger ---- */
+.ch-proof {
+  padding-block: clamp(96px, 12vh, 132px) clamp(72px, 12vh, 120px);
+  background: var(--ch-bg);
+}
+.ch-proof .ch-big {
+  margin-top: 36px;
+}
+.ch-proof ul {
+  margin: 56px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--ch-line);
+}
+.ch-proof li {
+  display: grid;
+  grid-template-columns: minmax(180px, 30%) 1fr;
+  align-items: baseline;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--ch-line);
+}
+.ch-proof b {
+  font: 400 clamp(46px, 6vw, 104px) / 1 var(--f-hz);
+  letter-spacing: -0.03em;
+  font-variant-numeric: lining-nums;
+}
+.ch-proof li span {
+  max-width: 36em;
+  font-size: clamp(17px, 1.5vw, 23px);
+  font-weight: 600;
+  color: var(--ch-soft);
+}
+.ch-note {
+  margin: 24px 0 0;
+  color: var(--ch-mut);
+}
+.ch-note a {
+  color: var(--ch-fg);
+  font-weight: 700;
+}
+
+/* ---- 05: the same custom, its own words ---- */
+.ch-names {
+  padding-block: clamp(96px, 12vh, 132px);
+  background: var(--ch-deep);
+  overflow: hidden;
+}
+.nm-list {
+  margin: 28px 0 56px;
+}
+.nm-list p {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 18px;
+  margin: 0;
+  white-space: nowrap;
+  will-change: transform;
+}
+.nm-list b {
+  font: 500 clamp(52px, 9.6vw, 188px) / 1.12 var(--f-hz);
+  letter-spacing: -0.02em;
+}
+.nm-list b:lang(zh) {
+  font-family: 'Noto Serif SC', serif;
+}
+.nm-list b:lang(ko) {
+  font-family: 'Noto Serif KR', serif;
+}
+.nm-list b:lang(ja) {
+  font-family: 'Noto Serif JP', serif;
+}
+.nm-list b:lang(vi) {
+  font-family: 'Noto Serif Display', serif;
+}
+.nm-list span {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ch-mut);
+}
+
+/* ---- 06: a new morning ---- */
+.ch-close {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  min-height: 100svh;
+  padding-block: clamp(88px, 12vh, 120px) 26px;
+  color: var(--ch-ink);
+  overflow: hidden;
+}
+.ch-dawn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+}
+.ch-end {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 12px;
+}
+.ch-logo {
+  width: clamp(64px, 6.4vw, 104px);
+  height: auto;
+  color: var(--ch-ink);
+}
+.ch-end p {
+  margin: 0;
+  font-size: clamp(18px, 1.5vw, 23px);
+  font-weight: 700;
+}
+.ch-doors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+.ch a.ch-go,
+.ch a.ch-ghost {
+  padding: 14px 22px;
+  border-radius: 12px;
+  font: 600 16px var(--f-ui);
+  text-decoration: none;
+}
+.ch a.ch-go {
+  background: var(--ch-ink);
+  color: var(--ch-paper);
+}
+.ch a.ch-ghost {
+  background: var(--ch-paper);
+  color: var(--ch-ink);
+}
+.ch-qr {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  font-weight: 700;
+  color: var(--ch-fg);
+  text-shadow: 0 1px 10px var(--ch-scrim);
+}
+.ch-qr img {
+  border-radius: 10px;
+  background: var(--ch-paper);
+  padding: 6px;
+}
+.ch-foot {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ch-fg);
+  text-shadow: 0 1px 10px var(--ch-scrim);
+}
+.ch-foot span:last-child {
+  text-align: right;
+}
+
+/* ---- phone ---- */
+@media (max-width: 760px) {
+  .cp-row {
+    flex-direction: column;
+    height: 640px;
+  }
+  .cp {
+    flex-basis: 56px;
+    flex-grow: 1;
+  }
+  .cp.on {
+    flex-grow: 6;
+  }
+  .ch-huge {
+    top: 34%;
+    font-size: 40px;
+  }
+  .ob {
+    left: 24%;
+    right: 24%;
+    top: 62%;
+    height: 22%;
+  }
+  .ob-glass {
+    width: 74vw;
+  }
+  .ob-card {
+    min-width: 168px;
+    padding: 10px 12px;
+  }
+  .ch-line {
+    right: var(--hz-gutter);
+    top: 120px;
+    font-size: 15.5px;
+  }
+  .ch-proof li {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .nm-list p {
+    justify-content: flex-start;
+  }
+  .ch-foot {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  .ch-foot span:last-child {
+    text-align: left;
+  }
+}

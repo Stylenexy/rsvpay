@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { link } from '../lib/app';
 import { HERO, LANGS, WORDS, type Lang } from './copy';
+import { Chapters } from './Chapters';
+import { Logo } from './Logo';
 import { mountHero } from './mount';
 import './hero.theme.css';
 import './hero.css';
@@ -48,6 +50,21 @@ export function Hero() {
   useEffect(() => mountHero(stage.current!, () => copy.current), []);
 
   useEffect(() => {
+    // the five words of chapter 05 need only a few glyphs, so ask for just those
+    for (const [fam, text] of [
+      ['Noto+Serif+SC', WORDS[1]],
+      ['Noto+Serif+KR', WORDS[2]],
+      ['Noto+Serif+JP', WORDS[3]],
+      ['Noto+Serif+Display', WORDS[4]],
+    ]) {
+      const l = document.createElement('link');
+      l.rel = 'stylesheet';
+      l.href = `https://fonts.googleapis.com/css2?family=${fam}:wght@500&text=${encodeURIComponent(text)}&display=swap`;
+      document.head.append(l);
+    }
+  }, []);
+
+  useEffect(() => {
     document.documentElement.lang = lang;
     try {
       localStorage.setItem('amplop-lang', lang);
@@ -64,41 +81,44 @@ export function Hero() {
   }, [lang]);
 
   return (
-    <div className="hz-pin">
-      <section className="hz" data-lang={lang} ref={stage}>
+    <div className="hz-page" data-lang={lang}>
+      <nav className="hz-nav">
+        <a className="hz-brand" href={link.beranda()}>
+          <Logo />
+          Amplop Balas
+        </a>
+        <span className="hz-what">{c.what}</span>
+        <span className="hz-navr">
+          <span className="hz-langs" role="group" aria-label="Language">
+            {LANGS.map((l) => (
+              <button
+                type="button"
+                key={l.id}
+                lang={l.id}
+                title={l.name}
+                aria-label={l.name}
+                aria-pressed={l.id === lang}
+                className={l.id === lang ? 'on' : ''}
+                onClick={() => setLang(l.id)}
+              >
+                {l.label}
+              </button>
+            ))}
+          </span>
+          <a className="hz-cta" href={link.buka()}>
+            {c.make}
+          </a>
+        </span>
+      </nav>
+      <div className="hz-pin">
+      <section className="hz" ref={stage}>
         <canvas className="hz-gl" aria-hidden="true" />
 
         <div className="hz-load" data-load>
+          <Logo />
           <span data-count>0</span>
         </div>
 
-        <nav className="hz-nav">
-          <a className="hz-brand" href={link.beranda()}>
-            Amplop Balas
-          </a>
-          <span className="hz-what">{c.what}</span>
-          <span className="hz-navr">
-            <span className="hz-langs" role="group" aria-label="Language">
-              {LANGS.map((l) => (
-                <button
-                  type="button"
-                  key={l.id}
-                  lang={l.id}
-                  title={l.name}
-                  aria-label={l.name}
-                  aria-pressed={l.id === lang}
-                  className={l.id === lang ? 'on' : ''}
-                  onClick={() => setLang(l.id)}
-                >
-                  {l.label}
-                </button>
-              ))}
-            </span>
-            <a className="hz-cta" href={link.buka()}>
-              {c.make}
-            </a>
-          </span>
-        </nav>
 
         <div className="hz-beats">
           {c.beats.map((b, i) => (
@@ -187,6 +207,8 @@ export function Hero() {
           </span>
         </div>
       </section>
+      </div>
+      <Chapters lang={lang} />
     </div>
   );
 }
