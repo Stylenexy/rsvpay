@@ -26,6 +26,7 @@ function Corner({ n, text }: { n: string; text: string }) {
 
 function Panels({ lang }: { lang: Lang }) {
   const c = CHAPTERS[lang].table;
+  const h = HERO[lang];
   const [on, setOn] = useState(0);
   const [held, setHeld] = useState(false);
   const row = useRef<HTMLDivElement>(null);
@@ -38,7 +39,7 @@ function Panels({ lang }: { lang: Lang }) {
   }, []);
 
   useEffect(() => {
-    if (!seen || held) return;
+    if (!seen || held || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const t = window.setTimeout(() => setOn((v) => (v + 1) % c.panels.length), HOLD);
     return () => window.clearTimeout(t);
   }, [on, seen, held, c.panels.length]);
@@ -59,6 +60,14 @@ function Panels({ lang }: { lang: Lang }) {
         >
           <img src={IMG(PANELS[i])} alt="" loading="lazy" />
           <span className="cp-no">{i + 1}</span>
+          {i === 2 && (
+            <span className="cp-split">
+              <b>Rp{(95000).toLocaleString(h.locale)}</b>
+              {h.forSiti}
+              <b className="kept">Rp{(5000).toLocaleString(h.locale)}</b>
+              {h.kept}
+            </span>
+          )}
           <span className="cp-text">
             <strong>{p.t}</strong>
             <span>{p.d}</span>

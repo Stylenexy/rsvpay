@@ -124,6 +124,29 @@
   font-weight: 600;
   color: var(--ch-soft);
 }
+.cp-split {
+  position: absolute;
+  z-index: 2;
+  right: 24px;
+  top: 20px;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.cp.on .cp-split {
+  opacity: 1;
+  transition: opacity 0.55s ease 0.5s;
+}
+.cp-split b {
+  font: 500 clamp(26px, 2.8vw, 44px) / 1.1 var(--f-hz);
+}
+.cp-split b.kept {
+  color: var(--ch-amber);
+}
 .cp-load {
   position: absolute;
   z-index: 3;
@@ -143,11 +166,12 @@
 
 /* ---- 03: one full rotation ---- */
 .ch-round {
-  height: 420vh;
+  height: 260vh;
   padding-inline: 0 !important;
   background: var(--ch-deep);
 }
 .ch-stick {
+  background: var(--ch-deep);
   position: sticky;
   top: 0;
   height: 100svh;
@@ -159,10 +183,10 @@
   z-index: 0;
   left: var(--hz-gutter);
   right: var(--hz-gutter);
-  top: 29%;
+  top: 30%;
   margin: 0;
   text-align: center;
-  font: 500 clamp(52px, 8.6vw, 168px) / 1 var(--f-hz);
+  font: 500 clamp(52px, 7vw, 136px) / 1 var(--f-hz);
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
@@ -170,8 +194,8 @@
   position: absolute;
   left: 13%;
   right: 13%;
-  top: 60%;
-  height: 32%;
+  top: 64%;
+  height: 30%;
 }
 .ob-ring {
   position: absolute;
@@ -195,8 +219,6 @@
   max-width: none;
   mix-blend-mode: screen;
   transform: translate(-50%, -50%);
-  -webkit-mask-image: radial-gradient(closest-side, var(--hz-black) 62%, transparent 92%);
-  mask-image: radial-gradient(closest-side, var(--hz-black) 62%, transparent 92%);
 }
 .ob-card {
   position: absolute;
@@ -373,14 +395,14 @@
   align-items: center;
   gap: 14px;
   margin-top: 14px;
+  padding: 8px 18px 8px 8px;
+  border-radius: 12px;
+  background: var(--ch-paper);
+  color: var(--ch-ink);
   font-weight: 700;
-  color: var(--ch-fg);
-  text-shadow: 0 1px 10px var(--ch-scrim);
 }
 .ch-qr img {
-  border-radius: 10px;
-  background: var(--ch-paper);
-  padding: 6px;
+  display: block;
 }
 .ch-foot {
   position: relative;
@@ -414,13 +436,13 @@
     font-size: 40px;
   }
   .ob {
-    left: 24%;
-    right: 24%;
-    top: 62%;
-    height: 22%;
+    left: 26%;
+    right: 26%;
+    top: 58%;
+    height: 34%;
   }
   .ob-glass {
-    width: 74vw;
+    width: 50vw;
   }
   .ob-card {
     min-width: 168px;

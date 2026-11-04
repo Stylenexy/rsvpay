@@ -21,7 +21,7 @@ Colour carries meaning: seed stars are `#7FDBFF`, change lines are green `#8FE3B
 - sentence-case labels, not spaced capitals;
 - the secondary part of a value is dim: the "Rp", the year;
 - a number always comes with context: "+Rp200.000 · Om Darto, baru saja";
-- one small real object in a card corner, the envelope. A version with a big envelope as the hero was dropped: it pulled the eye away from the sky and the amount;
+- inside the app, one small real object in a card corner, the envelope; on the landing page the glass envelope is the one big object;
 - small working details: a chip with the amplop number and network.
 
 **Motion explains something.** A card shrinks into a star because a gift became part of the sky. Stars dim on withdrawal because the money left, and seeds stay because they did not.

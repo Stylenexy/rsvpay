@@ -9,7 +9,7 @@
   --hz-c5: #ff8f4d;
   --hz-c6: #18c2ff;
   --hz-c7: #ffc184;
-  --hz-c8: #d85f0a;
+  --hz-c8: #9a3f00;
   --hz-white-9: rgba(255, 255, 255, 0.09);
   --hz-white-22: rgba(255, 255, 255, 0.22);
   --hz-white-30: rgba(255, 255, 255, 0.3);
@@ -46,7 +46,7 @@
   --hz-fg: color-mix(in srgb, #fff7ee calc(var(--ink) * 100%), rgb(var(--dawn-ink)));
   --hz-mut: color-mix(in srgb, rgba(255, 247, 238, 0.78) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.78));
   --hz-line: color-mix(in srgb, rgba(255, 255, 255, 0.22) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.16));
-  --hz-pane: color-mix(in srgb, rgba(255, 255, 255, 0.09) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.3));
+  --hz-pane: color-mix(in srgb, rgba(255, 255, 255, 0.09) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.62));
   --hz-rim: color-mix(in srgb, rgba(255, 255, 255, 0.28) calc(var(--ink) * 100%), rgba(255, 255, 255, 0.6));
   --hz-cast: color-mix(in srgb, rgba(2, 4, 18, 0.5) calc(var(--ink) * 100%), rgba(var(--dawn-ink), 0.16));
 }
@@ -92,6 +92,7 @@
   --ch-paper: #fbfaf6;
   --ch-ink: #0a2a5e;
   --ch-cast: rgba(0, 0, 0, 0.55);
+  --ch-bar: rgba(6, 11, 26, 0.82);
 }
 .logo-dot {
   fill: #ff8a3d;

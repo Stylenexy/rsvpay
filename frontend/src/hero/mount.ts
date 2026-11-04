@@ -284,8 +284,10 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
 
     const close = page.querySelector<HTMLElement>('[data-close]')?.getBoundingClientRect().top ?? 1e6;
     page.style.setProperty('--ink', (close < 44 ? 0 : inkAt(cur)).toFixed(3));
+    const pinEnd = pin.getBoundingClientRect().bottom;
+    page.classList.toggle('hz-past', pinEnd < 70 && close >= 44);
     // past the story the sky stops drawing, so the chapters below get the whole frame
-    if (pin.getBoundingClientRect().bottom < 0) return;
+    if (pinEnd < 0) return;
 
     eased.x += (mouse.x - eased.x) * (1 - Math.exp(-dt * 3));
     eased.y += (mouse.y - eased.y) * (1 - Math.exp(-dt * 3));

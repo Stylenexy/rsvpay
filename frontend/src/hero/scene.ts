@@ -83,7 +83,7 @@ function studio(renderer: THREE.WebGLRenderer) {
 export type SkyFrame = { a: ImageBitmap | null; b: ImageBitmap | null; ai: number; bi: number; mix: number };
 
 export function createScene(canvas: HTMLCanvasElement, lowPower: boolean) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !lowPower, alpha: false, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, lowPower ? 1.25 : 1.75));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
