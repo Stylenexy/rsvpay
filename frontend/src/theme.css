@@ -101,3 +101,29 @@
   --go-ink: #05070D;
   --star-op: 0.85;
 }
+
+/* App pages: pale text remains above 4.5:1 even over a white photograph. */
+:root {
+  --clear: transparent;
+  --fg: #f5f8ff;
+  --mut: #dbe5f3;
+  --amber: #ffdfb2;
+  --amber-ink: #ffdcad;
+  --line: rgba(210, 232, 255, 0.18);
+  --line-soft: rgba(210, 232, 255, 0.32);
+  --app-glass: linear-gradient(145deg, rgba(22, 51, 82, 0.79), rgba(8, 28, 53, 0.88));
+  --app-scrim: linear-gradient(110deg, rgba(5, 23, 46, 0.76), rgba(7, 30, 54, 0.69) 52%, rgba(5, 23, 46, 0.76));
+  --select-surface: #142d48;
+  --object-shadow: rgba(1, 12, 30, 0.5);
+  --envelope-aura: radial-gradient(ellipse, rgba(255, 191, 111, 0.6), rgba(0, 191, 255, 0.25) 45%, transparent 72%);
+  --slide-surface: rgba(4, 18, 36, 0.45);
+  --go: #b3eaff;
+  --go-ink: #092440;
+  --receipt-surface: rgba(80, 175, 229, 0.1);
+  --receipt-line: rgba(127, 219, 255, 0.4);
+  --ring-line: rgba(255, 201, 133, 0.65);
+  --ring-glass: linear-gradient(135deg, rgba(60, 47, 40, 0.93), rgba(12, 35, 61, 0.96));
+  --star-ray: linear-gradient(90deg, transparent, #fff, transparent);
+  --star-ray-vertical: linear-gradient(180deg, transparent, #fff, transparent);
+  --shoot-ray: linear-gradient(90deg, transparent, #fff);
+}

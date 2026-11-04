@@ -72,6 +72,8 @@ export interface AmplopClient {
   useAccount(id: AccountId): void;
   /** make a fresh funded test account (testnet helper) and switch to it */
   createAccount(name: string): Promise<AccountId>;
+  /** Create and fund a child using the active account, without the public helper. */
+  createSubAccount(name: string, funding: Yocto): Promise<Sent<AccountId>>;
   /** spendable balance of an account */
   balance(accountId: AccountId): Promise<Yocto>;
 
@@ -86,6 +88,7 @@ export interface AmplopClient {
     depositYocto: Yocto;
   }): Promise<Sent<number>>;
   withdraw(tokenId: TokenId): Promise<Sent<null>>;
+  transfer(tokenId: TokenId, receiverId: AccountId): Promise<Sent<null>>;
 
   // ---- view methods ----
   hajatan(tokenId: TokenId): Promise<Hajatan | null>;

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 export type Route =
   | { name: 'beranda' }
   | { name: 'buka' }
+  | { name: 'coba' }
   | { name: 'beri'; id: string }
   | { name: 'buku'; id: string }
   | { name: 'tidak-ada' };
@@ -13,6 +14,7 @@ export function parseHash(hash: string): Route {
   const path = hash.replace(/^#\/?/, '').replace(/\/+$/, '');
   if (path === '') return { name: 'beranda' };
   if (path === 'buka') return { name: 'buka' };
+  if (path === 'coba') return { name: 'coba' };
   const [head, rawId, ...rest] = path.split('/');
   if (rawId && rest.length === 0 && (head === 'beri' || head === 'buku')) {
     let id = rawId;
@@ -39,6 +41,7 @@ export function useRoute(): Route {
 export const link = {
   beranda: () => '#/',
   buka: () => '#/buka',
+  coba: () => '#/coba',
   beri: (id: string) => `#/beri/${encodeURIComponent(id)}`,
   buku: (id: string) => `#/buku/${encodeURIComponent(id)}`,
 };
@@ -90,6 +93,11 @@ export function useCountUp(target: number, ms = 900): number {
   const [shown, setShown] = useState(0);
   const from = useRef(0);
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setShown(target);
+      from.current = target;
+      return;
+    }
     const start = performance.now();
     const a = from.current;
     let raf = 0;

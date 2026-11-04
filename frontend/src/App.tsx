@@ -1,17 +1,22 @@
 import { useMemo } from 'react';
 import { createClient } from './chain';
-import { AccountChip } from './components/parts';
+import { AccountChip, LanguageSwitcher, Sky } from './components/parts';
 import { AmplopProvider } from './context';
-import { t } from './copy';
+import { useCopy } from './copy';
 import { link, useRoute } from './lib/app';
 import { Beranda } from './pages/Beranda';
 import { Beri } from './pages/Beri';
 import { Buka } from './pages/Buka';
 import { Buku } from './pages/Buku';
+import { Coba } from './pages/Coba';
+import { Logo } from './hero/Logo';
 
 function Page() {
+  const t = useCopy();
   const route = useRoute();
   switch (route.name) {
+    case 'coba':
+      return <Coba />;
     case 'buka':
       return <Buka />;
     case 'beri':
@@ -20,30 +25,32 @@ function Page() {
       return <Buku key={route.id} id={route.id} />;
     default:
       return (
-        <main>
-          <h1 className="hd">{t.notFound.title}</h1>
+        <main className="not-found">
+          <h1 className="hd">{t.notFoundTitle}</h1>
           <a className="btn" href={link.beranda()}>
-            {t.notFound.back}
+            {t.notFoundBack}
           </a>
         </main>
       );
   }
 }
 
-/** The landing page runs full screen; every other page keeps the phone-width column. */
+/** The app shares the landing sky, with a twelve-column frame for the story and form. */
 function Shell({ mode }: { mode: string }) {
+  const t = useCopy();
   const route = useRoute();
   if (route.name === 'beranda') return <Beranda />;
   return (
     <div className="app">
+      <Sky langit={route.name === 'beri' ? 'fajar' : route.name === 'buku' || route.name === 'coba' ? 'malam' : 'senja'} />
       <header className="topbar">
         <a className="brand" href={link.beranda()}>
-          {t.appName}
+          <Logo className="brand-mark" />{t.appName}
         </a>
-        <AccountChip />
+        <div className="header-tools"><LanguageSwitcher />{route.name !== 'coba' && <AccountChip />}</div>
       </header>
       <Page />
-      <p className="note">{mode === 'mock' ? 'Mode tiruan (?mock): tidak menyentuh jaringan.' : t.testnetNote}</p>
+      <p className="note">{mode === 'mock' ? t.mockNote : t.testnetNote}</p>
     </div>
   );
 }

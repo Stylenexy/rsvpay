@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Entry, Hajatan, PendingReply } from '../chain/types';
-import { EnvelopeObject, Qr, Rp, Sky, TxLink, rng, starShadow } from '../components/parts';
-import { plainError, t } from '../copy';
+import { EnvelopeObject, EnvelopeStory, Qr, Rp, TxLink, rng, starShadow } from '../components/parts';
+import { plainError, say, useCopy } from '../copy';
 import { useAmplop } from '../context';
 import { absoluteLink, copyText, link, shortName, useCountUp, usePoll } from '../lib/app';
-import { formatNear } from '../lib/money';
-import { STORAGE_MARGIN_YOCTO, formatRp, chainRp } from '../lib/rupiah';
+import { useFormat, useLang } from '../lib/lang';
+import { useBookMotion, usePageMotion } from '../lib/motion';
+import { STORAGE_MARGIN_YOCTO, chainRp } from '../lib/rupiah';
+import { validReceiver } from '../lib/accounts';
+import { History } from '../components/History';
 
 const FIELD_W = 440;
 const FIELD_H = 210;
@@ -18,17 +21,26 @@ function spot(i: number) {
 
 /** Host page: the amplop as a sky of stars, the guest book, withdraw, and replies that are due. */
 export function Buku({ id }: { id: string }) {
+  const t = useCopy();
+  const { lang } = useLang();
+  const { formatRp, number, percent } = useFormat();
+  const root = useRef<HTMLDivElement>(null);
   const { client, account } = useAmplop();
   const [h, setH] = useState<Hajatan | null | undefined>(undefined);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [pending, setPending] = useState<PendingReply[]>([]);
   const [fresh, setFresh] = useState<number[]>([]);
-  const [delta, setDelta] = useState('');
+  const [delta, setDelta] = useState<{ amount: number; who: string } | null>(null);
   const [peek, setPeek] = useState<'me' | 'other'>('me');
-  const [wd, setWd] = useState<{ busy: boolean; msg: string; hash: string | null } | null>(null);
-  const [replies, setReplies] = useState<Record<number, { busy: boolean; hash: string | null; err: string }>>({});
+  const [wd, setWd] = useState<{ busy: boolean; amount?: number; error?: unknown; hash: string | null } | null>(null);
+  const [replies, setReplies] = useState<Record<number, { busy: boolean; hash: string | null; err: unknown }>>({});
   const [copied, setCopied] = useState(false);
   const [later, setLater] = useState<number[]>([]);
+  const [passing, setPassing] = useState(false);
+  const [receiver, setReceiver] = useState('');
+  const [transfer, setTransfer] = useState<{ busy: boolean; hash: string | null; to?: string; error?: unknown } | null>(null);
+  const [historyRevision, setHistoryRevision] = useState(0);
+  const mutation = useRef(false);
   const known = useRef(-1);
 
   const load = useCallback(async () => {
@@ -40,7 +52,7 @@ export function Buku({ id }: { id: string }) {
       const added = es.filter((e) => e.index >= known.current);
       setFresh(added.map((e) => e.index));
       const last = added[added.length - 1];
-      setDelta(t.buku.arrived(formatRp(chainRp(last.amount)), shortName(last.giver)));
+      setDelta({ amount: chainRp(last.amount), who: shortName(last.giver) });
     }
     known.current = hh.entries;
     setEntries(es);
@@ -65,6 +77,10 @@ export function Buku({ id }: { id: string }) {
     };
   }, [entries, fresh]);
 
+  const isRinging = !!h && account === h.owner_id && pending.some((p) => !later.includes(p.entry));
+  usePageMotion(root, !!h);
+  useBookMotion(root, `${h?.token_id}:${peek}:${entries.map((e) => e.index).join(',')}`, isRinging);
+
   if (h === undefined) return <p className="busy">{t.loading}</p>;
   if (h === null) return <p className="err">{t.missing}</p>;
 
@@ -77,17 +93,24 @@ export function Buku({ id }: { id: string }) {
   const guestLink = absoluteLink(link.beri(id));
 
   async function withdraw() {
-    setWd({ busy: true, msg: '', hash: null });
+    if (mutation.current) return;
+    mutation.current = true;
+    setWd({ busy: true, hash: null });
     try {
       const r = await client.withdraw(id);
-      setWd({ busy: false, msg: t.buku.withdrawn(formatRp(freeRp)), hash: r.txHash });
+      setWd({ busy: false, amount: freeRp, hash: r.txHash });
       await load();
+      setHistoryRevision((n) => n + 1);
     } catch (e) {
-      setWd({ busy: false, msg: plainError(e), hash: null });
+      setWd({ busy: false, error: e, hash: null });
+    } finally {
+      mutation.current = false;
     }
   }
 
   async function reply(p: PendingReply) {
+    if (mutation.current) return;
+    mutation.current = true;
     setReplies((s) => ({ ...s, [p.entry]: { busy: true, hash: null, err: '' } }));
     try {
       const rest = BigInt(p.amount) - BigInt(p.seed);
@@ -95,13 +118,37 @@ export function Buku({ id }: { id: string }) {
         tokenId: id,
         entry: p.entry,
         toTokenId: p.to_token_id,
-        message: `Gantian ya, ${shortName(p.giver)}. Selamat!`,
+        message: say(t.bukuReplyWish, shortName(p.giver)),
         depositYocto: (rest + STORAGE_MARGIN_YOCTO).toString(),
       });
       setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: r.txHash, err: '' } }));
       await load();
+      setHistoryRevision((n) => n + 1);
     } catch (e) {
-      setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: null, err: plainError(e) } }));
+      setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: null, err: e } }));
+    } finally {
+      mutation.current = false;
+    }
+  }
+
+  async function pass() {
+    const to = receiver.trim();
+    if (!h || mutation.current || !validReceiver(to, h.owner_id)) return;
+    mutation.current = true;
+    setTransfer({ busy: true, hash: null });
+    try {
+      const r = await client.transfer(id, to);
+      setH((current) => current ? { ...current, owner_id: to } : current);
+      setTransfer({ busy: false, hash: r.txHash, to });
+      setPassing(false);
+      await load();
+      setHistoryRevision((n) => n + 1);
+    } catch (error) {
+      setTransfer({ busy: false, hash: null, error });
+      // A lost response may still have transferred ownership. Re-read the gate.
+      await load().catch(() => {});
+    } finally {
+      mutation.current = false;
     }
   }
 
@@ -110,29 +157,11 @@ export function Buku({ id }: { id: string }) {
   const ringing = holder && due.length > 0;
 
   return (
-    <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''}>
-      <Sky langit={ringing ? 'malam' : 'senja'} />
-      <main>
-        {holder && (
-          <div className="gate" role="radiogroup" aria-label="Tampilan">
-            <button className={peek === 'me' ? 'on' : ''} onClick={() => setPeek('me')}>
-              {t.buku.me}
-            </button>
-            <button className={peek === 'other' ? 'on' : ''} onClick={() => setPeek('other')}>
-              {t.buku.other}
-            </button>
-          </div>
-        )}
-
-        {locked ? (
-          <div className="glass locked">
-            <small className="label">{h.title}</small>
-            <b>{t.buku.lockedTitle(shortName(h.owner_id))}</b>
-            <p>{t.buku.lockedBody}</p>
-          </div>
-        ) : (
-          <>
-            <div className="field-stars" aria-hidden="true">
+    <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''} ref={root}>
+      <main className={`app-grid book-page${ringing ? ' is-ringing' : ''}`}>
+        <div className="story-column">
+          <EnvelopeStory title={h.title} date={h.date} eyebrow={locked ? t.bukuVisitorEyebrow : t.bukuEyebrow}>{locked ? t.bukuVisitorStory : t.bukuStory}</EnvelopeStory>
+          {!locked && (<div className="field-stars" aria-hidden="true">
               <i className="free" style={{ boxShadow: [stars.ambient, stars.plain].filter(Boolean).join(',') }} />
               {stars.seeded && <i className="seed" style={{ boxShadow: stars.seeded }} />}
               {fresh.map((i) => {
@@ -144,17 +173,44 @@ export function Buku({ id }: { id: string }) {
                   </span>
                 );
               })}
-            </div>
+            </div>)}
+        </div>
+        <section className="form-panel book-panel" aria-label={locked ? t.bukuVisitorEyebrow : t.bukuEyebrow}>
+        {transfer?.to && <div className="glass card" role="status"><p className="history-account">{say(t.passDone, transfer.to)}</p><TxLink hash={transfer.hash} /></div>}
+        {holder && (
+          <div className="gate" role="radiogroup" aria-label={t.bukuView}>
+            <button className={peek === 'me' ? 'on' : ''} aria-pressed={peek === 'me'} onClick={() => setPeek('me')}>
+              {t.bukuMe}
+            </button>
+            <button className={peek === 'other' ? 'on' : ''} aria-pressed={peek === 'other'} onClick={() => setPeek('other')}>
+              {t.bukuOther}
+            </button>
+          </div>
+        )}
 
+        {locked ? (
+          <div className="glass locked">
+            <span className="visitor-mark" aria-hidden="true">✧</span>
+            <b>{say(t.bukuLockedTitle, shortName(h.owner_id))}</b>
+            <p>{t.bukuLockedBody}</p>
+            <div className="visitor-next">
+              <h2>{t.bukuLockedNext}</h2>
+              <a className="btn" href={link.beri(id)}>{t.bukuGuest}</a>
+              <a className="btn ghost" href={link.buka()}>{t.bukuMake}</a>
+              <a className="text-link" href={link.beranda()}>{t.notFoundBack} ↗</a>
+            </div>
+          </div>
+        ) : (
+          <>
             <div className="total">
-              <span className="label">{t.buku.sky(h.title, h.entries)}</span>
-              <Rp value={total} />
+              <span className="label">{say(t.bukuSky, h.title, number(h.entries))}</span>
+              <Rp value={total} animate={false} />
               {delta ? (
-                <span className="delta on" key={delta}>
-                  {delta}
+                <span className="delta on" key={`${delta.amount}:${delta.who}`}>
+                  {say(t.bukuArrived, formatRp(delta.amount), delta.who)}
                 </span>
               ) : (
-                <span className="label">≈ {formatNear(h.balance)} NEAR · {t.rateNote}</span>
+                <span className="label">{say(t.rateNote, formatRp(500000))}</span>
               )}
             </div>
 
@@ -164,16 +220,16 @@ export function Buku({ id }: { id: string }) {
             </div>
             <div className="legend">
               <span>
-                {t.buku.free}
+                {t.bukuFree}
                 <b>{formatRp(freeRp)}</b>
               </span>
               <span>
-                {t.buku.seed} ({h.seed_bps / 100}%)
+                {t.bukuSeed} ({percent(h.seed_bps / 10000)})
                 <b>{formatRp(seedRp)}</b>
               </span>
             </div>
 
-            {later.length > 0 && !ringing && <p className="note">{t.buku.laterNote}</p>}
+            {later.length > 0 && !ringing && <p className="note">{t.bukuLaterNote}</p>}
             {ringing &&
               due.slice(0, 2).map((p) => {
                 const who = shortName(p.giver);
@@ -181,33 +237,34 @@ export function Buku({ id }: { id: string }) {
                 const amountRp = chainRp(p.amount);
                 const seedRpP = chainRp(p.seed);
                 return (
-                  <div className="glass card ring-card" key={p.entry}>
+                  <div className="glass card ring-card" key={p.entry} role="status">
+                    <i className="ring-orbit" aria-hidden="true" />
                     <EnvelopeObject />
-                    <span className="label">{t.buku.ring}</span>
-                    <p className="muted">{t.buku.ringBody(who, formatRp(amountRp))}</p>
-                    <p className="big">{t.buku.ringSeed(formatRp(seedRpP), formatRp(amountRp - seedRpP))}</p>
+                    <span className="label">{t.bukuRing}</span>
+                    <p className="muted">{say(t.bukuRingBody, who, formatRp(amountRp))}</p>
+                    <p className="big">{say(t.bukuRingSeed, formatRp(seedRpP), formatRp(amountRp - seedRpP))}</p>
                     {st?.hash ? (
                       <>
-                        <p className="seedline">{t.buku.replied}</p>
+                        <p className="seedline">{t.bukuReplied}</p>
                         <TxLink hash={st.hash} />
                       </>
                     ) : (
                       <div className="row">
-                        <button className="btn" disabled={st?.busy} onClick={() => reply(p)}>
-                          {st?.busy ? t.buku.withdrawing : t.buku.reply}
+                        <button className="btn" disabled={st?.busy || !!transfer?.busy || !!wd?.busy} onClick={() => reply(p)}>
+                          {st?.busy ? t.bukuWithdrawing : t.bukuReply}
                         </button>
                         <button className="btn ghost" disabled={st?.busy} onClick={() => setLater((l) => [...l, p.entry])}>
-                          {t.buku.later}
+                          {t.bukuLater}
                         </button>
                       </div>
                     )}
-                    {st?.err && <p className="err">{st.err}</p>}
+                    {!!st?.err && <p className="err" role="alert">{plainError(st.err, lang)}</p>}
                   </div>
                 );
               })}
 
             <ol className="list glass">
-              {shown.length === 0 && <li className="empty">{t.buku.empty}</li>}
+              {shown.length === 0 && <li className="empty">{t.bukuEmpty}</li>}
               {shown.map((e) => (
                 <li key={e.index} className={fresh.includes(e.index) ? 'new' : ''}>
                   <span>{shortName(e.giver)}</span>
@@ -218,20 +275,31 @@ export function Buku({ id }: { id: string }) {
               ))}
             </ol>
 
-            <button className="btn" disabled={!!wd?.busy || BigInt(h.free) === 0n} onClick={withdraw}>
-              {wd?.busy ? t.buku.withdrawing : BigInt(h.free) === 0n ? t.buku.nothing : t.buku.withdraw}
+            <button className="btn" disabled={!!wd?.busy || !!transfer?.busy || Object.values(replies).some((r) => r.busy) || BigInt(h.free) === 0n} onClick={withdraw}>
+              {wd?.busy ? t.bukuWithdrawing : BigInt(h.free) === 0n ? t.bukuNothing : t.bukuWithdraw}
             </button>
             {wd && !wd.busy && (
               <div className="done">
-                <p>{wd.msg}</p>
+                <p>{wd.error ? plainError(wd.error, lang) : say(t.bukuWithdrawn, formatRp(wd.amount ?? 0))}</p>
                 <TxLink hash={wd.hash} />
               </div>
             )}
 
+            <div className="glass card pass-envelope">
+              {!passing ? <button className="btn ghost" disabled={!!wd?.busy || Object.values(replies).some((r) => r.busy)} onClick={() => setPassing(true)}>{t.passTitle}</button> : <>
+                <h2>{t.passTitle}</h2><p>{t.passMeaning}</p>
+                <label className="field"><span className="label">{t.passAccount}</span><input className="input" value={receiver} autoCapitalize="none" autoCorrect="off" spellCheck={false} disabled={transfer?.busy} onChange={(e) => setReceiver(e.target.value)} /></label>
+                {!!receiver && !validReceiver(receiver.trim(), h.owner_id) && <p className="err">{t.passInvalid}</p>}
+                <button className="btn" disabled={!!transfer?.busy || !validReceiver(receiver.trim(), h.owner_id)} onClick={() => void pass()}>{transfer?.busy ? t.bukuWithdrawing : say(t.passConfirm, receiver.trim())}</button>
+                <button className="btn ghost" disabled={transfer?.busy} onClick={() => setPassing(false)}>{t.passCancel}</button>
+                {!!transfer?.error && <p className="err" role="alert">{plainError(transfer.error, lang)}</p>}
+              </>}
+            </div>
+            <History hajatan={h} revision={historyRevision + h.entries} />
             <div className="glass share">
-              <b>{t.buku.share}</b>
+              <b>{t.bukuShare}</b>
               <Qr text={guestLink} />
-              <p>{t.buku.shareHint}</p>
+              <p>{t.bukuShareHint}</p>
               <button
                 className="btn ghost"
                 onClick={async () => {
@@ -239,11 +307,12 @@ export function Buku({ id }: { id: string }) {
                   setTimeout(() => setCopied(false), 1800);
                 }}
               >
-                {copied ? t.buku.copied : t.buku.copy}
+                {copied ? t.bukuCopied : t.bukuCopy}
               </button>
             </div>
           </>
         )}
+        </section>
       </main>
     </div>
   );

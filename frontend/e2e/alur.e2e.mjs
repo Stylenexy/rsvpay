@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
 const URL_BASE = process.argv[2] ?? 'https://amplop-balas.vercel.app';
-const CHROME = process.env.CHROME ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+
 const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
@@ -43,6 +43,7 @@ const guestCtx = await browser.newContext({
   userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36',
 });
 const guest = await guestCtx.newPage();
+await Promise.all([hostCtx, guestCtx].map((ctx) => ctx.addInitScript(() => localStorage.setItem('amplop-lang', 'id'))));
 watch(host, 'host');
 watch(guest, 'guest');
 const stamp = Date.now().toString(36).slice(-4);
@@ -74,11 +75,11 @@ try {
   await host.goto(`${URL_BASE}/#/buka`);
   await host.getByPlaceholder('Siti & Andi').fill(`Siti & Andi ${stamp}`);
   if (!PARENT) await host.getByPlaceholder('Siti', { exact: true }).fill('Siti');
-  await host.getByRole('button', { name: 'Buka amplop' }).click();
+  await host.getByRole('button', { name: 'Buka bingkisan' }).click();
   await host.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
   const id = host.url().match(/#\/buku\/(\d+)/)[1];
   say(true, 'E1 host opens a hajatan from the web', `amplop #${id}`);
-  await host.getByText('Belum ada amplop').waitFor({ timeout: 15_000 });
+  await host.getByText('Belum ada pemberian').waitFor({ timeout: 15_000 });
   say(true, 'E2 empty book shows for the holder, with a QR', '');
 
   // 2. guest gives from a phone
@@ -111,14 +112,14 @@ try {
   await host.waitForTimeout(1200);
   await host.screenshot({ path: `${OUT}3-host-book.png`, fullPage: true });
   await host.getByRole('button', { name: 'Orang lain' }).click();
-  await host.getByText(/Amplop ini milik/).waitFor({ timeout: 5_000 });
+  await host.getByText(/Bingkisan ini milik/).waitFor({ timeout: 5_000 });
   const hidden = (await host.getByText('Budi', { exact: true }).count()) === 0;
   await host.getByRole('button', { name: 'Saya pemegang' }).click();
   say(hidden, 'E6b holder taps "Orang lain": names and amounts disappear', '');
 
   // 4. a non-holder sees the lock, not the book
   await guest.goto(`${URL_BASE}/#/buku/${id}`);
-  await guest.getByText(/Amplop ini milik Siti/).waitFor({ timeout: 15_000 });
+  await guest.getByText(/Bingkisan ini milik Siti/).waitFor({ timeout: 15_000 });
   const leak = await guest.getByRole('button', { name: 'Tarik dana bebas' }).count();
   say(leak === 0, 'E7 non-holder sees the lock: no list, no withdraw button', '');
   await guest.screenshot({ path: `${OUT}4-non-holder.png` });
@@ -126,13 +127,13 @@ try {
   // 5. two years later: Budi opens his own hajatan, Siti's amplop rings
   await guest.goto(`${URL_BASE}/#/buka`);
   await guest.getByPlaceholder('Siti & Andi').fill(`Budi & Rina ${stamp}`);
-  await guest.getByRole('button', { name: 'Buka amplop' }).tap();
+  await guest.getByRole('button', { name: 'Buka bingkisan' }).tap();
   await guest.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
-  await host.getByText('Amplop berbunyi').waitFor({ timeout: 20_000 });
+  await host.getByText('Tamu lamamu punya hari bahagia').waitFor({ timeout: 20_000 });
   say(true, "E8 Siti's amplop rings after Budi opens a hajatan", '');
   await host.waitForTimeout(1800);
   await host.screenshot({ path: `${OUT}5-amplop-rings.png`, fullPage: true });
-  await host.getByRole('button', { name: 'Kirim balasan' }).click();
+  await host.getByRole('button', { name: 'Balas' }).click();
   await host.getByText(/tertaut ke pemberiannya dulu/).waitFor({ timeout: 60_000 });
   say(true, "E9 one-tap reply lands in Budi's amplop", '');
   await guest.getByText('Siti', { exact: true }).waitFor({ timeout: 20_000 });

@@ -34,19 +34,20 @@ export function chainRp(yocto: bigint | string): number {
   return Math.floor(yoctoToRupiah(yocto) / 1000) * 1000;
 }
 
-const fmt = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 });
+const formatter = (locale: string) => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
 
 /** "Rp500.000" (no space, Indonesian thousands dots) */
-export function formatRp(rp: number): string {
-  return 'Rp' + fmt.format(Math.round(rp));
+export function formatRp(rp: number, locale = 'id-ID'): string {
+  return 'Rp' + formatter(locale).format(Math.round(rp));
 }
 
 /** digits only, for the two-tone display where "Rp" is drawn separately */
-export function formatRpDigits(rp: number): string {
-  return fmt.format(Math.round(rp));
+export function formatRpDigits(rp: number, locale = 'id-ID'): string {
+  return formatter(locale).format(Math.round(rp));
 }
 
 /** chip label: 100rb, 250rb, 1jt */
-export function shortRp(rp: number): string {
+export function shortRp(rp: number, locale = 'id-ID'): string {
+  if (locale !== 'id-ID') return new Intl.NumberFormat(locale, { notation: 'compact', maximumFractionDigits: 1 }).format(rp);
   return rp >= 1_000_000 ? `${rp / 1_000_000}jt` : `${rp / 1000}rb`;
 }

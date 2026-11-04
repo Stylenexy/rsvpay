@@ -16,21 +16,28 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Contract (testnet) | [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U`, equal to the hash of a release build of this source |
-| Tests | 45 Rust, 21 web, 12 live attacks, 13 steps in a real browser ([reports](docs/evidence/)) |
+| Tests | This change: 44 web tests passed, 2 live tests skipped by default. Existing evidence: 45 Rust tests, 12 live attacks and 13 browser steps ([reports](docs/evidence/)) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Evidence](docs/evidence/) |
 
-## Try it in two minutes (no wallet, no code)
+## Try the whole story on one device
 
-1. **Do:** open https://amplop-balas.vercel.app/#/beri/14. **See:** the guest page of a demo amplop, *Siti & Andi*.
-2. **Do:** type a name, tap the round button. **See:** about 10 seconds later the card shrinks into a star and a link to the real transaction appears.
-3. **Do:** open that link. **See:** a `give` call to the contract, signed by a throwaway account your browser made.
-4. **Do:** run the command below. **See:** `"keys":[]`. Nobody can change this contract, including us.
+In the local app, click **Try the whole story** on the landing page, or open `http://localhost:5173/#/coba`. The route starts immediately. No account selection or second device is needed.
+
+The browser requests one throwaway account for Siti from NEAR's public testnet helper. Siti funds Budi's sub-account from her own test balance. It then opens Siti's wedding, sends Budi's gift, advances the story date by two years and opens Budi's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Budi**.
+
+Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; this new flow has not been timed in a browser. Network latency and helper availability affect it.
+
+If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Budi's opening receipt.
+
+These changes have not been deployed. The existing public deployment is https://amplop-balas.vercel.app; its availability does not establish that this route is deployed.
+
+To inspect the fixed deployment's keys:
 
 ```bash
 curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"amplop-c-mvznhnlx.testnet"}}'
 ```
 
-If step 2 cannot make an account, NEAR's public testnet helper has rate-limited your IP. Use another network, or read the [full walkthrough](#try-it) and the [recorded runs](docs/evidence/). The moment the amplop rings needs two accounts, so it is in the full walkthrough.
+The read-only check on 5 November 2026 (Asia/Jakarta) returned `"keys":[]`.
 
 ## Track requirements and where to check them
 
@@ -41,7 +48,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 | NEP-171 contract plus logic that ties each token to its money | Done, with one difference: the money is booked per token id inside one keyless contract, not in a sub-account per token | [`contracts/src/lib.rs`](contracts/src/lib.rs), [how control moves](#how-control-moves-when-the-nft-is-transferred) |
 | README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
 | Gated page only current holders can open | Done at screen level: the book is hidden from anyone but the holder, while amounts stay public on chain | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
-| History per NFT: earned, paid out, who held it | **Partly.** Gifts and replies are shown. Payouts and past holders are not shown yet | The book page of any amplop |
+| History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from successful transaction receipts. The public indexer currently returns no rows for this contract | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
 | Tests for the transfer path, including a sale in the middle of a payout | Done | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
 
@@ -73,19 +80,23 @@ Each reply is itself an entry with its own seed, so the chain of giving back can
 
 ## Try it
 
-No install. Works on a phone. Amounts in rupiah use a demo rate, marked on screen (1 NEAR = Rp500.000); testnet NEAR has no price. The app speaks Indonesian: *Coba jadi tamu* = try as a guest, *Buka hajatan* = open a celebration.
+Run the frontend locally as described below. The app uses only the fixed testnet deployment `amplop-c-mvznhnlx.testnet`. It offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Rupiah amounts use a labelled display rate of 1 NEAR = Rp500,000; testnet NEAR has no market price.
 
 | Do | See |
 |---|---|
-| Open https://amplop-balas.vercel.app, tap **Coba jadi tamu** | The guest page of a demo amplop with gifts already in it |
-| Type a name, tap the round button (or slide it) | About 10 seconds later the card shrinks into a star, and a link to the real transaction appears |
-| On a laptop open https://amplop-balas.vercel.app/#/buka, type your name, tap **Buka amplop** | Your own amplop: a sky, one star per gift, a QR for guests |
-| Scan that QR with a phone and give | The laptop updates by itself within seconds: new star, new row, "+Rp… baru saja" |
-| Tap **Orang lain** on the laptop | Names and amounts disappear; only the holder sees the book |
-| On the phone open `/#/buka` and open a hajatan with the same account you gave from | The laptop shows **Amplop berbunyi** (the amplop rings). Tap **Kirim balasan**, and the reply lands in the phone's amplop |
-| Tap **Tarik dana bebas** on the laptop | Free money arrives in the host account; the seeds of unreplied guests stay locked |
+| Click **Try the whole story** on the landing page | A live timeline on `#/coba`, with both families on the same device |
+| Wait for Siti's envelope to ring | Budi's original gift, the part kept for him and the amount Siti will add |
+| Click **Give back to Budi** | A real reply into Budi's envelope, its transaction link and the measured elapsed time |
+| Click **Open Budi's book** | The browser switches to Budi, the current holder, and opens his book |
+| Read **The envelope's history** | Incoming gifts, linked replies, current holder and any verified payouts or holder changes. Missing history is labelled explicitly |
+| Click **Pass the envelope on**, enter an existing testnet account and read the confirmation | The book, remaining balance and promises will all move. The old holder loses the book's controls |
+| Confirm the named recipient | A real `nft_transfer` with one yoctoNEAR, a transaction link and the new holder. Switching to that holder on this device opens the inherited book |
 
-Accounts on this demo are throwaway testnet accounts made by your browser through NEAR's public testnet helper. No secret ships with the site.
+The ordinary `#/buka`, `#/beri/<id>` and `#/buku/<id>` pages remain available for a two-device walkthrough: open a celebration, share its QR, give from the second device, then open the guest's own celebration and reply from the first device.
+
+Accounts are throwaway testnet accounts created by the browser. Their keys stay on that device. There is no server key. Clearing browser storage removes access to those accounts.
+
+History checks the public Nearblocks testnet API without a key and verifies indexed transaction logs against testnet RPC receipts. The scan is limited to the latest 100 indexed contract transactions and labels truncated or missing coverage. Public receipt references for transactions made on this device are also saved locally and verified through RPC when read again. Failed payouts are shown as refunds, never as money paid out. This is not a complete archive when the public index is missing data.
 
 ## Run it from zero
 
@@ -99,7 +110,7 @@ See `test result: ok. 45 passed`.
 ```bash
 cd frontend && npm ci && npm test
 ```
-See `21 passed | 1 skipped`. The skipped one is the first live check below.
+The regular suite includes pure-logic and in-memory tests. The live-network test is skipped unless `LIVE=1`. See the verification note below for the latest checked result.
 
 ```bash
 cd frontend && npm run dev
@@ -130,6 +141,14 @@ rustup target add wasm32-unknown-unknown
 cd contracts && cargo build --target wasm32-unknown-unknown --release
 ```
 `.cargo/config.toml` adds `--cfg near`. Without it every on-chain panic loses its message.
+
+### Verification of this change
+
+- `cd frontend` then `npm run typecheck` and `npx vitest run`: typecheck passed; 44 tests passed and 2 live tests skipped. Live tests remain opt-in.
+- Read-only curl with a browser `Origin` header: Nearblocks returned HTTP 200 and `Access-Control-Allow-Origin: *`, but empty results. RPC returned the known successful withdrawal callback; a reduced public fixture is used in unit tests. See [source checks](docs/evidence/history-source-check.txt).
+- [`frontend/e2e/coba.e2e.mjs`](frontend/e2e/coba.e2e.mjs) is a manual testnet script for the one-device story, its pause, the three laptop sizes and passing the envelope on. It has not been run. No browser was launched for this change.
+- One native sub-account funding call passed on testnet, using one helper account and in-memory keys. It created a child with exactly 0.4 test NEAR and waited for finality. The opt-in check is `LIVE_SUBACCOUNT=1 npx vitest run src/chain/subaccount-check.test.ts` (use your shell's environment-variable syntax). No Amplop contract methods were called.
+- The new story's full network path, NFT transfer through the browser, 60-second target, rendered layout and full indexed history remain unverified. No browser or e2e was run, and nothing was deployed.
 
 ## How control moves when the NFT is transferred
 
@@ -189,7 +208,7 @@ Written down so nobody has to discover it. Full list: [threat model](docs/THREAT
 - **The guest's key lives in the browser.** Clear the browser or change phones and that account is gone, so the old amplop can no longer find you. This is the biggest gap in the product: the promise runs for years, and a browser key does not. Google or email login through NEAR Auth is the fix, but its shared testnet client only accepts `http://localhost:3000` as a callback (checked 4 November 2026), so a public site needs approved credentials we do not have.
 - **"No wallet" still means someone funds the guest.** Here the testnet helper does. A real product needs rupiah in through QRIS, a stablecoin, and gas sponsored by a relayer. None of that is built.
 - **Rupiah is a demo rate,** not a market price.
-- **Payouts and past holders are not on screen yet.** The track asks for them in the history view; gifts and replies are there.
+- **Public history coverage is incomplete.** Nearblocks returned HTTP 200 with empty transaction lists for this contract and a known past transaction when checked. Chain entries and current holder remain readable. Verified receipt references from this device supplement them, but earlier payouts and holders can remain unavailable.
 - **The holder gate is a screen.** Reading the contract directly shows the same data.
 - **Not audited, and no independent users yet.** Every test above was run by the builder.
 
@@ -207,7 +226,7 @@ There is no `backend/` on purpose; see [Architecture](docs/ARCHITECTURE.md). See
 ## Tools and libraries
 
 - Contract: Rust, `near-sdk` 5.30.0, `near-contract-standards`.
-- Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`. Fonts: Kalnia, Gloock, Karla, DM Mono from Google Fonts.
+- Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`, GSAP. App display and body fonts: Zodiak and Satoshi.
 - Tests: `cargo test`, Vitest, `playwright-core` driving an installed Chrome.
 - Testnet RPC: FastNEAR. Accounts: NEAR testnet helper. Hosting: Vercel.
 - AI: code and documentation were written with an AI coding assistant (Claude Code), and several AI chat assistants were consulted when choosing the idea. The landing page sky video and images come from Google Flow (Veo, Nano Banana). Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.

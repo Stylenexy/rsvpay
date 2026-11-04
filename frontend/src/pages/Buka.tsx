@@ -1,28 +1,35 @@
-import { useState } from 'react';
-import { Segmented, Sky } from '../components/parts';
-import { plainError, t } from '../copy';
+import { useRef, useState } from 'react';
+import { EnvelopeStory, Segmented } from '../components/parts';
+import { plainError, useCopy } from '../copy';
 import { useAmplop } from '../context';
 import { go, link } from '../lib/app';
 import { OPEN_DEPOSIT_YOCTO } from '../lib/rupiah';
+import { useFormat, useLang } from '../lib/lang';
+import { usePageMotion } from '../lib/motion';
 
 /** Host opens a hajatan: the amplop is minted to them with a fixed reply seed. */
 export function Buka() {
+  const t = useCopy();
+  const { lang } = useLang();
+  const { percent } = useFormat();
+  const root = useRef<HTMLElement>(null);
+  usePageMotion(root);
   const { client, account, refresh } = useAmplop();
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [host, setHost] = useState('');
   const [bps, setBps] = useState(500);
   const [busy, setBusy] = useState<'' | 'akun' | 'buka'>('');
-  const [err, setErr] = useState('');
+  const [err, setErr] = useState<unknown>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
-    setErr('');
+    setErr(null);
     try {
       if (!client.account()) {
         if (!host.trim()) {
-          setErr('Isi namamu dulu.');
+          setErr('name-required');
           return;
         }
         setBusy('akun');
@@ -31,54 +38,52 @@ export function Buka() {
       }
       setBusy('buka');
       const r = await client.openHajatan({
-        title: title.trim() || t.buka.namesHint,
-        date: date.trim() || t.buka.dateHint,
+        title: title.trim() || t.bukaNamesHint,
+        date: date || '2026-11-21',
         seedBps: bps,
         depositYocto: OPEN_DEPOSIT_YOCTO.toString(),
       });
       go(link.buku(r.value));
     } catch (x) {
-      setErr(plainError(x));
+      setErr(x);
       setBusy('');
     }
   }
 
   return (
     <>
-      <Sky langit="fajar" />
-      <main>
-        <header className="hd">
-          <h1>{t.buka.title}</h1>
-        </header>
-        <form className="glass card" onSubmit={submit}>
+      <main className="app-grid open-page" ref={root}>
+        <EnvelopeStory title={title || t.bukaTitle} date={date} eyebrow={t.bukaEyebrow} amount={bps * 100}>{t.bukaStory}</EnvelopeStory>
+        <form className="glass card form-panel" onSubmit={submit}>
+          <h2>{t.bukaForm}</h2>
           <label className="field">
-            <span className="label">{t.buka.names}</span>
-            <input className="input" value={title} placeholder={t.buka.namesHint} maxLength={80} onChange={(e) => setTitle(e.target.value)} />
+            <span className="label">{t.bukaNames}</span>
+            <input className="input" value={title} placeholder={t.bukaNamesHint} maxLength={80} onChange={(e) => setTitle(e.target.value)} />
           </label>
           <label className="field">
-            <span className="label">{t.buka.date}</span>
-            <input className="input" value={date} placeholder={t.buka.dateHint} maxLength={32} onChange={(e) => setDate(e.target.value)} />
+            <span className="label">{t.bukaDate}</span>
+            <input className="input" type="date" value={date} placeholder={t.bukaDateHint} maxLength={32} onChange={(e) => setDate(e.target.value)} />
           </label>
           {!account && (
             <label className="field">
-              <span className="label">{t.buka.host}</span>
-              <input className="input" value={host} placeholder={t.buka.hostHint} onChange={(e) => setHost(e.target.value)} />
+              <span className="label">{t.bukaHost}</span>
+              <input className="input" value={host} placeholder={t.bukaHostHint} onChange={(e) => setHost(e.target.value)} />
             </label>
           )}
           <div className="field">
-            <span className="label">{t.buka.seed}</span>
+            <span className="label">{t.bukaSeed}</span>
             <Segmented
-              label={t.buka.seed}
+              label={t.bukaSeed}
               value={bps}
               onChange={setBps}
-              options={[0, 200, 500, 1000].map((v) => ({ value: v, label: `${v / 100}%` }))}
+              options={[0, 200, 500, 1000].map((v) => ({ value: v, label: percent(v / 10000) }))}
             />
-            <span className="label">{t.buka.seedNote}</span>
+            <span className="label">{t.bukaSeedNote}</span>
           </div>
           <button className="btn" type="submit" disabled={!!busy}>
-            {busy === 'akun' ? t.buka.making : busy === 'buka' ? t.buka.opening : t.buka.submit}
+            {busy === 'akun' ? t.bukaMaking : busy === 'buka' ? t.bukaOpening : t.bukaSubmit}
           </button>
-          {err && <p className="err">{err}</p>}
+          {!!err && <p className="err" role="alert">{err === 'name-required' ? t.bukaNameRequired : plainError(err, lang)}</p>}
         </form>
       </main>
     </>

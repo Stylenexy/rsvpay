@@ -1,5 +1,6 @@
-import { Account, JsonRpcProvider, KeyPair, getTransactionLastResult, teraToGas } from 'near-api-js';
+import { Account, JsonRpcProvider, KeyPair, actions, getTransactionLastResult, teraToGas } from 'near-api-js';
 import type { AccountId, AmplopClient, Entry, Hajatan, PendingReply, Sent, TokenId, Yocto } from './types';
+import { rememberHistoryTransaction } from './history';
 
 /**
  * Live client on NEAR TESTNET. No secrets ship with the site:
@@ -9,9 +10,9 @@ import type { AccountId, AmplopClient, Entry, Hajatan, PendingReply, Sent, Token
  * Testnet only: the keys here guard play money.
  */
 
-const RPC = import.meta.env.VITE_NEAR_RPC ?? 'https://test.rpc.fastnear.com';
+const RPC = 'https://test.rpc.fastnear.com';
 const HELPER = 'https://helper.nearprotocol.com/account';
-export const DEFAULT_CONTRACT = import.meta.env.VITE_AMPLOP_CONTRACT ?? 'amplop-c-mvznhnlx.testnet';
+export const DEFAULT_CONTRACT = 'amplop-c-mvznhnlx.testnet';
 const GAS = teraToGas('100');
 const KEYS = 'amplop.kunci';
 const ACTIVE = 'amplop.akun';
@@ -78,6 +79,7 @@ export class NearAmplopClient implements AmplopClient {
     readonly contractId: string = DEFAULT_CONTRACT,
     private store: KeyStore = browserKeyStore(),
   ) {
+    if (contractId !== DEFAULT_CONTRACT) throw new Error('only the fixed testnet deployment is supported');
     this.provider = new JsonRpcProvider({ url: RPC });
   }
 
@@ -104,6 +106,7 @@ export class NearAmplopClient implements AmplopClient {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ newAccountId: id, newAccountPublicKey: kp.getPublicKey().toString() }),
+      signal: AbortSignal.timeout(20_000),
     });
     if (!res.ok) throw new Error(`helper ${res.status}: ${(await res.text()).slice(0, 160)}`);
     // keep the key before anything else can fail, or the funded account is lost
@@ -123,6 +126,22 @@ export class NearAmplopClient implements AmplopClient {
   async balance(accountId: AccountId): Promise<Yocto> {
     const a = await this.provider.viewAccount({ accountId });
     return a.amount.toString();
+  }
+
+  async createSubAccount(name: string, funding: Yocto): Promise<Sent<AccountId>> {
+    const parent = this.signer();
+    const id = `${slug(name)}-${Date.now().toString(36).slice(-5)}.${parent.accountId}`;
+    if (id.length > 64) throw new Error('child account name too long');
+    const kp = KeyPair.fromRandom('ed25519');
+    // Persist before broadcasting: an uncertain RPC response must not lose the child's key.
+    this.store.saveKey(id, kp.toString());
+    const res = await parent.signAndSendTransaction({ receiverId: id,
+      actions: [actions.createAccount(), actions.transfer(BigInt(funding)), actions.addFullAccessKey(kp.getPublicKey())],
+      waitUntil: 'FINAL' });
+    const status = res.status;
+    if (status && typeof status === 'object' && 'Failure' in status) throw new Error(JSON.stringify(status.Failure));
+    this.store.setActive(id);
+    return { value: id, txHash: res.transaction.hash };
   }
 
   // ---- calls ----
@@ -147,6 +166,7 @@ export class NearAmplopClient implements AmplopClient {
       throw new Error(JSON.stringify((status as { Failure: unknown }).Failure));
     }
     const hash = (res as { transaction?: { hash?: string } }).transaction?.hash ?? null;
+    rememberHistoryTransaction(this.contractId, res);
     return { value: getTransactionLastResult(res) as T, txHash: hash };
   }
 
@@ -177,6 +197,12 @@ export class NearAmplopClient implements AmplopClient {
 
   async withdraw(tokenId: TokenId): Promise<Sent<null>> {
     const r = await this.call<unknown>('withdraw', { token_id: tokenId });
+    return { value: null, txHash: r.txHash };
+  }
+
+  async transfer(tokenId: TokenId, receiverId: AccountId): Promise<Sent<null>> {
+    await this.provider.viewAccount({ accountId: receiverId });
+    const r = await this.call<unknown>('nft_transfer', { token_id: tokenId, receiver_id: receiverId }, 1n);
     return { value: null, txHash: r.txHash };
   }
 

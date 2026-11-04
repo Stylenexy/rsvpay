@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
 const URL_BASE = process.argv[2] ?? 'https://amplop-balas.vercel.app';
-const CHROME = process.env.CHROME ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+
 const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
@@ -28,6 +28,7 @@ if (PARENT) {
     [JSON.stringify({ [id]: kp.toString() }), id],
   );
 }
+await ctx.addInitScript(() => localStorage.setItem('amplop-lang', 'id'));
 const page = await ctx.newPage();
 await page.goto(URL_BASE);
 await page.getByRole('link', { name: 'Coba jadi tamu' }).waitFor({ timeout: 20_000 });

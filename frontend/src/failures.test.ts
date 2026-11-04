@@ -11,19 +11,19 @@ const NEAR = 10n ** 24n;
 describe('what a person sees when something fails', () => {
   it('turns every contract refusal a guest or host can hit into plain Indonesian', () => {
     const real = (text: string) => `Smart contract panicked: ${text}`;
-    expect(plainError(new Error(real('this hajatan is not accepting gifts')))).toMatch(/tidak menerima amplop/);
-    expect(plainError(new Error(real('only the current holder of the amplop can do this')))).toMatch(/pemegang amplop/);
-    expect(plainError(new Error(real('this gift was already replied to')))).toMatch(/sudah dibalas/);
-    expect(plainError(new Error(real('nothing to withdraw')))).toMatch(/dana bebas/);
-    expect(plainError(new Error(real('amplop is mid-transfer, try after it settles')))).toMatch(/berpindah tangan/);
+    expect(plainError(new Error(real('this hajatan is not accepting gifts')), 'id')).toMatch(/tidak menerima pemberian/);
+    expect(plainError(new Error(real('only the current holder of the amplop can do this')), 'id')).toMatch(/pemegang/);
+    expect(plainError(new Error(real('this gift was already replied to')), 'id')).toMatch(/sudah dibalas/);
+    expect(plainError(new Error(real('nothing to withdraw')), 'id')).toMatch(/dana bebas/);
+    expect(plainError(new Error(real('amplop is mid-transfer, try after it settles')), 'id')).toMatch(/berpindah tangan/);
   });
 
   it('explains a rate-limited account helper instead of failing silently', () => {
-    expect(plainError(new Error('helper 429: too many requests'))).toMatch(/dibatasi/);
+    expect(plainError(new Error('helper 429: too many requests'), 'id')).toMatch(/dibatasi/);
   });
 
   it('never shows raw technical text for an unknown failure', () => {
-    const shown = plainError(new Error('wasm trap: StackOverflow at 0xdeadbeef'));
+    const shown = plainError(new Error('wasm trap: StackOverflow at 0xdeadbeef'), 'id');
     expect(shown).toBe('Ada yang gagal. Coba lagi.');
   });
 

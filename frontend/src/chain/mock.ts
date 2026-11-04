@@ -50,6 +50,23 @@ export class MockAmplopClient implements AmplopClient {
     return (this.wallets.get(id) ?? 0n).toString();
   }
 
+  async createSubAccount(name: string, funding: Yocto) {
+    const id = `${name.toLowerCase()}.${this.me()}`;
+    if (this.wallets.has(id)) throw new Error('account already exists');
+    this.pay(BigInt(funding));
+    this.wallets.set(id, BigInt(funding));
+    this.active = id;
+    return this.sent(id);
+  }
+
+  async transfer(tokenId: TokenId, receiverId: AccountId) {
+    const r = this.row(tokenId);
+    if (r.owner !== this.me()) throw new Error('only the current holder');
+    if (receiverId === r.owner) throw new Error('receiver is already holder');
+    r.owner = receiverId;
+    return this.sent(null);
+  }
+
   private me(): AccountId {
     if (!this.active) throw new Error('no account on this device');
     return this.active;

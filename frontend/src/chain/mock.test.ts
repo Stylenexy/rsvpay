@@ -14,6 +14,26 @@ async function cycle() {
 }
 
 describe('mock follows the contract rules', () => {
+  it('passes the book, free money and locked promises to the new holder and refuses the old holder', async () => {
+    const { c, siti, budi, A } = await cycle();
+    const buyer = await c.createAccount('Next');
+    const before = (await c.hajatan(A))!;
+    const book = await c.entries(A);
+    c.useAccount(budi);
+    const { value: B } = await c.openHajatan({ title: 'Budi', date: '', seedBps: 500, depositYocto: (NEAR / 20n).toString() });
+    await expect(c.transfer(A, buyer)).rejects.toThrow('only the current holder');
+    c.useAccount(siti);
+    await c.transfer(A, buyer);
+    expect(await c.hajatan(A)).toEqual({ ...before, owner_id: buyer });
+    expect(await c.entries(A)).toEqual(book);
+    await expect(c.withdraw(A)).rejects.toThrow('only the current holder');
+    await expect(c.reciprocate({ tokenId: A, entry: 0, toTokenId: B, message: '', depositYocto: NEAR.toString() })).rejects.toThrow('only the current holder');
+    c.useAccount(buyer);
+    await c.withdraw(A);
+    expect((await c.hajatan(A))!.seed_locked).toBe(before.seed_locked);
+    await c.reciprocate({ tokenId: A, entry: 0, toTokenId: B, message: '', depositYocto: (NEAR / 2n).toString() });
+    expect((await c.entries(B))[0].reply_to).toEqual({ token_id: A, entry: 0 });
+  });
   it('locks 5% of a gift as seed and keeps balance = free + seed', async () => {
     const { c, A } = await cycle();
     const h = (await c.hajatan(A))!;

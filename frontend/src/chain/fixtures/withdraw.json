@@ -1,0 +1,81 @@
+﻿{
+    "receipts_outcome":  [
+                             {
+                                 "block_hash":  "BC4bvTgfR5pCuPrCa3TnswRWZPereeGZmYboQWZmfNuC",
+                                 "outcome":  {
+                                                 "logs":  [
+                                                              "amplop:withdraw token=5 holder=siti-oighzb5.testnet yocto=993607000000000000000000"
+                                                          ],
+                                                 "executor_id":  "amplop-c-mvznhnlx.testnet",
+                                                 "status":  {
+                                                                "SuccessReceiptId":  "6grSQreqvjo7qiTW6LUXjXCmLya1dj3X4tsZzBz7ynvF"
+                                                            }
+                                             }
+                             },
+                             {
+                                 "block_hash":  "FcMCJTf2kJ2xk1rFbcBeJvdtXHwqjCJzkxVVp6V9crje",
+                                 "outcome":  {
+                                                 "logs":  [
+
+                                                          ],
+                                                 "executor_id":  "siti-oighzb5.testnet",
+                                                 "status":  {
+                                                                "SuccessValue":  ""
+                                                            }
+                                             }
+                             },
+                             {
+                                 "block_hash":  "5QeudoKLPf9skrnuNMRgBSJqvvnKaQRqmizxL8C9LMFw",
+                                 "outcome":  {
+                                                 "logs":  [
+
+                                                          ],
+                                                 "executor_id":  "siti-oighzb5.testnet",
+                                                 "status":  {
+                                                                "SuccessValue":  ""
+                                                            }
+                                             }
+                             },
+                             {
+                                 "block_hash":  "5QeudoKLPf9skrnuNMRgBSJqvvnKaQRqmizxL8C9LMFw",
+                                 "outcome":  {
+                                                 "logs":  [
+                                                              "amplop:paid token=5 yocto=993607000000000000000000"
+                                                          ],
+                                                 "executor_id":  "amplop-c-mvznhnlx.testnet",
+                                                 "status":  {
+                                                                "SuccessValue":  ""
+                                                            }
+                                             }
+                             },
+                             {
+                                 "block_hash":  "CtPktochZAgLQ8DtxS6xsFSstcFKRYiyjkgqLkhfz9q5",
+                                 "outcome":  {
+                                                 "logs":  [
+
+                                                          ],
+                                                 "executor_id":  "siti-oighzb5.testnet",
+                                                 "status":  {
+                                                                "SuccessValue":  ""
+                                                            }
+                                             }
+                             },
+                             {
+                                 "block_hash":  "FcMCJTf2kJ2xk1rFbcBeJvdtXHwqjCJzkxVVp6V9crje",
+                                 "outcome":  {
+                                                 "logs":  [
+
+                                                          ],
+                                                 "executor_id":  "siti-oighzb5.testnet",
+                                                 "status":  {
+                                                                "SuccessValue":  ""
+                                                            }
+                                             }
+                             }
+                         ],
+    "transaction":  {
+                        "receiver_id":  "amplop-c-mvznhnlx.testnet",
+                        "signer_id":  "siti-oighzb5.testnet",
+                        "hash":  "CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45"
+                    }
+}
