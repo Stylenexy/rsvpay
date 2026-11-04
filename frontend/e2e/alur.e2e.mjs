@@ -75,7 +75,7 @@ try {
   await host.goto(`${URL_BASE}/#/buka`);
   await host.getByPlaceholder('Siti & Andi').fill(`Siti & Andi ${stamp}`);
   if (!PARENT) await host.getByPlaceholder('Siti', { exact: true }).fill('Siti');
-  await host.getByRole('button', { name: 'Buka bingkisan' }).click();
+  await host.getByRole('button', { name: 'Buka amplop' }).click();
   await host.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
   const id = host.url().match(/#\/buku\/(\d+)/)[1];
   say(true, 'E1 host opens a hajatan from the web', `amplop #${id}`);
@@ -112,14 +112,14 @@ try {
   await host.waitForTimeout(1200);
   await host.screenshot({ path: `${OUT}3-host-book.png`, fullPage: true });
   await host.getByRole('button', { name: 'Orang lain' }).click();
-  await host.getByText(/Bingkisan ini milik/).waitFor({ timeout: 5_000 });
+  await host.getByText(/Amplop ini milik/).waitFor({ timeout: 5_000 });
   const hidden = (await host.getByText('Budi', { exact: true }).count()) === 0;
   await host.getByRole('button', { name: 'Saya pemegang' }).click();
   say(hidden, 'E6b holder taps "Orang lain": names and amounts disappear', '');
 
   // 4. a non-holder sees the lock, not the book
   await guest.goto(`${URL_BASE}/#/buku/${id}`);
-  await guest.getByText(/Bingkisan ini milik Siti/).waitFor({ timeout: 15_000 });
+  await guest.getByText(/Amplop ini milik Siti/).waitFor({ timeout: 15_000 });
   const leak = await guest.getByRole('button', { name: 'Tarik dana bebas' }).count();
   say(leak === 0, 'E7 non-holder sees the lock: no list, no withdraw button', '');
   await guest.screenshot({ path: `${OUT}4-non-holder.png` });
@@ -127,7 +127,7 @@ try {
   // 5. two years later: Budi opens his own hajatan, Siti's amplop rings
   await guest.goto(`${URL_BASE}/#/buka`);
   await guest.getByPlaceholder('Siti & Andi').fill(`Budi & Rina ${stamp}`);
-  await guest.getByRole('button', { name: 'Buka bingkisan' }).tap();
+  await guest.getByRole('button', { name: 'Buka amplop' }).tap();
   await guest.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
   await host.getByText('Tamu lamamu punya hari bahagia').waitFor({ timeout: 20_000 });
   say(true, "E8 Siti's amplop rings after Budi opens a hajatan", '');

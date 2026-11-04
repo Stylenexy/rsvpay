@@ -66,11 +66,11 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     customs: ['A gift today. A return at their celebration.', 'A red envelope carries a wish for good fortune.', 'A wedding gift, remembered between families.', 'A knot tied around a wish for the couple.', 'A gift of joy, returned when the time comes.'],
   },
   id: {
-    matches: 'Cocok dengan catatan terbit', mismatch: 'Tidak cocok dengan catatan terbit',
+    matches: 'Cocok dengan catatan publik', mismatch: 'Tidak cocok dengan catatan publik',
     index: 'Bab', continue: 'Gulir mengikuti janji', forSiti: 'untuk Siti', kept: 'disimpan untuk membalas',
-    ask: 'Tanya jaringan sekarang', asking: 'Menunggu jawaban jaringan…', idle: 'Jawaban langsung, dari perambanmu.',
+    ask: 'Tanya jaringan sekarang', asking: 'Menunggu jawaban jaringan…', idle: 'Jawaban langsung, dari browsermu.',
     failed: 'Jaringan tidak menjawab. Coba lagi atau periksa kontraknya.', received: 'Jawaban diterima',
-    unexpected: 'Jawabannya berbeda dari catatan terbit. Periksa kontraknya.',
+    unexpected: 'Jawabannya berbeda dari catatan publik. Periksa kontraknya.',
     keys: 'Kunci akses', hash: 'Hash kode', block: 'Blok', elapsed: 'Waktu tempuh', receipt: 'Bukti langsung dari jaringan',
     refused: '12 dari 12 ditolak di kontrak yang berjalan. Daftar lengkap di model ancaman.', tests: '45 tes kontrak lulus.',
     fixed: 'Sekali ditentukan. Selamanya tetap.', threat: 'Model ancaman', try: 'Coba', check: 'Periksa', languages: 'Bahasa',
@@ -86,7 +86,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     refused: '线上合约拒绝了全部 12 次检查。完整清单见威胁模型。', tests: '45 项合约测试通过。',
     fixed: '设定一次，永远不变。', threat: '威胁模型', try: '体验', check: '核查', languages: '语言',
     copyHash: '复制代码哈希', copied: '已复制', guest: '成为宾客', host: '创建红包', replay: '重看故事', trial: 'NEAR 测试网试用版。仅使用测试币。',
-    customs: ['今天送礼，在对方的喜事上回礼。', '一封红包，寄托美好的祝愿。', '一份贺礼，两家人铭记。', '一结水引，系住对新人的祝福。', '一份喜悦，待来日相报。'],
+    customs: ['今天送礼，在对方的喜事上回礼。', '一封红包，寄托美好的祝愿。', '一份贺礼，两家人铭记。', '一枚水引结，系住对新人的祝福。', '一份喜悦，待来日相报。'],
   },
   ko: {
     matches: '공개 기록과 일치', mismatch: '공개 기록과 불일치',
@@ -114,7 +114,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
   },
   vi: {
     matches: 'Khớp với bản ghi công bố', mismatch: 'Không khớp với bản ghi công bố',
-    index: 'Chương', continue: 'Cuộn theo lời hứa', forSiti: 'cho Siti', kept: 'giữ lại để mừng đáp',
+    index: 'Chương', continue: 'Cuộn theo lời hứa', forSiti: 'cho Siti', kept: 'giữ lại để mừng lại',
     ask: 'Hỏi mạng ngay', asking: 'Đang hỏi mạng…', idle: 'Câu trả lời trực tiếp từ trình duyệt của bạn.',
     failed: 'Mạng chưa trả lời. Hãy thử lại hoặc xem hợp đồng.', received: 'Đã nhận câu trả lời',
     unexpected: 'Câu trả lời khác với bản ghi công bố. Hãy xem hợp đồng.',
@@ -180,12 +180,12 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
   id: {
     table: {
       kicker: 'Di meja tamu',
-      big: 'Empat hal yang buku tamu tidak bisa.',
+      big: 'Empat hal yang tak bisa dilakukan buku tamu.',
       panels: [
         { t: 'QR di meja tamu', d: 'Tamu memindai dan memberi. Tanpa memasang aplikasi.' },
         { t: 'Buku yang tidak hilang', d: 'Siapa memberi, berapa, dan ucapannya. Milik keluarga, bukan milik perusahaan.' },
         { t: 'Sebagian disimpan', d: 'Kamu tentukan saat membuka amplop, paling banyak 10%. Tidak bisa diubah lagi.' },
-        { t: 'Berbunyi saat waktunya', d: 'Saat tamu membuka hajatannya sendiri, amplopmu memberi tahu. Sekali ketuk untuk membalas.' },
+        { t: 'Berbunyi saat harinya tiba', d: 'Saat tamu membuka hajatannya sendiri, amplopmu memberi tahu. Sekali ketuk untuk membalas.' },
       ],
     },
     round: {
@@ -223,25 +223,25 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       kicker: '在迎宾台',
       big: '礼金簿做不到的四件事。',
       panels: [
-        { t: '迎宾台上的二维码', d: '宾客扫码送礼,无需安装应用。' },
-        { t: '不会丢的账本', d: '谁送的、送多少、写了什么祝福。属于家庭,不属于公司。' },
-        { t: '留下一部分', d: '打开红包时由你设定,最多 10%,之后不能更改。' },
-        { t: '到时候就会响', d: '当宾客办自己的喜事,红包会提醒你。一键回礼。' },
+        { t: '迎宾台上的二维码', d: '宾客扫码送礼，无需安装应用。' },
+        { t: '不会丢的账本', d: '谁送的、送多少、写了什么祝福。属于家庭，不属于公司。' },
+        { t: '留下一部分', d: '打开红包时由你设定，最多 10%，之后不能更改。' },
+        { t: '到时候就会响', d: '当宾客办自己的喜事，红包会提醒你。一键回礼。' },
       ],
     },
     round: {
       kicker: '多年以后',
-      big: '每一次回礼,都是下一次的开始。',
-      line: '每次回礼本身也是一份礼,也留下自己的一部分。两家人可以这样往来几十年。',
+      big: '每一次回礼，都是下一次的开始。',
+      line: '每次回礼本身也是一份礼，也留下自己的一部分。两家人可以这样往来几十年。',
       cards: ['Budi 送礼给 Siti', 'Siti 回礼给 Budi', 'Budi 回礼给 Siti'],
     },
     proof: {
       kicker: '写给谨慎的人',
-      big: '别信我们,自己查。',
+      big: '别信我们，自己查。',
       rows: [
-        '合约上的密钥。规则谁也改不了,包括我们。',
+        '合约上的密钥。规则谁也改不了，包括我们。',
         '针对线上合约的攻击全部被拒绝。',
-        '合约测试通过,包括付款途中转售。',
+        '合约测试通过，包括付款途中转售。',
         '留存比例上限。红包打开后永久固定。',
       ],
       note: '仅在测试网。未经审计。尚无独立用户。',
@@ -249,13 +249,13 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     names: {
       kicker: '不只在这里',
-      big: '同一个承诺,许多名字。',
+      big: '同一个承诺，许多名字。',
       lands: ['印度尼西亚', '中国', '韩国', '日本', '越南'],
     },
     close: {
       big: '打开第一个红包。',
-      line: '只要一分钟,承诺却能延续多年。',
-      phone: '或扫码,用手机当一回宾客。',
+      line: '只要一分钟，承诺却能延续多年。',
+      phone: '或扫码，用手机当一回宾客。',
       built: '在 NEAR HACKATHON 2026 打造',
     },
   },
@@ -267,7 +267,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
         { t: '접수대의 QR', d: '하객은 QR을 찍고 축의금을 냅니다. 앱 설치는 필요 없습니다.' },
         { t: '사라지지 않는 장부', d: '누가, 얼마를, 어떤 말과 함께 보냈는지. 회사가 아니라 가족의 것입니다.' },
         { t: '일부는 남겨 둡니다', d: '봉투를 열 때 정합니다. 최대 10%, 이후에는 바꿀 수 없습니다.' },
-        { t: '때가 되면 울립니다', d: '하객이 자기 행사를 열면 봉투가 알려 줍니다. 한 번만 누르면 마음을 전합니다.' },
+        { t: '때가 되면 울립니다', d: '하객에게 기쁜 날이 오면 봉투가 알려 줍니다. 한 번만 누르면 마음을 전합니다.' },
       ],
     },
     round: {
@@ -349,7 +349,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
         { t: 'Mã QR trên bàn đón khách', d: 'Khách quét và mừng. Không cần cài ứng dụng.' },
         { t: 'Cuốn sổ không thất lạc', d: 'Ai mừng, bao nhiêu, lời chúc gì. Của gia đình, không phải của công ty.' },
         { t: 'Giữ lại một phần', d: 'Bạn chọn khi mở phong bì, tối đa 10%. Không thể thay đổi sau đó.' },
-        { t: 'Reo lên đúng lúc', d: 'Khi khách tổ chức tiệc của mình, phong bì báo cho bạn. Một chạm để mừng lại.' },
+        { t: 'Reo lên đúng lúc', d: 'Khi khách đến ngày vui của mình, phong bì báo cho bạn. Một chạm để mừng lại.' },
       ],
     },
     round: {
