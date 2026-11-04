@@ -6,7 +6,7 @@ import { chromium } from 'playwright-core';
 
 const URL_BASE = process.argv[2] ?? 'https://amplop-balas.vercel.app';
 const CHROME = process.env.CHROME ?? 'C:/Program Files/Google/Chrome/Application/chrome.exe';
-const OUT = fileURLToPath(new URL('./hasil/', import.meta.url));
+const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
 const browser = await chromium.launch({ executablePath: CHROME, headless: true });
@@ -15,14 +15,14 @@ const page = await ctx.newPage();
 await page.goto(URL_BASE);
 await page.getByRole('link', { name: 'Coba jadi tamu' }).waitFor({ timeout: 20_000 });
 await page.waitForTimeout(600);
-await page.screenshot({ path: `${OUT}0-beranda.png` });
+await page.screenshot({ path: `${OUT}0-home.png` });
 await page.getByRole('link', { name: 'Coba jadi tamu' }).tap();
 await page.getByText('Kamu memberi').waitFor({ timeout: 20_000 });
 await page.getByPlaceholder('Budi').fill('Juri');
 const t0 = Date.now();
 await page.getByRole('button', { name: 'Geser untuk memberi' }).tap();
 await page.getByText('Terkirim.').waitFor({ timeout: 60_000 });
-console.log(`PASS | beranda → coba jadi tamu → terkirim | ${((Date.now() - t0) / 1000).toFixed(1)} dtk`);
+console.log(`PASS | home, try as guest, sent | ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 await page.waitForTimeout(2300);
-await page.screenshot({ path: `${OUT}2-tamu-terkirim.png` });
+await page.screenshot({ path: `${OUT}2-guest-sent.png` });
 await browser.close();

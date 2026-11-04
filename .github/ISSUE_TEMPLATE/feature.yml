@@ -1,0 +1,14 @@
+name: Idea
+description: Suggest a change
+labels: [idea]
+body:
+  - type: textarea
+    id: who
+    attributes:
+      label: Who is this for, and what do they need?
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What would you change?

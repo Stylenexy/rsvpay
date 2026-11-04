@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "typecheck": "tsc -b",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:live": "LIVE=1 vitest run src/chain/near.live.test.ts"
   },
   "dependencies": {
     "@types/qrcode": "^1.5.6",
@@ -25,5 +27,7 @@
     "typescript": "^7.0.2",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"
-  }
+  },
+  "description": "Amplop Balas web app: a wedding gift that remembers, and gives back",
+  "license": "MIT"
 }

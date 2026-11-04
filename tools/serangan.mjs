@@ -56,18 +56,18 @@ async function refused(name, attack, mustContain, stateOf) {
   let msg = "";
   try {
     await attack();
-    say(false, name, "serangan BERHASIL, seharusnya ditolak");
+    say(false, name, "ATTACK SUCCEEDED, should have been refused");
     return;
   } catch (e) {
     msg = String(e?.message ?? e);
   }
   const after = JSON.stringify(await stateOf());
-  say(msg.includes(mustContain) && before === after, name, `ditolak: ${msg.slice(0, 90)}`);
+  say(msg.includes(mustContain) && before === after, name, `refused: ${msg.slice(0, 90)}`);
 }
 
 // L1: nobody, us included, can change this contract
 const keys = await provider.viewAccessKeyList({ accountId: CONTRACT });
-say(keys.keys.length === 0, "L1 kontrak tanpa kunci akses: tidak ada admin, tidak bisa diganti", `${keys.keys.length} kunci`);
+say(keys.keys.length === 0, "L1 contract has zero access keys: no admin, cannot be changed", `${keys.keys.length} keys`);
 
 const root = await helperAccount("uji-serang");
 const siti = await sub(root, "siti", "2.5");
@@ -80,24 +80,24 @@ const A = await open(siti, `Uji serangan ${run}`);
 await call(budi, "give", { token_id: A, message: "selamat" }, nearToYocto("1"));
 const state = () => view("hajatan", { token_id: A });
 
-await refused("L2 orang asing menarik dana amplop orang lain", () => call(maling, "withdraw", { token_id: A }), "only the current holder", state);
+await refused("L2 stranger withdraws from someone else's amplop", () => call(maling, "withdraw", { token_id: A }), "only the current holder", state);
 await refused(
-  "L3 memalsukan callback gagal bayar untuk menambah saldo",
+  "L3 forged failed-payout callback to inflate the balance",
   () => call(maling, "on_withdraw_done", { token_id: A, amount: nearToYocto("5").toString() }),
   "is private",
   state,
 );
 await refused(
-  "L4 memalsukan resolver transfer untuk merebut amplop",
+  "L4 forged transfer resolver to take the amplop",
   () => call(maling, "nft_resolve_transfer", { previous_owner_id: maling.accountId, receiver_id: siti.accountId, token_id: A }),
   "is private",
   state,
 );
-await refused("L5 hadiah 1 yocto tanpa biaya simpan", () => call(maling, "give", { token_id: A, message: "x" }, 1n), "deposit must cover storage", state);
+await refused("L5 1 yocto gift that cannot pay its storage", () => call(maling, "give", { token_id: A, message: "x" }, 1n), "deposit must cover storage", state);
 
 const M = await open(maling, `Hajatan maling ${run}`);
 await refused(
-  "L6 membelokkan benih Budi ke hajatan orang lain",
+  "L6 host redirects a guest's seed into another person's hajatan",
   () => call(siti, "reciprocate", { token_id: A, entry: 0, to_token_id: M, message: "x" }, nearToYocto("0.1")),
   "held by the original giver",
   state,
@@ -105,25 +105,25 @@ await refused(
 
 const B = await open(budi, `Hajatan Budi ${run}`);
 const pend = await view("pending_replies", { token_id: A });
-say(pend.length === 1 && pend[0].to_token_id === B, "L7 amplop berbunyi hanya untuk pemberi aslinya", `ke #${B}`);
+say(pend.length === 1 && pend[0].to_token_id === B, "L7 amplop rings only for the original giver", `to #${B}`);
 await call(siti, "reciprocate", { token_id: A, entry: 0, to_token_id: B, message: "balas" }, nearToYocto("0.01"));
-await refused("L8 membalas dua kali dari benih yang sama", () => call(siti, "reciprocate", { token_id: A, entry: 0, to_token_id: B, message: "lagi" }, nearToYocto("0.1")), "already replied", state);
+await refused("L8 reply twice from the same seed", () => call(siti, "reciprocate", { token_id: A, entry: 0, to_token_id: B, message: "lagi" }, nearToYocto("0.1")), "already replied", state);
 
 // sale: money, seeds and rights move with the NFT
 const C = await open(siti, `Dijual ${run}`);
 await call(budi, "give", { token_id: C, message: "selamat" }, nearToYocto("0.2"));
 const stateC = () => view("hajatan", { token_id: C });
 await siti.callFunction({ contractId: CONTRACT, methodName: "nft_transfer", args: { receiver_id: pembeli.accountId, token_id: C }, gas: GAS, deposit: 1n, waitUntil: "FINAL" });
-await refused("L9 pemilik lama menarik dana sesudah amplop dijual", () => call(siti, "withdraw", { token_id: C }), "only the current holder", stateC);
+await refused("L9 old owner withdraws after selling the amplop", () => call(siti, "withdraw", { token_id: C }), "only the current holder", stateC);
 const beforeSale = await stateC();
 await call(pembeli, "withdraw", { token_id: C });
 const afterSale = await stateC();
-say(afterSale.free === "0" && afterSale.seed_locked === beforeSale.seed_locked, "L10 pemegang baru menarik dana bebas, benih tamu tetap terkunci", `benih ${afterSale.seed_locked}`);
-await refused("L11 menarik benih sesudah dana bebas habis", () => call(pembeli, "withdraw", { token_id: C }), "nothing to withdraw", stateC);
+say(afterSale.free === "0" && afterSale.seed_locked === beforeSale.seed_locked, "L10 new holder withdraws free money, guest seeds stay locked", `seed ${afterSale.seed_locked}`);
+await refused("L11 withdraw seeds after free money is gone", () => call(pembeli, "withdraw", { token_id: C }), "nothing to withdraw", stateC);
 
 await call(maling, "set_open", { token_id: M, open: false });
-await refused("L12 memberi ke hajatan yang sudah ditutup", () => call(budi, "give", { token_id: M, message: "x" }, nearToYocto("0.1")), "not accepting gifts", () => view("hajatan", { token_id: M }));
+await refused("L12 give into a closed hajatan", () => call(budi, "give", { token_id: M, message: "x" }, nearToYocto("0.1")), "not accepting gifts", () => view("hajatan", { token_id: M }));
 
-const report = `Serangan hidup, kontrak ${CONTRACT}\n${new Date().toISOString()}\n${lines.join("\n")}\n`;
-fs.writeFileSync(new URL(`./serangan-laporan.txt`, import.meta.url), report);
+const report = `Live attacks, contract ${CONTRACT}\n${new Date().toISOString()}\n${lines.join("\n")}\n`;
+fs.writeFileSync(new URL(`../docs/evidence/attacks-report.txt`, import.meta.url), report);
 process.exit(failed ? 1 : 0);

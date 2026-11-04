@@ -1,0 +1,28 @@
+name: Bug
+description: Something does not work as the README says
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: For a security problem, do not open an issue. See SECURITY.md.
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: What did you do? Include the amplop number if there is one.
+    validations:
+      required: true
+  - type: textarea
+    id: saw
+    attributes:
+      label: What you saw, and what you expected
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Phone or browser
+  - type: input
+    id: tx
+    attributes:
+      label: Transaction link, if any
