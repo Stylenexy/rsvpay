@@ -1,0 +1,9 @@
+[rtk] /!\ No hook installed — run `rtk init -g` for automatic token savings
+Measured on testnet, contract amplop-c-mvznhnlx.testnet, read 2026-11-04T16:41:12.296Z
+access keys: 0
+code hash on chain: 4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U
+code hash of local build: 4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U
+open_hajatan | ok | 5.47 TGas | 0.000525 NEAR burnt | 2026-11-03T12:43:40.193Z | 9cDvqFm9hBvdZgxFrHdL5PViAvGEtev5F1ZYYnhrwdxk
+give | ok | 3.05 TGas | 0.000282 NEAR burnt | 2026-11-03T12:43:48.040Z | 23fkWd22hwQKgFJc8aFxJrLpQJg42PbDaX3PwL5Ci71u
+reciprocate | ok | 3.71 TGas | 0.000349 NEAR burnt | 2026-11-03T12:43:58.376Z | 53gPm5NADLhf6xq56p7A1Z7VmCVrkc9rvV1UCxtnuAxV
+withdraw | ok | 5.69 TGas | 0.000502 NEAR burnt | 2026-11-03T12:44:02.562Z | CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45

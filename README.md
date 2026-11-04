@@ -14,7 +14,36 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 |---|---|
 | Live demo | https://amplop-balas.vercel.app |
 | Contract (testnet) | [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet), zero access keys |
+| Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
+| Code on chain | `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U`, equal to the hash of a release build of this source |
+| Tests | 45 Rust, 21 web, 12 live attacks, 13 steps in a real browser ([reports](docs/evidence/)) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Evidence](docs/evidence/) |
+
+## Try it in two minutes (no wallet, no code)
+
+1. **Do:** open https://amplop-balas.vercel.app/#/beri/14. **See:** the guest page of a demo amplop, *Siti & Andi*.
+2. **Do:** type a name, tap the round button. **See:** about 10 seconds later the card shrinks into a star and a link to the real transaction appears.
+3. **Do:** open that link. **See:** a `give` call to the contract, signed by a throwaway account your browser made.
+4. **Do:** run the command below. **See:** `"keys":[]`. Nobody can change this contract, including us.
+
+```bash
+curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"amplop-c-mvznhnlx.testnet"}}'
+```
+
+If step 2 cannot make an account, NEAR's public testnet helper has rate-limited your IP. Use another network, or read the [full walkthrough](#try-it) and the [recorded runs](docs/evidence/). The moment the amplop rings needs two accounts, so it is in the full walkthrough.
+
+## Track requirements and where to check them
+
+Track **NFTs That Do Something**, from its [official prompt](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/10-nfts.md). Open Innovation has no written requirements.
+
+| Requirement | Status | Check it |
+|---|---|---|
+| NEP-171 contract plus logic that ties each token to its money | Done, with one difference: the money is booked per token id inside one keyless contract, not in a sub-account per token | [`contracts/src/lib.rs`](contracts/src/lib.rs), [how control moves](#how-control-moves-when-the-nft-is-transferred) |
+| README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
+| Gated page only current holders can open | Done at screen level: the book is hidden from anyone but the holder, while amounts stay public on chain | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| History per NFT: earned, paid out, who held it | **Partly.** Gifts and replies are shown. Payouts and past holders are not shown yet | The book page of any amplop |
+| Tests for the transfer path, including a sale in the middle of a payout | Done | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
+| Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
 
 ## What it does
 
@@ -28,10 +57,12 @@ Each reply is itself an entry with its own seed, so the chain of giving back can
 
 ## Why an NFT, not a database
 
-- **The cycle outlives apps.** Giving back takes 5 to 20 years, longer than almost any app that records envelopes. This book belongs to the family, not to a company.
-- **The money is held by the token, not by us.** There is no admin and no owner function, and the contract has no access keys.
-- **The rights move with the NFT.** Pass the amplop to a child and the money, the book and the promises go with it. The previous holder is locked out.
-- **The seed is a promise kept by code.** It can only ever go to the guest who gave it. Nobody can quietly withdraw it.
+| Claim | Proof |
+|---|---|
+| **The cycle outlives apps.** Giving back takes 5 to 20 years. This book belongs to the family, not to a company. | The book is contract state, readable with `hajatan(token_id)` without our site |
+| **The money is held by the token, not by us.** No admin, no owner function, no access keys. | Live attack L1: 0 keys |
+| **The rights move with the NFT.** The money, the book and the promises travel with it. The previous holder is locked out. | Step A11 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt), test `old_owner_cannot_withdraw_after_transfer`, live attack L9 |
+| **The seed is a promise kept by code.** It can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; live attacks L6, L11 |
 
 ## Why NEAR
 
@@ -114,7 +145,41 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 
 ## What we attacked
 
-[17 attacks](docs/THREAT-MODEL.md), each with its defence and the test that proves it. 12 checks ran for real against the deployed contract on testnet, and each counted only if the call failed **and** the state did not change. They include stealing a seed, redirecting a reply, replying twice, an old owner acting after a sale, and forging the payout callback.
+[17 attacks](docs/THREAT-MODEL.md), each with its defence and the test that proves it. 12 checks ran for real against the deployed contract on testnet, and each counted only if the call failed **and** the state did not change. The ones that matter most to a buyer or a guest:
+
+| Attack | Defence | Proof |
+|---|---|---|
+| Seller keeps withdrawing after the sale | Holder read from NEP-171 at call time | `old_owner_cannot_withdraw_after_transfer`, live L9 |
+| Buyer drains the amplop inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer | `withdraw_blocked_while_sale_settles` |
+| Receiver never resolves, freezing the amplop | Lock goes stale after 300 blocks | `stale_lock_releases_after_lock_max_blocks` |
+| Host withdraws the guests' seeds | `withdraw` pays only `balance - seed_locked` | `withdraw_pays_only_free_money_and_never_touches_seeds`, live L10, L11 |
+| Host sends a seed to a friend | Target must be held by the original giver | `reply_cannot_be_redirected_to_someone_else`, live L6 |
+| Reply twice from one seed | Entry marked `replied` | `a_gift_can_be_replied_only_once`, live L8 |
+| Forge the payout callback | `#[private]` | Live L3 |
+| Payout fails and the money vanishes | Refund into the amplop | `failed_payout_refunds_into_the_amplop` |
+| The developer changes the rules later | Zero access keys | Live L1 |
+
+## Measured on testnet
+
+Reproduce the first table with `cd scripts && node measure.mjs` (see [`measured-testnet.txt`](docs/evidence/measured-testnet.txt)).
+
+One full cycle through the web client, 3 November 2026 UTC:
+
+| Call | Gas burnt | Fee | Transaction |
+|---|---|---|---|
+| `open_hajatan` | 5.47 TGas | 0.000525 NEAR | [9cDvqFm9…](https://testnet.nearblocks.io/txns/9cDvqFm9hBvdZgxFrHdL5PViAvGEtev5F1ZYYnhrwdxk) |
+| `give` | 3.05 TGas | 0.000282 NEAR | [23fkWd22…](https://testnet.nearblocks.io/txns/23fkWd22hwQKgFJc8aFxJrLpQJg42PbDaX3PwL5Ci71u) |
+| `reciprocate` | 3.71 TGas | 0.000349 NEAR | [53gPm5NA…](https://testnet.nearblocks.io/txns/53gPm5NADLhf6xq56p7A1Z7VmCVrkc9rvV1UCxtnuAxV) |
+| `withdraw` | 5.69 TGas | 0.000502 NEAR | [CVz6QvXk…](https://testnet.nearblocks.io/txns/CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45) |
+
+Other measurements:
+
+| What | Result | When | Source |
+|---|---|---|---|
+| Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
+| New guest gives on the deployed site, 360 px emulated touch screen, account already seated | 5.3 s | 4 Nov 2026 | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| Storage a gift pays for its own entry | 0.0015 NEAR | 2 Nov 2026 | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
+| Live attacks refused | 12 of 12 | 4 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
 
 ## What is not solved
 
@@ -124,6 +189,8 @@ Written down so nobody has to discover it. Full list: [threat model](docs/THREAT
 - **The guest's key lives in the browser.** Clear the browser or change phones and that account is gone, so the old amplop can no longer find you. This is the biggest gap in the product: the promise runs for years, and a browser key does not. Google or email login through NEAR Auth is the fix, but its shared testnet client only accepts `http://localhost:3000` as a callback (checked 4 November 2026), so a public site needs approved credentials we do not have.
 - **"No wallet" still means someone funds the guest.** Here the testnet helper does. A real product needs rupiah in through QRIS, a stablecoin, and gas sponsored by a relayer. None of that is built.
 - **Rupiah is a demo rate,** not a market price.
+- **Payouts and past holders are not on screen yet.** The track asks for them in the history view; gifts and replies are there.
+- **The holder gate is a screen.** Reading the contract directly shows the same data.
 - **Not audited, and no independent users yet.** Every test above was run by the builder.
 
 ## Repository
@@ -140,10 +207,10 @@ There is no `backend/` on purpose; see [Architecture](docs/ARCHITECTURE.md). See
 ## Tools and libraries
 
 - Contract: Rust, `near-sdk` 5.30.0, `near-contract-standards`.
-- Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`. Fonts: Gloock, Karla, DM Mono from Google Fonts.
+- Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`. Fonts: Kalnia, Gloock, Karla, DM Mono from Google Fonts.
 - Tests: `cargo test`, Vitest, `playwright-core` driving an installed Chrome.
 - Testnet RPC: FastNEAR. Accounts: NEAR testnet helper. Hosting: Vercel.
-- AI: code and documentation were written with an AI coding assistant (Claude Code), and several AI chat assistants were consulted when choosing the idea. Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
+- AI: code and documentation were written with an AI coding assistant (Claude Code), and several AI chat assistants were consulted when choosing the idea. The landing page sky video and images come from Google Flow (Veo, Nano Banana). Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
 
 ## Team
 
