@@ -10,6 +10,7 @@ export const t = {
   beranda: {
     lead: 'Tamu memberi lewat QR. Sebagian kecil disimpan sebagai benih atas nama tamu. Saat tamu itu menikah, amplopmu mengingatkan dan membalas dengan satu ketuk.',
     open: 'Buka hajatan',
+    tryGuest: 'Coba jadi tamu',
     mine: 'Hajatanmu',
     none: 'Belum ada hajatan di perangkat ini.',
   },
@@ -70,6 +71,7 @@ export const t = {
     ringSeed: (seed: string, rest: string) => `Benih ${seed} sudah siap. Lengkapi ${rest}?`,
     reply: 'Kirim balasan',
     later: 'Nanti',
+    laterNote: 'Tidak ada yang berubah. Amplop tetap ingat.',
     replied: 'Terkirim ke amplop tamu, tertaut ke pemberiannya dulu.',
   },
 

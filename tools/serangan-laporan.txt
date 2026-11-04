@@ -1,0 +1,14 @@
+Serangan hidup, kontrak amplop-c-mvznhnlx.testnet
+2026-11-04T03:35:42.426Z
+PASS | L1 kontrak tanpa kunci akses: tidak ada admin, tidak bisa diganti | 0 kunci
+PASS | L2 orang asing menarik dana amplop orang lain | ditolak: Smart contract panicked: only the current holder of the amplop can do this
+PASS | L3 memalsukan callback gagal bayar untuk menambah saldo | ditolak: Smart contract panicked: Method on_withdraw_done is private
+PASS | L4 memalsukan resolver transfer untuk merebut amplop | ditolak: Smart contract panicked: Method nft_resolve_transfer is private
+PASS | L5 hadiah 1 yocto tanpa biaya simpan | ditolak: Smart contract panicked: deposit must cover storage and leave a gift
+PASS | L6 membelokkan benih Budi ke hajatan orang lain | ditolak: Smart contract panicked: reply must go to a hajatan held by the original giver
+PASS | L7 amplop berbunyi hanya untuk pemberi aslinya | ke #11
+PASS | L8 membalas dua kali dari benih yang sama | ditolak: Smart contract panicked: this gift was already replied to
+PASS | L9 pemilik lama menarik dana sesudah amplop dijual | ditolak: Smart contract panicked: only the current holder of the amplop can do this
+PASS | L10 pemegang baru menarik dana bebas, benih tamu tetap terkunci | benih 9932000000000000000000
+PASS | L11 menarik benih sesudah dana bebas habis | ditolak: Smart contract panicked: nothing to withdraw
+PASS | L12 memberi ke hajatan yang sudah ditutup | ditolak: Smart contract panicked: this hajatan is not accepting gifts

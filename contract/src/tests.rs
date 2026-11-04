@@ -540,3 +540,116 @@ fn hajatan_of_lists_holder_amplops() {
     assert_eq!(c.hajatan_of(siti()).len(), 2);
     assert_eq!(c.hajatan_of(budi()).len(), 1);
 }
+
+// ---------- failures that would cost someone money or a promise ----------
+
+#[test]
+#[should_panic(expected = "no such amplop")]
+fn gift_to_a_missing_amplop_rejected() {
+    let mut c = fresh();
+    give(&mut c, &"404".to_string(), budi(), ONE_NEAR);
+}
+
+#[test]
+#[should_panic(expected = "deposit must cover storage of the amplop")]
+fn open_without_storage_deposit_rejected() {
+    let mut c = fresh();
+    testing_env!(ctx(siti(), 1).build());
+    c.open_hajatan("Nikahan".to_string(), "2026-11-21".to_string(), 500);
+}
+
+#[test]
+#[should_panic(expected = "no such entry")]
+fn reply_to_a_missing_entry_rejected() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let b = open(&mut c, budi(), 500);
+    testing_env!(ctx(siti(), ONE_NEAR).build());
+    c.reciprocate(a, 7, b, String::new());
+}
+
+#[test]
+fn ring_stops_when_the_giver_sold_their_hajatan() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let b = open(&mut c, budi(), 500);
+    assert_eq!(c.pending_replies(a.clone(), None, None).len(), 1);
+    testing_env!(ctx(budi(), 1).build());
+    c.nft_transfer(buyer(), b, None, None);
+    assert!(c.pending_replies(a, None, None).is_empty());
+}
+
+#[test]
+#[should_panic(expected = "reply must go to a hajatan held by the original giver")]
+fn reply_cannot_follow_the_giver_hajatan_to_its_buyer() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let b = open(&mut c, budi(), 500);
+    testing_env!(ctx(budi(), 1).build());
+    c.nft_transfer(buyer(), b.clone(), None, None);
+    testing_env!(ctx(siti(), ONE_NEAR).build());
+    c.reciprocate(a, 0, b, String::new());
+}
+
+#[test]
+#[should_panic(expected = "only the current holder")]
+fn old_owner_cannot_close_the_hajatan_after_transfer() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    testing_env!(ctx(siti(), 1).build());
+    c.nft_transfer(buyer(), a.clone(), None, None);
+    testing_env!(ctx(siti(), 0).build());
+    c.set_open(a, false);
+}
+
+#[test]
+fn new_holder_inherits_the_promise_and_can_reply() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let seed = entry(&c, &a, 0).seed.0;
+    let b = open(&mut c, budi(), 500);
+    testing_env!(ctx(siti(), 1).build());
+    c.nft_transfer(buyer(), a.clone(), None, None);
+    testing_env!(ctx(buyer(), 0).build());
+    let j = c.reciprocate(a.clone(), 0, b.clone(), "dari ahli waris".to_string());
+    assert_eq!(entry(&c, &b, j).giver, buyer());
+    assert!(entry(&c, &b, j).amount.0 < seed);
+    check_invariants(&c, &a);
+    check_invariants(&c, &b);
+}
+
+#[test]
+fn failed_payout_with_a_gift_in_between_loses_nothing() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let first = c.hajatan(a.clone()).unwrap();
+    testing_env!(ctx(siti(), 0).build());
+    let _ = c.withdraw(a.clone());
+    // a new gift lands while the payout is in flight
+    give(&mut c, &a, stranger(), ONE_NEAR);
+    let second_gift = entry(&c, &a, 1).amount.0;
+    testing_env!(ctx(accounts(0), 0).build());
+    c.apply_withdraw_result(&a, first.free.0, false);
+    let after = c.hajatan(a.clone()).unwrap();
+    assert_eq!(after.balance.0, first.balance.0 + second_gift);
+    check_invariants(&c, &a);
+}
+
+#[test]
+fn seed_rounding_on_tiny_gifts_never_breaks_the_books() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 1);
+    // gifts barely above storage: 0.01% of them rounds down, sometimes to zero
+    for i in 0..5u128 {
+        give(&mut c, &a, budi(), 5 * MILLI_NEAR + i);
+        check_invariants(&c, &a);
+    }
+    testing_env!(ctx(siti(), 0).build());
+    let _ = c.withdraw(a.clone());
+    check_invariants(&c, &a);
+}

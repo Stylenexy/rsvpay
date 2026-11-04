@@ -20,6 +20,7 @@ export function Beri({ id }: { id: string }) {
   const [out, setOut] = useState<{ hash: string | null; seedRp: number } | null>(null);
   const [star, setStar] = useState<CSSProperties | null>(null);
   const card = useRef<HTMLDivElement>(null);
+  const head = useRef<HTMLElement>(null);
 
   if (h.loading && !h.data) return <p className="busy">{t.loading}</p>;
   if (!h.data) return <p className="err">{t.missing}</p>;
@@ -45,7 +46,8 @@ export function Beri({ id }: { id: string }) {
       const box = card.current?.getBoundingClientRect();
       if (box) {
         const y = box.top + box.height / 2;
-        setStar({ ['--sy' as string]: `${y}px`, ['--up' as string]: `${70 - y}px` });
+        const rest = (head.current?.getBoundingClientRect().bottom ?? 120) + 72; // hangs in the sky under the title
+        setStar({ ['--sy' as string]: `${y}px`, ['--up' as string]: `${rest - y}px` });
       }
       setOut({ hash: r.txHash, seedRp: e ? chainRp(e.seed) : 0 });
       setPhase('done');
@@ -60,7 +62,7 @@ export function Beri({ id }: { id: string }) {
     <div className={phase === 'done' ? 'sent' : ''}>
       <Sky langit="fajar" />
       <main>
-        <header className="hd">
+        <header className="hd" ref={head}>
           <small>{t.beri.for}</small>
           <h1>{hajatan.title}</h1>
           <small>{hajatan.date}</small>

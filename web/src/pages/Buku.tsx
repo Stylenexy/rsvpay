@@ -28,6 +28,7 @@ export function Buku({ id }: { id: string }) {
   const [wd, setWd] = useState<{ busy: boolean; msg: string; hash: string | null } | null>(null);
   const [replies, setReplies] = useState<Record<number, { busy: boolean; hash: string | null; err: string }>>({});
   const [copied, setCopied] = useState(false);
+  const [later, setLater] = useState<number[]>([]);
   const known = useRef(-1);
 
   const load = useCallback(async () => {
@@ -105,7 +106,8 @@ export function Buku({ id }: { id: string }) {
   }
 
   const shown = [...entries].reverse().slice(0, 8);
-  const ringing = holder && pending.length > 0;
+  const due = pending.filter((p) => !later.includes(p.entry));
+  const ringing = holder && due.length > 0;
 
   return (
     <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''}>
@@ -171,8 +173,9 @@ export function Buku({ id }: { id: string }) {
               </span>
             </div>
 
+            {later.length > 0 && !ringing && <p className="note">{t.buku.laterNote}</p>}
             {ringing &&
-              pending.slice(0, 2).map((p) => {
+              due.slice(0, 2).map((p) => {
                 const who = shortName(p.giver);
                 const st = replies[p.entry];
                 const amountRp = chainRp(p.amount);
@@ -193,7 +196,7 @@ export function Buku({ id }: { id: string }) {
                         <button className="btn" disabled={st?.busy} onClick={() => reply(p)}>
                           {st?.busy ? t.buku.withdrawing : t.buku.reply}
                         </button>
-                        <button className="btn ghost" disabled={st?.busy}>
+                        <button className="btn ghost" disabled={st?.busy} onClick={() => setLater((l) => [...l, p.entry])}>
                           {t.buku.later}
                         </button>
                       </div>
