@@ -27,7 +27,7 @@ page.on('request', (r) => { if (r.url() === 'https://helper.nearprotocol.com/acc
 try {
   await page.goto(URL_BASE);
   const start = Date.now();
-  await page.getByRole('link', { name: /Try the whole story/ }).click();
+  await page.locator('.story-entry').click();
   await page.waitForURL(/#\/coba$/);
   await page.locator('[data-step="ring"][data-state="done"], [role="alert"]').first().waitFor({ timeout: 90_000 });
   if (await page.getByRole('alert').count()) {

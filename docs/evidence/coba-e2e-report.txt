@@ -1,10 +1,10 @@
 Manual testnet run: https://amplop-balas.vercel.app
-2026-11-04T21:39:14.827Z
+2026-11-05T08:58:24.081Z
 PASS | one public helper call for both families | 1
 PASS | child-account funding has a real receipt
 PASS | funding, opening, gift and second opening each have a receipt
 PASS | the reply waits for a tap
-PASS | whole story including the pause in 60 seconds | 29.4 s
+FAIL | whole story including the pause in 60 seconds | 60.9 s
 PASS | reply has a real receipt
 PASS | no second helper request while replying
 PASS | book layout at 1366x768 | {"separated":true,"overflow":0}
