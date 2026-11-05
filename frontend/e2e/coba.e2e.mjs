@@ -69,11 +69,11 @@ try {
   const next = people.find((id) => id !== current);
   if (!next) throw new Error('Second person missing');
   await page.getByRole('button', { name: 'Pass the envelope on' }).click();
-  await page.getByLabel('Next keeper’s account').fill(next);
+  await page.getByLabel('Their trial account').fill(next);
   check((await page.locator('.pass-envelope').innerText()).includes('You lose access'), 'confirmation explains loss of access');
   await page.getByRole('button', { name: `Pass it on to ${next}`, exact: true }).click();
   await page.getByText(`Now held by ${next}`, { exact: true }).waitFor({ timeout: 60_000 });
-  check(await page.getByRole('button', { name: 'Withdraw free money' }).count() === 0, 'old keeper loses controls');
+  check(await page.getByRole('button', { name: 'Take your gifts' }).count() === 0, 'old keeper loses controls');
   await page.locator('.acct select').selectOption(next);
   await page.getByRole('button', { name: 'Pass the envelope on' }).waitFor({ timeout: 20_000 });
   await page.getByText('The envelope’s history', { exact: true }).waitFor();
