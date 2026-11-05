@@ -7,6 +7,7 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 | `attacks-report.txt` | 12 live attacks against the deployed contract | `cd scripts && node attacks.mjs` |
 | `e2e-report.txt` | Whole story from a local build against the deployed contract, guest on a 360 px touch screen | `cd frontend && node e2e/alur.e2e.mjs` |
 | `coba-e2e-report.txt` | The one-button story on the live site | `cd frontend && node e2e/coba.e2e.mjs https://amplop-balas.vercel.app` |
+| `return-check-report.txt` | Leaving the landing from the very bottom and coming back | `cd frontend && node e2e/balik.e2e.mjs https://amplop-balas.vercel.app` |
 | `asset-check-report.txt` | Every page at two screen sizes: no failed file, every image decodes | `cd frontend && node e2e/aset.e2e.mjs https://amplop-balas.vercel.app` |
 | `web-client-live.txt` | The web client on testnet, with transaction hashes | `cd frontend && LIVE=1 npx vitest run src/chain/near.live.test.ts --reporter=verbose` |
 | `full-cycle-report.txt` | 19 checks: first full cycle from a fresh deployment, then all keys deleted | `cd scripts && node spk-a1.mjs <wasm>` |

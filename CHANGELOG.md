@@ -13,12 +13,18 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - `CLAIMS.md` and this changelog.
 
 ### Changed
+- The five envelopes each get the stage alone, on a backdrop made from their own tradition's material, then meet at the end. The backdrops live with the sky, so no edge shows.
+- The footer is a full closing page: night again, every chapter by its own headline, and the name rising out of the clouds.
 - Landing page rebuilt around one continuous sky. The story's own sky carries on behind every chapter, from night to morning, so no chapter paints a background and no section edge can show.
-- The orbit chapter and its second WebGL scene are gone, replaced by a glass envelope and one letter at a time. The page went from about 31 screens to about 23, and first load from 10.9 MB to about 5 MB.
+- The orbit chapter and its second WebGL scene are gone, replaced by a glass envelope and one letter at a time. First load went from 10.9 MB to about 5 MB.
 - The proof chapter is plain page scrolling beside a sticky heading. Figures no longer animate, so a number on screen is correct at every moment.
 - Share image reduced from 1 MB to 74 KB, so messaging apps show it.
 - Fonts settled on Zodiak and Satoshi, with Noto Serif and Figtree where those have no glyphs.
 - Translations audited for the words families actually use at weddings.
+
+### Fixed
+- Coming back to the landing from another page no longer leaves it broken: the page starts at the top, and scroll effects no longer read the old position.
+- The morning sky holds at the very bottom of the page.
 
 ## 2026-11-04
 

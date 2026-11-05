@@ -26,8 +26,9 @@ Contract: [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/am
 | The story takes about a minute or less. | 29.5 s and 60.9 s on 5 November, target 60 s. It depends on the public testnet. If the public helper refuses, the page says so and offers a run clearly labelled as a recording. | same |
 | A guest gives from a phone in 20 s or less, with nothing to install. | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt): 10.7 s, signed in the browser. | `cd frontend && node e2e/alur.e2e.mjs` |
 | Guest pages fit a 360 px screen. | Step E3: 0 px overflow. | same |
-| Every file of the site answers and every image decodes. | [`asset-check-report.txt`](docs/evidence/asset-check-report.txt): 209 files, five pages, two screen sizes. | `cd frontend && node e2e/aset.e2e.mjs https://amplop-balas.vercel.app` |
-| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 55 web tests passing (2 skipped) on 5 November. | `cd frontend && npx vitest run` |
+| Every file of the site answers and every image decodes. | [`asset-check-report.txt`](docs/evidence/asset-check-report.txt): 208 files, five pages, two screen sizes. | `cd frontend && node e2e/aset.e2e.mjs https://amplop-balas.vercel.app` |
+| The landing stays whole after leaving it and coming back. | [`return-check-report.txt`](docs/evidence/return-check-report.txt): back by logo and by browser button, from the very bottom of the page, then 18 quick round trips. | `cd frontend && node e2e/balik.e2e.mjs https://amplop-balas.vercel.app` |
+| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 57 web tests passing (2 skipped) on 5 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
 
@@ -37,4 +38,4 @@ Contract: [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/am
 - **A clean last browser run.** The last full run passed 13 of 14 steps. Step E12 failed because a public RPC answered 429, which shows up as a browser console error.
 - **Complete history.** The public indexer can be empty for this contract; the page falls back to receipts and says which source it used.
 - **Native-speaker translations.** They were written with AI help and checked by a second AI.
-- **Low-end phones.** Smoothness was measured on a laptop with a GPU, not on a cheap phone.
+- **Smoothness everywhere.** It was measured on a laptop with a GPU before the last rebuild of the five envelopes and the footer, and never on a cheap phone.
