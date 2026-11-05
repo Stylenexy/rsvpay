@@ -22,15 +22,16 @@ Contract: [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/am
 
 | Claim | Proof | Check it yourself |
 |---|---|---|
-| The whole story runs on real testnet from one button, with a receipt per transaction. | [`coba-e2e-report.txt`](docs/evidence/coba-e2e-report.txt): 14 of 14 checks on the last run. | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
+| The whole story runs on real testnet from one button, with a receipt per transaction. | [`coba-e2e-report.txt`](docs/evidence/coba-e2e-report.txt): 14 of 14 checks on the last run the public helper allowed, 6 November 02.34 Asia/Jakarta. A later attempt was refused with 429 and the page offered the labelled recording: [`coba-refused-report.txt`](docs/evidence/coba-refused-report.txt). | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
 | The story takes about a minute or less. | Between 28.6 s and 60.9 s, target 60 s. It depends on the public testnet. If the public helper refuses, the page says so and offers a run clearly labelled as a recording. | same |
 | A guest gives from a phone in 20 s or less, with nothing to install. | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt): 10.7 s, signed in the browser. | `cd frontend && node e2e/alur.e2e.mjs` |
 | Guest pages fit a 360 px screen. | Step E3: 0 px overflow. | same |
-| Every file of the site answers and every image decodes. | [`asset-check-report.txt`](docs/evidence/asset-check-report.txt): 210 files, five pages, two screen sizes. | `cd frontend && node e2e/aset.e2e.mjs https://rsvpay.vercel.app` |
+| Every file of the site answers and every image decodes. | [`asset-check-report.txt`](docs/evidence/asset-check-report.txt): 207 files, five pages, two screen sizes. | `cd frontend && node e2e/aset.e2e.mjs https://rsvpay.vercel.app` |
 | A reply shows on both sides: the gift says it was given back, and the receiver's book shows the reply as its own card. | Fields `reply_to` and `replied` from the contract, shown in `frontend/src/pages/Buku.tsx`; screenshot [`coba-book-1366.png`](docs/evidence/coba-book-1366.png). | Finish the story at `#/coba` |
 | The landing stays whole after leaving it and coming back. | [`return-check-report.txt`](docs/evidence/return-check-report.txt): back by logo and by browser button, from the very bottom of the page, then 18 quick round trips. | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |
-| Each inner page says who you are and what happens next. | `frontend/src/components/Guide.tsx`, in all six languages. | Open any inner page on the live site |
-| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 65 web tests passing (2 skipped) on 6 November. | `cd frontend && npx vitest run` |
+| Each inner page says who you are and what happens next, floating over the page without moving it. | [`demo-check-report.txt`](docs/evidence/demo-check-report.txt): layout identical before and after opening the guide, in all six languages. | `cd frontend && node e2e/demo.e2e.mjs https://rsvpay.vercel.app` |
+| A demo runs itself from the first field to the last screen, on a laptop and on a phone. It uses the rehearsal client, not testnet, and says so on screen. | Same report. | same |
+| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 66 web tests passing (2 skipped) on 6 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
 

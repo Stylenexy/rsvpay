@@ -18,7 +18,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Contract (testnet) | [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U`, equal to the hash of a release build of this source |
-| Tests | 45 Rust, 65 web, 12 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 28.6 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
+| Tests | 45 Rust, 66 web, 12 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 28.6 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 ## Try the whole story on one device
@@ -30,6 +30,8 @@ The browser requests one throwaway account for Siti from NEAR's public testnet h
 Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; live checks took between 28.6 s and 60.9 s including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Budi's opening receipt.
+
+To watch instead of waiting on the network, open **How it works** on any inner page and press **Show me, step by step**. The site types the names, opens the book, gives, rings and gives back on its own, then says the demo is finished. That demo runs on a rehearsal client in your browser with play money, and it is labelled as a rehearsal on screen. The button above is the one that uses real testnet.
 
 To inspect the fixed deployment's keys:
 

@@ -1,0 +1,7 @@
+Manual testnet run: https://rsvpay.vercel.app
+2026-11-05T20:15:08.677Z
+PASS | one helper attempt on refusal | 1
+PASS | fallback contains four explicitly recorded receipts
+PASS | recording cannot be mistaken for this visit
+FAIL | flow stopped | Error: Live story unverified: account service or network refused; recording checked separately.
+The public helper answered 429 to this laptop's address. The page said so and offered the labelled recording, which is the behaviour this run shows. The story itself was not reached.

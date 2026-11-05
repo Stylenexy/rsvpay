@@ -5,7 +5,10 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ## 2026-11-06
 
 ### Added
-- A quiet guide on every inner page: who you are here, what happens next, and the whole journey one tap away.
+- A floating guide on every inner page: who you are here, the four steps, and what comes next. It moves nothing on the page.
+- A demo that runs itself: Show me, step by step types the names, opens the book, gives, rings, gives back, then says Demo finished. It runs on the rehearsal client on the visitor's device, so it costs nothing and touches no network.
+- A finished step now says so and names the next one.
+- The language highlight slides to the language under the pointer, and the chosen one stays marked.
 - Hints on the main buttons, so each one says what it does before you press it.
 - New name and marks: RSVPay, a glass seal for large moments and a flat seal for small sizes.
 
@@ -13,6 +16,11 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - The book links gifts and replies both ways, and the product name lives in one file.
 - Plain words replace "keeper" everywhere.
 - A couple's names read on three lines: name, connector, name.
+- The heading on the make-an-envelope page stays put; the couple's names fade in beneath it.
+
+### Fixed
+- The landing stayed broken after someone made an envelope, with space below the footer and no hero. The landing no longer renders an app block for returning accounts.
+- Low balance errors now read in plain words, using the wording the network really sends.
 
 ## 2026-11-05
 

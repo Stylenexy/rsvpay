@@ -121,6 +121,17 @@ const overflow = await phone.page.evaluate(() => document.documentElement.scroll
 say(overflow <= 0, 'no sideways scroll on a phone', String(overflow));
 await phone.context.close();
 
+// the floating guide must never sit on the one button the whole story waits for
+for (const [label, viewport, extra] of [['laptop', { width: 1366, height: 768 }, {}], ['phone', { width: 360, height: 740 }, { isMobile: true, hasTouch: true }]]) {
+  const story = await open(viewport, extra);
+  await story.page.goto(`${BASE}/?mock#/coba`, { waitUntil: 'load' });
+  await story.page.locator('[data-step="ring"][data-state="done"]').waitFor({ timeout: 60000 });
+  await story.page.getByRole('button', { name: 'Give back to Budi' }).click({ timeout: 8000 });
+  await story.page.locator('[data-story-complete]').waitFor({ timeout: 30000 });
+  say(true, `the story button stays reachable on a ${label}`);
+  await story.context.close();
+}
+
 say(!errors.length, 'no page errors', errors[0] ?? '');
 await browser.close();
 console.log(results.every(Boolean) ? 'PASS | guide and demo' : `FAIL | ${results.filter((ok) => !ok).length} checks`);

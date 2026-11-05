@@ -1,0 +1,24 @@
+2026-11-05T20:17:57Z
+PASS | opening the guide moves nothing | {"form":127,"stage":481,"line":715,"height":887}
+PASS | the guide floats
+PASS | the heading keeps its words while typing | A beginning worth keeping.
+PASS | the names arrive under it | {"text":"Siti dan Andi","opacity":1}
+PASS | typing moves nothing
+PASS | clearing fades the names away
+PASS | the heading is still there after clearing
+PASS | the pill slides to the hovered language | 952 to 1064
+PASS | hovering does not change the language | EN
+PASS | the pill returns when the pointer leaves
+PASS | finishing step 1 says what comes next | Step 1 done. Time for step 2: Guests scan and give ↗
+PASS | giving says what comes next | Step 2 done. Time for step 3: The book keeps every gift and a small share ↗
+PASS | the book says what comes next | Step 3 done. Time for step 4: Years later it rings, and you give back ↗
+PASS | the demo runs to the end in 32 s | Demo finished. The guest's new book shows the gift came back.
+PASS | the demo ends on the gift that came back
+PASS | the finished card offers ways on, not a stop
+PASS | leaving the demo leaves rehearsal mode | /#/buka
+PASS | the demo finishes on a phone in 39 s | Demo finished. The guest's new book shows the gift came back.
+PASS | no sideways scroll on a phone | 0
+PASS | the story button stays reachable on a laptop
+PASS | the story button stays reachable on a phone
+PASS | no page errors
+PASS | guide and demo
