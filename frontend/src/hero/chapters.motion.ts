@@ -17,6 +17,10 @@ export function mountChapters(root: HTMLElement) {
   const page = root.closest<HTMLElement>('.hz-page')!;
   const pin = page.querySelector<HTMLElement>('.hz-pin')!;
 
+  // ScrollTrigger keeps the last scroll position it read. Coming back from another page, that number is from the old page.
+  ScrollTrigger.clearScrollMemory();
+  ScrollTrigger.refresh();
+
   const context = gsap.context(() => {
     ScrollTrigger.create({ trigger: '.ch-footer', start: 'top 88px', end: 'bottom top', toggleClass: { targets: page, className: 'ch-footer-on' } });
     ScrollTrigger.create({ trigger: '.ch-round', start: 'top 60%', endTrigger: '.ch-close', end: 'bottom top', toggleClass: { targets: page, className: 'ch-stage-on' } });
@@ -55,13 +59,14 @@ export function mountChapters(root: HTMLElement) {
       const clouds = $('.ch-sky-clouds');
       // Sky and clouds wake a few screens early, while nothing is moving, and sleep again when their pass is over.
       const wake = (element: HTMLElement, trigger: gsap.DOMTarget, start: string, end: string) => ScrollTrigger.create({ trigger, start, end, onToggle: self => { element.style.visibility = self.isActive ? 'visible' : 'hidden'; } });
-      wake(sky, pin, 'bottom 320%', 'max');
+      const stayAwake = (element: HTMLElement, trigger: gsap.DOMTarget, start: string) => ScrollTrigger.create({ trigger, start, onEnter: () => { element.style.visibility = 'visible'; }, onLeaveBack: () => { element.style.visibility = 'hidden'; } });
+      stayAwake(sky, pin, 'bottom 320%');
       wake(clouds, pin, 'bottom 320%', 'bottom 40%');
       wake(clouds, '.ch-close', 'top 300%', 'top 10%');
       // Only the layers in play stay awake: a layer sleeps until two screens before its turn and again once it is covered.
       wake(gold, '.ch-names', 'top 300%', 'top -110%');
       wake(blue, '.ch-names', 'top 200%', 'bottom top');
-      wake(morning, '.ch-names', 'bottom 300%', 'max');
+      stayAwake(morning, '.ch-names', 'bottom 300%');
       gsap.fromTo(sky, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: pin, start: 'bottom 140%', end: 'bottom 112%', scrub: SCRUB } });
       const cloudPass = (trigger: gsap.DOMTarget, start: string, end: string) => gsap.timeline({ scrollTrigger: { trigger, start, end, scrub: SCRUB } })
         .fromTo(clouds, { opacity: FAINT, yPercent: 46 }, { opacity: 1, yPercent: 0, duration: .45, ease: 'power1.out', immediateRender: false }, 0)

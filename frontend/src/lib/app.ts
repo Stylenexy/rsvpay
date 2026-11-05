@@ -31,7 +31,10 @@ export function parseHash(hash: string): Route {
 export function useRoute(): Route {
   const [hash, setHash] = useState(() => window.location.hash);
   useEffect(() => {
-    const onChange = () => setHash(window.location.hash);
+    const onChange = () => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      setHash(window.location.hash);
+    };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
   }, []);

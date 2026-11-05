@@ -310,6 +310,8 @@ export function createScene(canvas: HTMLCanvasElement, lowPower: boolean) {
 
   function dispose() {
     renderer.dispose();
+    // React's development double mount reuses this canvas; a page that really left has already removed it
+    if (!canvas.isConnected) renderer.forceContextLoss();
     scene.traverse((o) => {
       const m = o as THREE.Mesh;
       m.geometry?.dispose?.();
