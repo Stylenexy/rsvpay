@@ -1,3 +1,4 @@
+import { Guide } from '../components/Guide';
 import { useEffect, useRef, useState } from 'react';
 import { RECORDED, replyStory, startStory, type StoryMark, type StorySession, type StoryStep } from '../chain/story';
 import type { Entry } from '../chain/types';
@@ -79,7 +80,7 @@ export function Coba() {
   }
 
   const p = session?.pending;
-  return <main className="app-grid coba-page" ref={root}>
+  return <><Guide role="demo" line={t.guideCoba} step={3} /><main className="app-grid coba-page" ref={root}>
     <div className="story-column">
       <EnvelopeStory title={t.cobaTitle} date={marks.some((m) => m.step === 'years') ? '2028-11-20' : '2026-11-21'} eyebrow={t.cobaStart}>{t.cobaIntro}</EnvelopeStory>
       <ol className="story-timeline glass" aria-label={t.cobaStart} aria-live="polite">
@@ -119,5 +120,5 @@ export function Coba() {
         <ol>{RECORDED.map((r) => <li key={r.hash}><p>{labels[r.step]}</p><TxLink hash={r.hash} /></li>)}</ol>
       </div>}
     </section>
-  </main>;
+  </main></>;
 }

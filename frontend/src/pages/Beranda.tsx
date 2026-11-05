@@ -14,7 +14,7 @@ export function Beranda() {
   return (
     <>
       <Hero />
-      <a className="btn story-entry" href={link.coba()}>{t.cobaStart} ↗</a>
+      <a className="btn story-entry" href={link.coba()} data-tip={t.tipStory}>{t.cobaStart} ↗</a>
       {account && (
         <main className="app">
           <Sky langit="malam" />

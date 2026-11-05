@@ -111,11 +111,11 @@ try {
   say(true, 'E6 host book updates by itself without a reload', await host.getByText(/baru saja/).innerText());
   await host.waitForTimeout(1200);
   await host.screenshot({ path: `${OUT}3-host-book.png`, fullPage: true });
-  await host.getByRole('button', { name: 'Orang lain' }).click();
+  await host.getByRole('button', { name: 'Yang dilihat tamu' }).click();
   await host.getByText(/Amplop ini milik/).waitFor({ timeout: 5_000 });
   const hidden = (await host.getByText('Budi', { exact: true }).count()) === 0;
-  await host.getByRole('button', { name: 'Saya pemegang' }).click();
-  say(hidden, 'E6b holder taps "Orang lain": names and amounts disappear', '');
+  await host.getByRole('button', { name: 'Yang kamu lihat' }).click();
+  say(hidden, 'E6b holder taps "Yang dilihat tamu": names and amounts disappear', '');
 
   // 4. a non-holder sees the lock, not the book
   await guest.goto(`${URL_BASE}/#/buku/${id}`);

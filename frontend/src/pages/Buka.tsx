@@ -1,3 +1,4 @@
+import { Guide } from '../components/Guide';
 import { useRef, useState } from 'react';
 import { EnvelopeStory, Segmented } from '../components/parts';
 import { plainError, useCopy } from '../copy';
@@ -52,6 +53,7 @@ export function Buka() {
 
   return (
     <>
+      <Guide role="couple" line={t.guideBuka} step={0} />
       <main className="app-grid open-page" ref={root}>
         <EnvelopeStory title={title || t.bukaTitle} date={date} eyebrow={t.bukaEyebrow} amount={bps * 100}>{t.bukaStory}</EnvelopeStory>
         <form className="glass card form-panel" onSubmit={submit}>
@@ -83,6 +85,7 @@ export function Buka() {
           <button className="btn" type="submit" disabled={!!busy}>
             {busy === 'akun' ? t.bukaMaking : busy === 'buka' ? t.bukaOpening : t.bukaSubmit}
           </button>
+          <p className="next-hint">{t.hintBuka}</p>
           {!!err && <p className="err" role="alert">{err === 'name-required' ? t.bukaNameRequired : plainError(err, lang)}</p>}
         </form>
       </main>

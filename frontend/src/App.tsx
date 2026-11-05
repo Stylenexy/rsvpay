@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { createClient } from './chain';
+import { PointerTip } from './components/Guide';
 import { AccountChip, LanguageSwitcher, Sky } from './components/parts';
 import { AmplopProvider } from './context';
 import { useCopy } from './copy';
@@ -60,6 +61,7 @@ export function App() {
   return (
     <AmplopProvider client={client}>
       <Shell mode={client.mode} />
+      <PointerTip />
     </AmplopProvider>
   );
 }

@@ -8,6 +8,7 @@ import { useFormat, useLang } from '../lib/lang';
 import { useBookMotion, usePageMotion } from '../lib/motion';
 import { STORAGE_MARGIN_YOCTO, chainRp } from '../lib/rupiah';
 import { validReceiver } from '../lib/accounts';
+import { Guide } from '../components/Guide';
 import { History } from '../components/History';
 
 const FIELD_W = 440;
@@ -176,6 +177,7 @@ export function Buku({ id }: { id: string }) {
 
   return (
     <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''} ref={root}>
+      <Guide role={holder ? 'couple' : 'visitor'} line={holder ? t.guideBukuOwner : t.guideBukuVisitor} step={2} />
       <main className={`app-grid book-page${ringing ? ' is-ringing' : ''}`}>
         <div className="story-column">
           <EnvelopeStory title={h.title} date={h.date} eyebrow={locked ? t.bukuVisitorEyebrow : t.bukuEyebrow}>{locked ? t.bukuVisitorStory : t.bukuStory}</EnvelopeStory>
@@ -310,6 +312,7 @@ export function Buku({ id }: { id: string }) {
             <button className="btn" disabled={!!wd?.busy || !!transfer?.busy || Object.values(replies).some((r) => r.busy) || BigInt(h.free) === 0n} onClick={withdraw}>
               {wd?.busy ? t.bukuWithdrawing : BigInt(h.free) === 0n ? t.bukuNothing : t.bukuWithdraw}
             </button>
+            <p className="next-hint">{t.hintTake}</p>
             {wd && !wd.busy && (
               <div className="done">
                 <p>{wd.error ? plainError(wd.error, lang) : say(t.bukuWithdrawn, formatRp(wd.amount ?? 0))}</p>

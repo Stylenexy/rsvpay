@@ -1,3 +1,4 @@
+import { Guide } from '../components/Guide';
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { EnvelopeStory, Rp, Segmented, SlideToGive, TxLink, Loading, Missing } from '../components/parts';
 import { plainError, say, useCopy } from '../copy';
@@ -82,6 +83,7 @@ export function Beri({ id }: { id: string }) {
   const busy = phase === 'akun' || phase === 'kirim';
   return (
     <div className={phase === 'done' ? 'sent' : ''} ref={root}>
+      <Guide role="guest" line={t.guideBeri} step={1} />
       <main className="app-grid guest-page">
         <div className="story-column">
           <EnvelopeStory title={hajatan.title} date={hajatan.date} eyebrow={t.beriFor} amount={rp}>{t.beriStory}</EnvelopeStory>
@@ -105,6 +107,7 @@ export function Beri({ id }: { id: string }) {
                 <input className="input wish" value={wish ?? t.beriWishDefault} placeholder={t.beriWishHint} aria-label={t.beriWish} maxLength={280} onChange={(e) => setWish(e.target.value)} />
               </label>
               {!hajatan.open ? <p className="err">{t.beriClosed}</p> : <SlideToGive label={t.beriSlide} disabled={busy} onGive={give} />}
+              {hajatan.open && <p className="next-hint">{t.hintBeri}</p>}
               {busy && <p className="busy" role="status">{phase === 'akun' ? t.beriMaking : t.beriSending}</p>}
               {!!err && <p className="err" role="alert">{err === 'name-required' ? t.beriNameRequired : plainError(err, lang)}</p>}
               {account && <p className="note giving-as">{say(t.beriAs, shortName(account))}</p>}

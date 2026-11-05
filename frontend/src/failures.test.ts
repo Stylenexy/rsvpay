@@ -12,7 +12,7 @@ describe('what a person sees when something fails', () => {
   it('turns every contract refusal a guest or host can hit into plain Indonesian', () => {
     const real = (text: string) => `Smart contract panicked: ${text}`;
     expect(plainError(new Error(real('this hajatan is not accepting gifts')), 'id')).toMatch(/tidak menerima pemberian/);
-    expect(plainError(new Error(real('only the current holder of the amplop can do this')), 'id')).toMatch(/pemegang/);
+    expect(plainError(new Error(real('only the current holder of the amplop can do this')), 'id')).toMatch(/pasangan/);
     expect(plainError(new Error(real('this gift was already replied to')), 'id')).toMatch(/sudah dibalas/);
     expect(plainError(new Error(real('nothing to withdraw')), 'id')).toMatch(/dana bebas/);
     expect(plainError(new Error(real('amplop is mid-transfer, try after it settles')), 'id')).toMatch(/berpindah tangan/);
