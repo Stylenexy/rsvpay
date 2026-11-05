@@ -305,6 +305,8 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
 .guide-panel li.on a, .tour-card li.on { background: var(--app-glass); box-shadow: inset 0 0 0 1px var(--amber-ink); }
 .guide-panel small { color: var(--mut); font-size: 12px; }
 .next-hint { margin: 0; color: var(--mut); font-size: 12px; line-height: 1.4; text-align: center; }
+.story-names { min-height: 1.3em; margin: 6px 0 0; font: 400 clamp(22px, 2.4vw, 34px)/1.25 var(--f-disp); color: var(--amber-ink); opacity: 0; transform: translateY(6px); transition: opacity .5s ease, transform .5s ease; }
+.story-names.on { opacity: 1; transform: none; }
 .lang-pill { position: absolute; top: 0; left: 0; border-radius: 999px; pointer-events: none; transition: transform .34s cubic-bezier(.3, 1, .4, 1), width .34s cubic-bezier(.3, 1, .4, 1); }
 .app-languages .lang-pill { background: var(--fg); }
 .app-languages button { position: relative; z-index: 1; transition: color .25s ease, box-shadow .25s ease; }
@@ -312,7 +314,8 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
 .app-languages[data-peek] button[aria-pressed='true'] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--amber-ink); }
 .tour-spot { outline: 2px solid var(--amber-ink); outline-offset: 3px; }
 .tour-card .guide-who span { color: var(--fg); }
+.story-date.off { opacity: 0; }
 @media (max-width: 640px) { .tour-card ol { display: none; } .tour-card .guide-panel { gap: 6px; padding: 12px 14px; } }
 @keyframes guide-in { from { opacity: 0; transform: translateY(8px); } }
 .pointer-tip { position: fixed; z-index: 60; max-width: 280px; padding: 6px 12px; border-radius: 10px; background: var(--fg); color: var(--sky0); font: 500 12px/1.35 var(--f-body); text-align: center; transform: translate(-50%, calc(-100% - 10px)); pointer-events: none; }
-@media (prefers-reduced-motion: reduce) { .guide-bubble { animation: none; } .lang-pill { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .guide-bubble { animation: none; } .story-names, .lang-pill { transition: none; } }

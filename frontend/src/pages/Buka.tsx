@@ -55,7 +55,7 @@ export function Buka() {
     <>
       <Guide role="couple" line={t.guideBuka} step={0} />
       <main className="app-grid open-page" ref={root}>
-        <EnvelopeStory title={title || t.bukaTitle} date={date} eyebrow={t.bukaEyebrow} amount={bps * 100}>{t.bukaStory}</EnvelopeStory>
+        <EnvelopeStory title={t.bukaTitle} names={title} date={date} eyebrow={t.bukaEyebrow} amount={bps * 100}>{t.bukaStory}</EnvelopeStory>
         <form className="glass card form-panel" onSubmit={submit}>
           <h2>{t.bukaForm}</h2>
           <label className="field">

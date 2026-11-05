@@ -13,6 +13,14 @@ PASS | back button: no leftover page state | hz-page
 PASS | back button: wedding panels are visible | 1
 PASS | back button: first letter is visible | 1
 PASS | back button: morning sky holds at the very bottom | visible visible
+PASS | after making an envelope: story fills the screen | {"nav":0,"hz":0}
+PASS | after making an envelope: no chapter label over the story | hidden
+PASS | after making an envelope: chapter sky stays off the story | hidden 0.01
+PASS | after making an envelope: no leftover page state | hz-page
+PASS | after making an envelope: wedding panels are visible | 1
+PASS | after making an envelope: first letter is visible | 1
+PASS | after making an envelope: morning sky holds at the very bottom | visible visible
+PASS | nothing below the footer | {"extra":0,"end":0.390625}
 PASS | still drawing after 18 returns
 PASS | no page errors
 PASS | landing survives every way back
