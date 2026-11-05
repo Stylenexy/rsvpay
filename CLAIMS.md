@@ -16,7 +16,7 @@ Contract: [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/am
 | A gift can be replied to only once. | Test `a_gift_can_be_replied_only_once`; step A09; attack L8. | same |
 | A host keeps back at most 10%, set once. | Test `seed_above_ten_percent_rejected`; contract panic `seed_bps must be 0..=1000 (max 10%)`. | same |
 | No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. | same |
-| 45 contract tests pass. | Test binary run on 5 November: 45 passed, contract source unchanged since it was built on 4 November. A fresh `cargo test` on the author's Windows laptop currently stops in the build script of the dependency `aws-lc-sys`, before any project code. CI runs the same command on Linux and has not run yet, because the repository is not public yet. | `cd contracts && cargo test` |
+| 45 contract tests pass. | Fresh `cargo test` on 5 November: 45 passed, 0 failed. CI runs the same command on Linux and has not run yet, because the repository is not public yet. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
 
 ## On the site
 

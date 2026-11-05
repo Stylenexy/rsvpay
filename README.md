@@ -103,7 +103,7 @@ Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_
 ```bash
 cd contracts && cargo test
 ```
-See `test result: ok. 45 passed`.
+See `test result: ok. 45 passed`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first.
 
 ```bash
 cd frontend && npm ci && npm test
