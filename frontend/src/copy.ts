@@ -109,7 +109,7 @@ const words = {
   bukuVisitorStory: ['A happy day, surrounded by the people who matter. The couple keeps their gift book here. You can leave a gift and a few kind words.', 'Hari bahagia bersama orang tersayang. Pasangan ini menyimpan buku pemberiannya di sini. Kamu bisa ikut memberi dan menitipkan doa.', '与珍爱的人共度喜悦。新人把礼金簿留在这里，你也可以送上一份心意和祝福。', '소중한 사람들과 맞이하는 기쁜 날. 두 사람의 축의금 장부가 여기 있어요. 선물과 축하의 말을 전해 보세요.', '大切な人たちと迎える晴れの日。ふたりのご祝儀帳はここに。贈り物とお祝いの言葉を届けられます。', 'Ngày vui bên những người thân yêu. Hai bạn giữ sổ quà cưới ở đây. Bạn có thể gửi quà và đôi lời chúc.'],
   bukuEyebrow: ['Your wedding gift book', 'Buku pemberian pernikahan', '婚礼礼金簿', '우리의 축의금 장부', 'ふたりのご祝儀帳', 'Sổ quà cưới của bạn'],
   bukuStory: ['Every star is someone who came for you. The share kept stays here, ready for the day you give back.', 'Setiap bintang adalah seseorang yang hadir untukmu. Simpanan tetap di sini, siap saat kamu Balas.', '每颗星，都是为你而来的人。留存的那一份还在这里，等待回礼的日子。', '별 하나마다 함께해 준 사람이 있어요. 남겨 둔 몫은 보답할 날을 기다려요.', '星のひとつひとつが、来てくれた人。残した分は、お返しの日までここに。', 'Mỗi ngôi sao là một người đến chung vui. Phần giữ lại vẫn ở đây, chờ ngày bạn mừng lại.'],
-  bukuSky: ['{0} … {1} gifts', '{0} … {1} pemberian', '{0} · {1} 份心意', '{0} · 축의금 {1}건', '{0} · {1}件の贈り物', '{0} · {1} món quà'],
+  bukuSky: ['{0} … gifts: {1}', '{0} … {1} pemberian', '{0} · {1} 份心意', '{0} · 축의금 {1}건', '{0} · {1}件の贈り物', '{0} · {1} món quà'],
   bukuFree: ['Yours to take', 'Bebas ditarik', '可领取', '받을 수 있는 금액', '受け取れる分', 'Phần có thể nhận'],
   bukuSeed: ['Share kept to give back', 'Simpanan untuk Balas', '留作回礼', '보답할 몫', 'お返しに残す分', 'Phần giữ để mừng lại'],
   bukuWithdraw: ['Take your gifts', 'Tarik dana bebas', '领取礼金', '축의금 받기', '贈り物を受け取る', 'Nhận tiền mừng'],
