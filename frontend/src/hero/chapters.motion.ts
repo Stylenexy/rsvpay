@@ -3,6 +3,8 @@ import { clamp, ease, lerp, seg } from './math';
 import { cardFocus, roundFrame } from './ch/layout';
 
 const SCRUB = .6;
+// Browsers skip painting at opacity 0, so the first visible frame would pay for all of it. This is too faint to see and still paints.
+const FAINT = .01;
 
 /** ScrollTrigger reads the hero's scroll; it never pins, snaps or writes it. Sections stay transparent: only the sky owns colour. */
 export function mountChapters(root: HTMLElement) {
@@ -51,17 +53,22 @@ export function mountChapters(root: HTMLElement) {
       const [, gold, blue, morning] = $$('.ch-sky > img');
       const shade = $('.ch-sky-shade');
       const clouds = $('.ch-sky-clouds');
-      gsap.set(clouds, { autoAlpha: 0 });
-      gsap.fromTo(sky, { autoAlpha: 0 }, { autoAlpha: 1, ease: 'none', scrollTrigger: { trigger: pin, start: 'bottom 140%', end: 'bottom 112%', scrub: SCRUB } });
+      // Sky and clouds wake a few screens early, while nothing is moving, and sleep again when their pass is over.
+      const wake = (element: HTMLElement, trigger: gsap.DOMTarget, start: string, end: string) => ScrollTrigger.create({ trigger, start, end, onToggle: self => { element.style.visibility = self.isActive ? 'visible' : 'hidden'; } });
+      wake(sky, pin, 'bottom 320%', 'max');
+      wake(clouds, pin, 'bottom 320%', 'bottom 40%');
+      wake(clouds, '.ch-close', 'top 300%', 'top 10%');
+      gsap.fromTo(sky, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: pin, start: 'bottom 140%', end: 'bottom 112%', scrub: SCRUB } });
       const cloudPass = (trigger: gsap.DOMTarget, start: string, end: string) => gsap.timeline({ scrollTrigger: { trigger, start, end, scrub: SCRUB } })
-        .fromTo(clouds, { autoAlpha: 0, yPercent: 46 }, { autoAlpha: 1, yPercent: 0, duration: .45, ease: 'power1.out', immediateRender: false }, 0)
-        .to(clouds, { autoAlpha: 0, yPercent: -46, duration: .55, ease: 'power1.in' }, .45);
+        .fromTo(clouds, { opacity: FAINT, yPercent: 46 }, { opacity: 1, yPercent: 0, duration: .45, ease: 'power1.out', immediateRender: false }, 0)
+        .to(clouds, { opacity: FAINT, yPercent: -46, duration: .55, ease: 'power1.in' }, .45);
+      gsap.set(clouds, { opacity: FAINT });
       cloudPass(pin, 'bottom 165%', 'bottom 60%');
       cloudPass('.ch-close', 'top 135%', 'top 20%');
-      gsap.fromTo(gold, { opacity: 0 }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ch-names', start: 'top bottom', end: 'top top', scrub: SCRUB } });
-      gsap.fromTo(blue, { opacity: 0 }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ch-names', start: 'top top', end: 'top -100%', scrub: SCRUB } });
+      gsap.fromTo(gold, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ch-names', start: 'top bottom', end: 'top top', scrub: SCRUB } });
+      gsap.fromTo(blue, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ch-names', start: 'top top', end: 'top -100%', scrub: SCRUB } });
       gsap.fromTo(shade, { opacity: 1 }, { opacity: .45, ease: 'none', scrollTrigger: { trigger: '.ch-names', start: 'top bottom', end: 'top -100%', scrub: SCRUB } });
-      gsap.fromTo(morning, { opacity: 0 }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ch-close', start: 'top 120%', end: 'top 30%', scrub: SCRUB } });
+      gsap.fromTo(morning, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: '.ch-close', start: 'top 120%', end: 'top 30%', scrub: SCRUB } });
       gsap.to(shade, { opacity: 0, ease: 'none', scrollTrigger: { trigger: '.ch-close', start: 'top 120%', end: 'top 30%', scrub: SCRUB } });
 
       // SplitText owns its masks, including reflow when a language font arrives.
@@ -139,7 +146,7 @@ export function mountChapters(root: HTMLElement) {
       redraw();
       window.addEventListener('resize', redraw);
       removers.push(() => window.removeEventListener('resize', redraw));
-      gsap.from(row, { y: 72, opacity: 0, ease: 'power2.out', scrollTrigger: { trigger: wedding, start: 'top 85%', end: 'top 20%', scrub: SCRUB } });
+      gsap.from(row, { y: 72, opacity: FAINT, ease: 'power2.out', scrollTrigger: { trigger: wedding, start: 'top 85%', end: 'top 20%', scrub: SCRUB } });
 
       // ---- 03: one envelope, one letter at a time; it turns over to be sent back
       const round = $('.ch-round');
@@ -160,20 +167,20 @@ export function mountChapters(root: HTMLElement) {
       };
       gsap.to(roundState, { p: 1, ease: 'none', scrollTrigger: { trigger: round, start: 'top top', end: 'bottom bottom', scrub: SCRUB }, onUpdate: drawRound });
       drawRound();
-      gsap.from('.round-copy, .round-scene', { y: 64, opacity: 0, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: round, start: 'top 100%', end: 'top 30%', scrub: SCRUB } });
+      gsap.from('.round-copy, .round-scene', { y: 64, opacity: FAINT, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: round, start: 'top 100%', end: 'top 30%', scrub: SCRUB } });
       gsap.to('.round-stage', { opacity: 0, ease: 'none', scrollTrigger: { trigger: round, start: 'bottom 114%', end: 'bottom 100%', scrub: SCRUB } });
 
       // ---- 04: the page itself scrolls; each row arrives, makes its point, and clears the bar above
       const proofRows = $$('.proof-row, .proof-live');
       const steps = $$('.proof-steps li');
       proofRows.forEach((proofRow, i) => {
-        gsap.from([...proofRow.children], { y: 56, opacity: 0, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: proofRow, start: 'top 92%', end: 'top 58%', scrub: SCRUB } });
+        gsap.from([...proofRow.children], { y: 56, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: proofRow, start: 'top 92%', end: 'top 58%', scrub: SCRUB } });
         gsap.to(proofRow, { opacity: 0, ease: 'none', scrollTrigger: { trigger: proofRow, start: i === 4 ? 'center 20%' : 'center 36%', end: i === 4 ? 'center 2%' : 'center 16%', scrub: SCRUB } });
         ScrollTrigger.create({ trigger: proofRow, start: 'top 60%', end: 'bottom 60%', toggleClass: { targets: steps[i], className: 'on' } });
       });
       gsap.timeline({ scrollTrigger: { trigger: '.proof-row-0', start: 'top 55%', end: 'center 40%', scrub: SCRUB } })
         .to('.proof-key-whole', { opacity: 0, duration: .5, ease: 'none' }, .25)
-        .fromTo('.proof-key-broken', { opacity: 0, scale: .97 }, { opacity: 1, scale: 1, duration: .6, ease: 'none' }, .2);
+        .fromTo('.proof-key-broken', { opacity: FAINT, scale: .97 }, { opacity: 1, scale: 1, duration: .6, ease: 'none' }, .2);
       $$('.proof-list').forEach(list => {
         gsap.fromTo(list.children, { opacity: .28 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: list, start: 'top 72%', end: 'bottom 52%', scrub: SCRUB } });
       });
@@ -211,13 +218,13 @@ export function mountChapters(root: HTMLElement) {
       window.addEventListener('resize', redrawNames);
       removers.push(() => window.removeEventListener('resize', redrawNames));
       gsap.to(nameState, { p: 1, ease: 'none', scrollTrigger: { trigger: names, start: 'top top', end: 'bottom bottom', scrub: SCRUB }, onUpdate: drawNames });
-      gsap.from('.names-head, .names-window', { y: 64, opacity: 0, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: names, start: 'top 95%', end: 'top 20%', scrub: SCRUB } });
+      gsap.from('.names-head, .names-window', { y: 64, opacity: FAINT, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: names, start: 'top 95%', end: 'top 20%', scrub: SCRUB } });
       gsap.to('.names-stage', { opacity: 0, ease: 'none', scrollTrigger: { trigger: names, start: 'bottom 114%', end: 'bottom 100%', scrub: SCRUB } });
 
       // ---- 06: morning, and the envelope opens on its own
       const close = $('.ch-close');
-      gsap.fromTo('.close-envelope', { y: 96, opacity: 0, rotateZ: -4 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 45%', end: 'top top', scrub: SCRUB } });
-      gsap.from('.close-content, .close-qr', { y: 48, opacity: 0, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 40%', end: 'top top', scrub: SCRUB } });
+      gsap.fromTo('.close-envelope', { y: 96, opacity: FAINT, rotateZ: -4 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 45%', end: 'top top', scrub: SCRUB } });
+      gsap.from('.close-content, .close-qr', { y: 48, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 40%', end: 'top top', scrub: SCRUB } });
       gsap.to('.close-envelope-flap', { rotateX: -155, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
       gsap.from('.close-envelope-light', { scale: .2, opacity: .15, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
       if (desktop) $$('[data-magnetic]').forEach(button => {

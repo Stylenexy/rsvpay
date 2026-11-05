@@ -128,7 +128,7 @@
 .proof-object { position: relative; min-width: 0; display: grid; place-items: center; }
 .proof-key { position: relative; width: 100%; max-width: 440px; aspect-ratio: 1; }
 .proof-key img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-.proof-key-broken { opacity: 0; }
+.proof-key-broken { opacity: .01; }
 .proof-shield { position: relative; width: 100%; display: grid; gap: 12px; justify-items: center; }
 .proof-shield > img { width: 148px; height: 104px; object-fit: contain; }
 .proof-list { list-style: none; width: 100%; margin: 0; padding: 8px 16px; border: 1px solid var(--ch-line); border-radius: 14px; background: var(--ch-plate); font: 400 14px/1.45 var(--f-ui); }
