@@ -48,7 +48,7 @@ function NetworkReceipt({ lang }: { lang: Lang }) {
   return <div className="network-receipt" data-status={status}>
     <div className="network-top"><span className="ch-label"><i className={status === 'received' ? 'is-live' : ''} />{u.receipt}</span><span className="ch-label">{CH_DATA.account}</span></div>
     <p className="network-account">{CH_DATA.account}</p>
-    <div className="network-action"><button className="ch-button" type="button" onClick={() => void ask()} disabled={status === 'pending'}><span>{status === 'pending' ? u.asking : u.ask}</span><i aria-hidden="true">↗</i></button><p role="status" aria-live="polite">{status === 'failed' ? u.failed : status === 'received' ? receipt?.matches ? u.received : u.unexpected : u.idle}</p></div>
+    <div className="network-action"><button className="ch-button" type="button" data-tip={u.tipAsk} onClick={() => void ask()} disabled={status === 'pending'}><span>{status === 'pending' ? u.asking : u.ask}</span><i aria-hidden="true">↗</i></button><p role="status" aria-live="polite">{status === 'failed' ? u.failed : status === 'received' ? receipt?.matches ? u.received : u.unexpected : u.idle}</p></div>
     <div className="network-result"><div>{receipt && <dl className="network-values" ref={output}>
       <div><dt>{u.keys}</dt><dd><span data-receipt-value>{receipt.keys}</span></dd></div>
       <div className="network-hash"><dt>{u.hash}</dt><dd><code data-receipt-value>{receipt.hash}</code><span className="network-match">{receipt.hash === CH_DATA.hash ? u.matches : u.mismatch}</span></dd></div>

@@ -1,10 +1,12 @@
-# Amplop Balas
+# RSVPay
 
 **A wedding gift that remembers, and gives back.**
 
+RSVP is the reply to a wedding invitation; here the reply is a gift, years later. The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract keeps that name, `amplop-c-mvznhnlx.testnet`, because it has no keys and can never be renamed.
+
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet)
 
-At Indonesian weddings, guests give money in envelopes (*amplop*) and families keep a notebook of who gave what, so they can return the favour at the guest's own celebration years later. The notebook gets lost. Amplop Balas makes that notebook an NFT that holds its own money and remembers.
+At Indonesian weddings, guests give money in envelopes (*amplop*) and families keep a notebook of who gave what, so they can return the favour at the guest's own celebration years later. The notebook gets lost. RSVPay makes that notebook an NFT that holds its own money and remembers.
 
 Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHON, November 2026. Testnet only, play money, not audited.
 
@@ -12,7 +14,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 
 | | |
 |---|---|
-| Live demo | https://amplop-balas.vercel.app |
+| Live demo | https://rsvpay.vercel.app |
 | Contract (testnet) | [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U`, equal to the hash of a release build of this source |
@@ -21,7 +23,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 
 ## Try the whole story on one device
 
-Open https://amplop-balas.vercel.app/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
+Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
 
 The browser requests one throwaway account for Siti from NEAR's public testnet helper. Siti funds Budi's sub-account from her own test balance. It then opens Siti's wedding, sends Budi's gift, advances the story date by two years and opens Budi's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Budi**.
 

@@ -293,7 +293,7 @@ export function mountChapters(root: HTMLElement) {
     const range = document.createRange();
     range.selectNodeContents(word);
     const measured = range.getBoundingClientRect().width;
-    if (measured > 0) plate.style.fontSize = `${parseFloat(getComputedStyle(plate).fontSize) * plate.clientWidth / measured}px`;
+    if (measured > 0) plate.style.fontSize = `${Math.min(parseFloat(getComputedStyle(plate).fontSize) * plate.clientWidth / measured, window.innerHeight * .3)}px`;
   };
   const refresh = () => { if (disposed) return; fitWordmark(); ScrollTrigger.refresh(); };
   const refreshFrame = requestAnimationFrame(refresh);

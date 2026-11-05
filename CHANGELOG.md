@@ -2,6 +2,18 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-06
+
+### Added
+- A quiet guide on every inner page: who you are here, what happens next, and the whole journey one tap away.
+- Hints on the main buttons, so each one says what it does before you press it.
+- New name and marks: RSVPay, a glass seal for large moments and a flat seal for small sizes.
+
+### Changed
+- The book links gifts and replies both ways, and the product name lives in one file.
+- Plain words replace "keeper" everywhere.
+- A couple's names read on three lines: name, connector, name.
+
 ## 2026-11-05
 
 ### Added

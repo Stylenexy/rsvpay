@@ -1,6 +1,6 @@
 # Security
 
-Amplop Balas is a hackathon project on NEAR testnet. It is not audited and holds only play money. The contract is built so that it could hold real gifts one day, so contract bugs are treated as real bugs.
+RSVPay is a hackathon project on NEAR testnet. It is not audited and holds only play money. The contract is built so that it could hold real gifts one day, so contract bugs are treated as real bugs.
 
 **What matters most**
 - Any way to take money or seeds from an amplop without being its current holder.

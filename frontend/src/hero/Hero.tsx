@@ -3,6 +3,8 @@ import { link } from '../lib/app';
 import { HERO, LANGS, WORDS, type Lang } from './copy';
 import { BRAND } from '../brand';
 import { Chapters } from './Chapters';
+import { CH_UI } from './chapters.copy';
+import { asset } from './ch/shared';
 import { Logo } from './Logo';
 import { mountHero } from './mount';
 import './hero.theme.css';
@@ -44,6 +46,7 @@ function remembered(): Lang {
 export function Hero() {
   const [lang, setLang] = useState<Lang>(remembered);
   const c = HERO[lang];
+  const tips = CH_UI[lang];
   const stage = useRef<HTMLElement>(null);
   const copy = useRef(c);
   copy.current = c;
@@ -106,7 +109,7 @@ export function Hero() {
               </button>
             ))}
           </span>
-          <a className="hz-cta" href={link.buka()}>
+          <a className="hz-cta" href={link.buka()} data-tip={tips.tipHost}>
             {c.make}
           </a>
         </span>
@@ -116,7 +119,7 @@ export function Hero() {
         <canvas className="hz-gl" aria-hidden="true" />
 
         <div className="hz-load" data-load>
-          <Logo />
+          <img src={asset('segel-rsvp')} alt="" />
           <span data-count>0</span>
         </div>
 
@@ -177,10 +180,10 @@ export function Hero() {
         </div>
 
         <div className="hz-end" data-end>
-          <a className="hz-go" href={link.beri(DEMO)}>
+          <a className="hz-go" href={link.beri(DEMO)} data-tip={tips.tipGuest}>
             {c.guest}
           </a>
-          <a className="hz-ghost" href={link.buka()}>
+          <a className="hz-ghost" href={link.buka()} data-tip={tips.tipHost}>
             {c.host}
           </a>
           <button type="button" className="hz-text" data-do="replay">

@@ -578,10 +578,9 @@
   align-content: center;
   gap: 14px;
 }
-.hz-load svg {
-  width: 88px;
+.hz-load img {
+  width: 132px;
   height: auto;
-  color: var(--ch-fg);
 }
 
 /* once the story has passed, the bar needs its own ground under the chapters */

@@ -3,7 +3,6 @@ import { useCopy } from '../../copy';
 import { CHAPTERS, CH_DATA, CH_UI } from '../chapters.copy';
 import { LANGS, type Lang } from '../copy';
 import { link } from '../../lib/app';
-import { Logo } from '../Logo';
 import { asset, CONTRACT, THREAT, THREAT_DOWNLOAD, Title } from './shared';
 
 const DEMO: string = import.meta.env.VITE_DEMO_TOKEN ?? '14';
@@ -44,12 +43,12 @@ export function Close({ lang }: { lang: Lang }) {
         <svg className="close-envelope-render" viewBox="0 0 1376 768"><defs><clipPath id={`ch-body-${lang}`}><path d="M0 0H1376V768H0Z M300 140L1076 140L688 466Z" clipRule="evenodd" fillRule="evenodd" /></clipPath><clipPath id={`ch-flap-${lang}`}><path d="M300 140L1076 140L688 466Z" /></clipPath></defs><image href={near ? asset('kaca') : undefined} width="1376" height="768" clipPath={`url(#ch-body-${lang})`} /></svg>
         <div className="close-envelope-flap"><svg viewBox="0 0 1376 768"><image href={near ? asset('kaca') : undefined} width="1376" height="768" clipPath={`url(#ch-flap-${lang})`} /></svg></div>
       </div>
-      <div className="close-content"><Title text={c.big} /><p>{c.line}</p><div className="ch-doors"><a className="ch-button ch-button-dark" data-magnetic href={link.coba()}><span>{t.cobaStart}</span><i aria-hidden="true">↗</i></a><a className="ch-button ch-button-glass" data-magnetic href={link.buka()}><span>{u.host}</span><i aria-hidden="true">↗</i></a></div></div>
+      <div className="close-content"><Title text={c.big} /><p>{c.line}</p><div className="ch-doors"><a className="ch-button ch-button-dark" data-magnetic data-tip={u.tipStory} href={link.coba()}><span>{t.cobaStart}</span><i aria-hidden="true">↗</i></a><a className="ch-button ch-button-glass" data-magnetic data-tip={u.tipHost} href={link.buka()}><span>{u.host}</span><i aria-hidden="true">↗</i></a></div></div>
       <a className="close-qr" href={link.beri(DEMO)}><span className="close-qr-specular" aria-hidden="true" /><img src={`${import.meta.env.BASE_URL}aset/qr-tamu.png`} width="96" height="96" alt="" loading="lazy" /><span>{c.phone}<i aria-hidden="true">↗</i></span></a>
     </div>
     <footer className="ch-footer">
       <img className="footer-sky" src={`${import.meta.env.BASE_URL}langit/hd/187.webp`} alt="" loading="lazy" decoding="async" />
-      <div className="footer-head"><span className="footer-brand"><Logo />{CH_DATA.brand}</span><p>{c.line}</p></div>
+      <div className="footer-head"><span className="footer-brand"><img src={asset('segel-rsvp')} alt="" loading="lazy" decoding="async" />{CH_DATA.brand}</span><p>{c.line}</p></div>
       <div className="footer-grid">
         <div className="footer-column footer-chapters"><h3>{CH_UI[lang].index}</h3>{story.map(([selector, title], i) => <button type="button" key={selector} onClick={() => jump(selector)}><span>{CH_DATA.steps[i]}</span>{title}</button>)}</div>
         <div className="footer-column"><h3>{u.try}</h3><a href={link.beri(DEMO)}>{u.guest}</a><a href={link.buka()}>{u.host}</a><button type="button" onClick={replay}>{u.replay}</button></div>

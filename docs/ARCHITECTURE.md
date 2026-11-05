@@ -1,6 +1,6 @@
 # Architecture
 
-Amplop Balas has two parts and no server of its own.
+RSVPay has two parts and no server of its own.
 
 ```mermaid
 flowchart LR
