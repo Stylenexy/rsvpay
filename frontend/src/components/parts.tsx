@@ -1,3 +1,4 @@
+import { link } from '../lib/app';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import QRCode from 'qrcode';
 import { gsap } from 'gsap';
@@ -83,6 +84,26 @@ export function EnvelopeStory({ title, date, eyebrow, children, amount = 250000 
       <div className="envelope-stage" aria-hidden="true"><div className="envelope-halo" /><img className="envelope-float" src="/aset/v2/kaca.webp" alt="" /></div>
       <p className="story-line">{children}</p>
     </section>
+  );
+}
+
+/** While an envelope is read from the chain. */
+export function Loading() {
+  const t = useCopy();
+  return <div className="page-state" role="status"><img src="/aset/v2/kaca.webp" alt="" /><p>{t.loading}</p></div>;
+}
+
+/** A link that leads nowhere still offers a way forward. */
+export function Missing() {
+  const t = useCopy();
+  return (
+    <main className="page-state">
+      <img src="/aset/v2/kaca.webp" alt="" />
+      <h1>{t.missing}</h1>
+      <p>{t.missingHint}</p>
+      <div className="row"><a className="btn" href={link.buka()}>{t.bukuMake}</a><a className="btn ghost" href={link.coba()}>{t.cobaStart}</a></div>
+      <a className="text-link" href={link.beranda()}>{t.notFoundBack} ↗</a>
+    </main>
   );
 }
 

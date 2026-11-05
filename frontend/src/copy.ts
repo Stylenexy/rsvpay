@@ -58,7 +58,8 @@ const words = {
   mockNote: ['A rehearsal with play money, saved on this device.', 'Latihan dengan uang mainan, tersimpan di perangkat ini.', '这是一次演练，记录保存在此设备。', '이 기기에 저장되는 연습입니다.', 'この端末に保存する練習です。', 'Bản diễn thử, lưu trên thiết bị này.'],
   rateNote: ['Trial rate: 1 NEAR = {0}', 'Kurs coba: 1 NEAR = {0}', '体验换算：1 NEAR = {0}', '연습 환산: 1 NEAR = {0}', 'お試し換算：1 NEAR = {0}', 'Tỷ giá thử: 1 NEAR = {0}'],
   loading: ['Opening your envelope…', 'Membuka amplopmu…', '正在打开红包…', '봉투를 열고 있어요…', 'ご祝儀袋を開いています…', 'Đang mở phong bì…'],
-  missing: ['We could not find this envelope.', 'Amplop ini tidak ditemukan.', '没有找到这份红包。', '이 봉투를 찾을 수 없어요.', 'このご祝儀袋が見つかりません。', 'Không tìm thấy phong bì này.'],
+  missing: ['We could not find this envelope.', 'Amplop ini tidak ditemukan.', '没有找到这份红包。', '이 봉투를 찾을 수 없어요.', 'このご祝儀袋が見つかりません。', 'Không tìm thấy phong bì này.'],
+  missingHint: ['The link may be wrong, or this envelope was never opened.', 'Tautannya mungkin salah, atau amplop ini belum pernah dibuka.', '链接可能有误，或这份红包尚未创建。', '링크가 잘못되었거나 아직 만들어지지 않은 봉투예요.', 'リンクが違うか、まだ作られていないご祝儀袋です。', 'Liên kết có thể sai, hoặc phong bì này chưa được tạo.'],
   bukuIsReply: ['A reply to your gift', 'Balasan untuk pemberianmu', '这是给你的回礼', '내 축의금에 대한 답례', 'あなたへのお返し', 'Lời mừng lại cho bạn'],
   bukuGivenBack: ['Given back', 'Sudah dibalas', '已回礼', '답례 완료', 'お返し済み', 'Đã mừng lại'],
   bukuKeptLine: ['{0} kept for them', '{0} disimpan untuknya', '为对方留存 {0}', '{0} 보관 중', '{0} をお返し用に保管', 'Giữ lại {0} cho họ'],

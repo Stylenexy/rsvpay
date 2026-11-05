@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
-import { EnvelopeStory, Rp, Segmented, SlideToGive, TxLink } from '../components/parts';
+import { EnvelopeStory, Rp, Segmented, SlideToGive, TxLink, Loading, Missing } from '../components/parts';
 import { plainError, say, useCopy } from '../copy';
 import { useAmplop } from '../context';
 import { shortName, useAsync } from '../lib/app';
@@ -45,8 +45,8 @@ export function Beri({ id }: { id: string }) {
     return () => media.revert();
   }, [phase]);
 
-  if (h.loading && !h.data) return <p className="busy">{t.loading}</p>;
-  if (!h.data) return <p className="err">{t.missing}</p>;
+  if (h.loading && !h.data) return <Loading />;
+  if (!h.data) return <Missing />;
   const hajatan = h.data;
 
   async function give() {

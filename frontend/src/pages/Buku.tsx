@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Entry, Hajatan, PendingReply } from '../chain/types';
-import { EnvelopeObject, EnvelopeStory, Qr, Rp, TxLink, rng, starShadow } from '../components/parts';
+import { EnvelopeObject, EnvelopeStory, Loading, Missing, Qr, Rp, TxLink, rng, starShadow } from '../components/parts';
 import { plainError, say, useCopy } from '../copy';
 import { useAmplop } from '../context';
 import { absoluteLink, copyText, link, shortName, useCountUp, usePoll } from '../lib/app';
@@ -81,8 +81,8 @@ export function Buku({ id }: { id: string }) {
   usePageMotion(root, !!h);
   useBookMotion(root, `${h?.token_id}:${peek}:${entries.map((e) => e.index).join(',')}`, isRinging);
 
-  if (h === undefined) return <p className="busy">{t.loading}</p>;
-  if (h === null) return <p className="err">{t.missing}</p>;
+  if (h === undefined) return <Loading />;
+  if (h === null) return <Missing />;
 
   const holder = account === h.owner_id;
   const locked = !holder || peek === 'other';
@@ -157,6 +157,23 @@ export function Buku({ id }: { id: string }) {
   const ringing = holder && due.length > 0;
   const cameBack = [...entries].reverse().find((e) => e.reply_to);
 
+  const share = (
+            <div className="glass share">
+              <b>{t.bukuShare}</b>
+              <Qr text={guestLink} />
+              <p>{t.bukuShareHint}</p>
+              <button
+                className="btn ghost"
+                onClick={async () => {
+                  setCopied(await copyText(guestLink));
+                  setTimeout(() => setCopied(false), 1800);
+                }}
+              >
+                {copied ? t.bukuCopied : t.bukuCopy}
+              </button>
+            </div>
+  );
+
   return (
     <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''} ref={root}>
       <main className={`app-grid book-page${ringing ? ' is-ringing' : ''}`}>
@@ -230,6 +247,7 @@ export function Buku({ id }: { id: string }) {
               </span>
             </div>
 
+            {h.entries === 0 && share}
             {later.length > 0 && !ringing && <p className="note">{t.bukuLaterNote}</p>}
             {ringing &&
               due.slice(0, 2).map((p) => {
@@ -310,20 +328,7 @@ export function Buku({ id }: { id: string }) {
               </>}
             </div>
             <History hajatan={h} revision={historyRevision + h.entries} />
-            <div className="glass share">
-              <b>{t.bukuShare}</b>
-              <Qr text={guestLink} />
-              <p>{t.bukuShareHint}</p>
-              <button
-                className="btn ghost"
-                onClick={async () => {
-                  setCopied(await copyText(guestLink));
-                  setTimeout(() => setCopied(false), 1800);
-                }}
-              >
-                {copied ? t.bukuCopied : t.bukuCopy}
-              </button>
-            </div>
+            {h.entries > 0 && share}
           </>
         )}
         </section>
