@@ -70,6 +70,20 @@ await page.goBack();
 await landed();
 await check('back button');
 
+// the case that broke for real: someone made an envelope, so this device now has an account
+await page.goto(`${BASE}/?mock#/buka`, { waitUntil: 'load' });
+await page.waitForTimeout(900);
+await page.locator('.open-page input').first().fill('Siti dan Andi');
+await page.locator('.open-page input[type=date]').fill('2026-12-12');
+await page.locator('.open-page input').nth(2).fill('Siti');
+await page.locator('.open-page button[type=submit]').click();
+await page.waitForTimeout(1600);
+await page.locator('a.brand').click();
+await landed();
+await check('after making an envelope');
+const past = await page.evaluate(() => ({ extra: document.querySelectorAll('.hz-page ~ main').length, end: document.documentElement.scrollHeight - document.querySelector('.ch-footer').getBoundingClientRect().bottom - scrollY }));
+say(past.extra === 0 && Math.abs(past.end) < 2, 'nothing below the footer', JSON.stringify(past));
+
 for (let i = 0; i < 18; i++) {
   await page.evaluate(() => { location.hash = '#/buka'; });
   await page.waitForTimeout(120);
