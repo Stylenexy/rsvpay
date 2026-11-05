@@ -177,6 +177,11 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
 .list li i { border-bottom: 1px dotted var(--line-soft); transform: translateY(3px); }
 .list li b { font: 500 12px var(--f-body); color: var(--fg); }
 .list li small { grid-column: 1 / -1; margin-top: -6px; padding-bottom: 12px; color: var(--mut); font: 400 14px/1.5 var(--f-disp); overflow-wrap: anywhere; }
+.list li > .entry-link, .list li > .entry-seed { grid-column: 1 / -1; margin-top: -6px; padding-bottom: 10px; font: 500 12px/1.4 var(--f-body); text-decoration: none; }
+.list li > .entry-link { color: var(--amber-ink); }
+.list li > .entry-link:hover { text-decoration: underline; }
+.list li > .entry-seed { color: var(--mut); }
+.reply-card .text-link { justify-self: start; }
 .list .empty { display: block; padding: 20px 0; color: var(--mut); text-align: center; font-size: 13px; }
 .share { display: grid; grid-template-columns: 110px 1fr; align-items: center; gap: 10px 20px; padding: 24px; }
 .share .qr { grid-row: 1 / 4; width: 110px !important; height: 110px !important; }

@@ -155,6 +155,7 @@ export function Buku({ id }: { id: string }) {
   const shown = [...entries].reverse().slice(0, 8);
   const due = pending.filter((p) => !later.includes(p.entry));
   const ringing = holder && due.length > 0;
+  const cameBack = [...entries].reverse().find((e) => e.reply_to);
 
   return (
     <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''} ref={root}>
@@ -263,6 +264,16 @@ export function Buku({ id }: { id: string }) {
                 );
               })}
 
+            {cameBack && (
+              <div className="glass card ring-card reply-card" role="status">
+                <EnvelopeObject />
+                <span className="label">{t.replyCardLabel}</span>
+                <p className="big">{say(t.replyCardTitle, shortName(cameBack.giver), formatRp(chainRp(cameBack.amount)))}</p>
+                {cameBack.message && <p className="muted">“{cameBack.message}”</p>}
+                {cameBack.reply_to && <a className="text-link" href={link.buku(cameBack.reply_to.token_id)}>{t.historyRelated} ↗</a>}
+              </div>
+            )}
+
             <ol className="list glass">
               {shown.length === 0 && <li className="empty">{t.bukuEmpty}</li>}
               {shown.map((e) => (
@@ -271,6 +282,9 @@ export function Buku({ id }: { id: string }) {
                   <i />
                   <b>{formatRp(chainRp(e.amount))}</b>
                   {e.message && <small>“{e.message}”</small>}
+                  {e.reply_to && <a className="entry-link" href={link.buku(e.reply_to.token_id)}>{t.bukuIsReply} ↗</a>}
+                  {e.replied && <a className="entry-link" href={link.buku(e.replied.token_id)}>{t.bukuGivenBack} ↗</a>}
+                  {!e.replied && BigInt(e.seed) > 0n && <span className="entry-seed">{say(t.bukuKeptLine, formatRp(chainRp(e.seed)))}</span>}
                 </li>
               ))}
             </ol>
