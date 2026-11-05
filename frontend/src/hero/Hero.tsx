@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { link } from '../lib/app';
+import { useLangPill } from '../lib/pill';
 import { HERO, LANGS, WORDS, type Lang } from './copy';
 import { BRAND } from '../brand';
 import { Chapters } from './Chapters';
@@ -47,6 +48,7 @@ export function Hero() {
   const [lang, setLang] = useState<Lang>(remembered);
   const c = HERO[lang];
   const tips = CH_UI[lang];
+  const langs = useLangPill<HTMLSpanElement>(lang);
   const stage = useRef<HTMLElement>(null);
   const copy = useRef(c);
   copy.current = c;
@@ -93,7 +95,8 @@ export function Hero() {
         </a>
         <span className="hz-what">{c.what}</span>
         <span className="hz-navr">
-          <span className="hz-langs" role="group" aria-label="Language">
+          <span className="hz-langs" role="group" aria-label="Language" ref={langs}>
+            <i className="lang-pill" aria-hidden="true" />
             {LANGS.map((l) => (
               <button
                 type="button"

@@ -6,6 +6,7 @@ import { gsap } from 'gsap';
 import { useCopy } from '../copy';
 import { useAmplop } from '../context';
 import { useFormat, useLang } from '../lib/lang';
+import { useLangPill } from '../lib/pill';
 import { LANGS } from '../hero/copy';
 
 // ---- sky: photography + ambient stars + film grain ----
@@ -268,7 +269,9 @@ export function Qr({ text, size = 168 }: { text: string; size?: number }) {
 export function LanguageSwitcher() {
   const { lang, setLang } = useLang();
   const t = useCopy();
-  return <div className="app-languages" role="group" aria-label={t.language}>
+  const pill = useLangPill<HTMLDivElement>(lang);
+  return <div className="app-languages" role="group" aria-label={t.language} ref={pill}>
+    <i className="lang-pill" aria-hidden="true" />
     {LANGS.map((l) => <button type="button" key={l.id} lang={l.id} aria-label={l.name} title={l.name} aria-pressed={lang === l.id} onClick={() => setLang(l.id)}>{l.label}</button>)}
   </div>;
 }
