@@ -16,7 +16,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Contract (testnet) | [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U`, equal to the hash of a release build of this source |
-| Tests | 45 Rust, 64 web, 12 live attacks, 13 browser steps, and the one-button story run on the live site in 29.5 s ([reports](docs/evidence/)) |
+| Tests | 45 Rust, 64 web, 12 live attacks, 13 browser steps, and the one-button story run on the live site in 29.5 s and 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Evidence](docs/evidence/) |
 
 ## Try the whole story on one device
@@ -25,7 +25,7 @@ Open https://amplop-balas.vercel.app/#/coba, or click **Try the whole story** on
 
 The browser requests one throwaway account for Siti from NEAR's public testnet helper. Siti funds Budi's sub-account from her own test balance. It then opens Siti's wedding, sends Budi's gift, advances the story date by two years and opens Budi's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Budi**.
 
-Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; the last check on the live site took 29.5 s including the pause, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
+Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; live checks took 29.5 s and 60.9 s including the pause, the second one just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Budi's opening receipt.
 
