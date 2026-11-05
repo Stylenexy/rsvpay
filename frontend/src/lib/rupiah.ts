@@ -3,7 +3,7 @@ import { YOCTO_PER_NEAR } from './money';
 /**
  * Demo exchange rate, shown on screen as "kurs demo". Testnet NEAR has no market price;
  * this rate only makes gift sizes read like a real kondangan. A real product would
- * take rupiah through QRIS and hold a rupiah stablecoin instead (SPEC.md §3).
+ * take rupiah through QRIS and hold a rupiah stablecoin instead.
  */
 export const RP_PER_NEAR = 500_000n;
 

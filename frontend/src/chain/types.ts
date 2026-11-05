@@ -1,5 +1,5 @@
 /**
- * Client interface that mirrors the Amplop Balas contract (SPEC.md §4) one to one.
+ * Client interface that mirrors the Amplop Balas contract (contracts/src/lib.rs) one to one.
  * Pages only talk to this interface. The live testnet client (near.ts) and the
  * in-memory mock (mock.ts) both implement it.
  *

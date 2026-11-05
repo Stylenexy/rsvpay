@@ -1,0 +1,2 @@
+checked 209 files on https://amplop-balas.vercel.app
+PASS | every file answered and every image decoded
