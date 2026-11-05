@@ -177,7 +177,7 @@ export function Buku({ id }: { id: string }) {
 
   return (
     <div className={wd && !wd.busy && wd.hash ? 'withdrawn' : ''} ref={root}>
-      <Guide role={holder ? 'couple' : 'visitor'} line={holder ? t.guideBukuOwner : t.guideBukuVisitor} step={2} />
+      <Guide role={holder ? 'couple' : 'visitor'} line={holder ? t.guideBukuOwner : t.guideBukuVisitor} step={2} done={holder ? (h.entries === 0 ? 1 : 3) : undefined} next={h.entries === 0 ? link.beri(id) : link.coba()} />
       <main className={`app-grid book-page${ringing ? ' is-ringing' : ''}`}>
         <div className="story-column">
           <EnvelopeStory title={h.title} date={h.date} eyebrow={locked ? t.bukuVisitorEyebrow : t.bukuEyebrow}>{locked ? t.bukuVisitorStory : t.bukuStory}</EnvelopeStory>

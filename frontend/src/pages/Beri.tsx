@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { EnvelopeStory, Rp, Segmented, SlideToGive, TxLink, Loading, Missing } from '../components/parts';
 import { plainError, say, useCopy } from '../copy';
 import { useAmplop } from '../context';
-import { shortName, useAsync } from '../lib/app';
+import { link, shortName, useAsync } from '../lib/app';
 import { gsap } from 'gsap';
 import { useFormat, useLang } from '../lib/lang';
 import { usePageMotion } from '../lib/motion';
@@ -83,7 +83,7 @@ export function Beri({ id }: { id: string }) {
   const busy = phase === 'akun' || phase === 'kirim';
   return (
     <div className={phase === 'done' ? 'sent' : ''} ref={root}>
-      <Guide role="guest" line={t.guideBeri} step={1} />
+      <Guide role="guest" line={t.guideBeri} step={1} done={phase === 'done' ? 2 : undefined} next={link.buku(id)} />
       <main className="app-grid guest-page">
         <div className="story-column">
           <EnvelopeStory title={hajatan.title} date={hajatan.date} eyebrow={t.beriFor} amount={rp}>{t.beriStory}</EnvelopeStory>
