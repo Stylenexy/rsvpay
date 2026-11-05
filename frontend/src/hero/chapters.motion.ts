@@ -58,6 +58,10 @@ export function mountChapters(root: HTMLElement) {
       wake(sky, pin, 'bottom 320%', 'max');
       wake(clouds, pin, 'bottom 320%', 'bottom 40%');
       wake(clouds, '.ch-close', 'top 300%', 'top 10%');
+      // Only the layers in play stay awake: a layer sleeps until two screens before its turn and again once it is covered.
+      wake(gold, '.ch-names', 'top 300%', 'top -110%');
+      wake(blue, '.ch-names', 'top 200%', 'bottom top');
+      wake(morning, '.ch-names', 'bottom 300%', 'max');
       gsap.fromTo(sky, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: pin, start: 'bottom 140%', end: 'bottom 112%', scrub: SCRUB } });
       const cloudPass = (trigger: gsap.DOMTarget, start: string, end: string) => gsap.timeline({ scrollTrigger: { trigger, start, end, scrub: SCRUB } })
         .fromTo(clouds, { opacity: FAINT, yPercent: 46 }, { opacity: 1, yPercent: 0, duration: .45, ease: 'power1.out', immediateRender: false }, 0)
