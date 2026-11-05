@@ -1,7 +1,8 @@
 import type { Lang } from './copy';
+import { BRAND } from '../brand';
 
 export const CH_DATA = {
-  brand: 'Amplop Balas',
+  brand: BRAND,
   author: 'Dex Bennett',
   total: '06',
   digits: ['0', '1', '2', '3', '4', '5', '6'],

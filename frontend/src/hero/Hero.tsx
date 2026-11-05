@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { link } from '../lib/app';
 import { HERO, LANGS, WORDS, type Lang } from './copy';
+import { BRAND } from '../brand';
 import { Chapters } from './Chapters';
 import { Logo } from './Logo';
 import { mountHero } from './mount';
@@ -85,7 +86,7 @@ export function Hero() {
       <nav className="hz-nav">
         <a className="hz-brand" href={link.beranda()}>
           <Logo />
-          Amplop Balas
+          {BRAND}
         </a>
         <span className="hz-what">{c.what}</span>
         <span className="hz-navr">

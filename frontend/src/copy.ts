@@ -1,6 +1,7 @@
 import { AMPLOP_ERRORS as E } from './chain/types';
 import type { Lang } from './hero/copy';
 import { useLang } from './lib/lang';
+import { BRAND } from './brand';
 
 /** Each row reads English, Indonesian, Chinese, Korean, Japanese, Vietnamese. */
 const words = {
@@ -51,7 +52,7 @@ const words = {
   historyPayout: ["{0} paid out", "{0} ditarik", "已领取 {0}", "{0} 지급 완료", "{0}を受け取りました", "Đã chi {0}"],
   historyRefund: ["{0} returned after a failed payout", "{0} kembali setelah penarikan gagal", "领取失败，{0} 已退回", "지급 실패로 {0}이 돌아왔어요", "受け取りに失敗し、{0}が戻りました", "Hoàn {0} sau chi trả thất bại"],
   historyRelated: ["Related envelope", "Amplop terkait", "关联红包", "연결된 봉투", "つながるご祝儀袋", "Phong bì liên quan"],
-  appName: ['Amplop Balas', 'Amplop Balas', 'Amplop Balas', 'Amplop Balas', 'Amplop Balas', 'Amplop Balas'],
+  appName: Array<string>(6).fill(BRAND) as [string, string, string, string, string, string],
   language: ['Language', 'Bahasa', '语言', '언어', '言語', 'Ngôn ngữ'],
   testnetNote: ['A trial with play money on NEAR.', 'Versi coba di jaringan uji NEAR. Uang mainan.', 'NEAR 体验版，使用模拟金额。', 'NEAR 체험판입니다. 연습용 금액이에요.', 'NEARのお試し版です。練習用のお金を使います。', 'Bản thử trên NEAR, dùng tiền thử.'],
   mockNote: ['A rehearsal with play money, saved on this device.', 'Latihan dengan uang mainan, tersimpan di perangkat ini.', '这是一次演练，记录保存在此设备。', '이 기기에 저장되는 연습입니다.', 'この端末に保存する練習です。', 'Bản diễn thử, lưu trên thiết bị này.'],
