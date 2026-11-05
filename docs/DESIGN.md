@@ -26,6 +26,6 @@ Colour carries meaning: seed stars are `#7FDBFF`, change lines are green `#8FE3B
 
 **Motion explains something.** A card shrinks into a star because a gift became part of the sky. Stars dim on withdrawal because the money left, and seeds stay because they did not.
 
-**The page is one long take.** Below the time story there are no sections, only moves: fall through cloud to the wedding, zoom through the light of the phone into the orbit, the disc tilts edge-on and becomes the ruler of the proof, an amber drop wipes into the five cultures, cloud lifts into dawn. Scroll drives everything through one GSAP timeline per chapter, with sticky stages.
+**The page is one sky.** Below the time story no chapter paints a background. The story ends on a night frame of the sky time-lapse and that same sky carries on behind everything: night, then gold, then day, then morning, one frame fading into the next over a full screen of scroll each. Cloud carries the two big moves, out of the story and into the morning. Only opacity and transforms change while scrolling, so there is no second WebGL scene and no section edge to see. The proof chapter is plain page scroll beside a sticky heading, because reading is the point there.
 
-**Weak spots.** The orbit disc is a metaphor that needs the line of text beside it. The sky video is upscaled to 1080p, not native. The translations were written with AI help and checked by a second AI, not by native speakers. Performance on low-end phones is not measured.
+**Weak spots.** The sky video is upscaled to 1080p, not native. The translations were written with AI help and checked by a second AI, not by native speakers. Performance on low-end phones is not measured.

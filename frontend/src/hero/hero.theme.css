@@ -102,23 +102,13 @@
 
 /* Chapter light, glass and culture fields. The hero's existing tokens stay intact. */
 .ch {
-  --ch-wipe-amber: #ffb547;
-  --ch-card-tint: #07162d;
-  --ch-card-plate: rgba(7, 22, 45, .72);
-  --ch-card-rim: rgba(188, 234, 255, .8);
-  --ch-card-highlight: rgba(188, 234, 255, .17);
-  --ch-glass-frost: #d8efff;
-  --ch-glass-emission: #224565;
-  --ch-disc-blue: #0879c9;
-  --ch-proof-light: rgba(4, 61, 117, .28);
-  --ch-studio-ground: .012 .03 .07;
-  --ch-studio-ice: .55 .85 1;
-  --ch-studio-fill: .75 .82 1;
-  --ch-studio-amber: 1 .56 .18;
-  --ch-dawn-ground: #e8e6e7;
-  --ch-dawn-calm: rgba(244, 245, 249, .85);
-  --ch-culture-light: rgba(255, 197, 125, .18);
-  --ch-culture-ghost: rgba(225, 235, 255, .025);
+  --ch-shade-top: rgba(4, 8, 22, .66);
+  --ch-shade-low: rgba(4, 8, 22, .5);
+  --ch-plate: rgba(6, 12, 30, .46);
+  --ch-morning-veil: rgba(255, 250, 244, .5);
+  --ch-letter-warm: #f4e6d2;
+  --ch-ink-soft: rgba(10, 42, 94, .62);
+  --ch-amber-ink: #b4530f;
   --ch-blue: #29b8ff;
   --ch-violet: #9c8bff;
   --ch-ice: #bceaff;
@@ -131,15 +121,6 @@
   --ch-blue-bright: rgba(74, 192, 255, 0.56);
   --ch-amber-haze: rgba(255, 154, 77, 0.18);
   --ch-violet-haze: rgba(123, 97, 255, 0.13);
-  --ch-grid-line: rgba(171, 210, 255, 0.045);
-  --ch-ghost: rgba(201, 223, 255, 0.055);
-  --ch-dawn-veil: rgba(229, 244, 255, 0.22);
   --ch-white: #fff;
   --ch-zero: rgba(255, 255, 255, 0);
-  --ch-indigo: #121a38;
-  --ch-lacquer: #260c13;
-  --ch-hanbok: #172a45;
-  --ch-sumi: #11151b;
-  --ch-jade: #07382f;
-  --ch-wordmark: #bce7ff;
 }

@@ -6,21 +6,23 @@ const DECODING = 5;
 export class Frames {
   readonly count: number;
   private url: (i: number) => string;
+  private step: number;
   private blobs: (Blob | null)[];
   private decoded = new Map<number, ImageBitmap>();
   private pending = new Set<number>();
   private dead = false;
 
-  constructor(url: (i: number) => string, count: number) {
+  constructor(url: (i: number) => string, count: number, step = 1) {
     this.url = url;
     this.count = count;
+    this.step = step;
     this.blobs = new Array(count).fill(null);
   }
 
   /** Every 8th frame first, so the sky can move before the rest arrive. */
   async load(onProgress: (done: number) => void) {
     const order: number[] = [];
-    for (let s = 8; s >= 1; s = s >> 1) {
+    for (let s = 8; s >= this.step; s = s >> 1) {
       for (let i = 0; i < this.count; i += s) if (!order.includes(i)) order.push(i);
     }
     let done = 0;

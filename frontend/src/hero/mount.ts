@@ -66,7 +66,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
   const phoneSet = window.innerWidth < 760;
   const count = phoneSet ? PHONE : HD;
   const folder = phoneSet ? 'hp' : 'hd';
-  const frames = new Frames((i) => `${base}langit/${folder}/${String(i + 1).padStart(3, '0')}.webp`, count);
+  const frames = new Frames((i) => `${base}langit/${folder}/${String(i + 1).padStart(3, '0')}.webp`, count, phoneSet ? 1 : 2);
 
   let scene: ReturnType<typeof createScene>;
   try {
@@ -82,7 +82,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
   let target = 0;
   let cur = 0;
   let selfTop = -1;
-  const range = () => Math.max(1, pin.offsetHeight - window.innerHeight);
+  const range = () => Math.max(1, pin.offsetHeight - window.innerHeight * 1.9);
   const pinTop = () => pin.getBoundingClientRect().top + window.scrollY;
   const setTarget = (p: number) => {
     target = clamp(p);

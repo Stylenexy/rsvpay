@@ -1,7 +1,7 @@
 /* Beranda; colors live in hero.theme.css. Sky frames sit behind everything; every value that moves is written per frame by mount.ts. */
 
 .hz-pin {
-  height: 760vh;
+  height: 850vh;
   position: relative;
 }
 .hz {
@@ -61,12 +61,23 @@
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  font: 500 19px / 1 var(--f-hz);
+  justify-self: start;
+  font: 600 15px / 1 var(--f-ui);
+  white-space: nowrap;
   text-decoration: none;
 }
 .hz-what {
   font-size: 15.5px;
   font-weight: 600;
+  white-space: nowrap;
+}
+@media (max-width: 1240px) {
+  .hz-what {
+    display: none;
+  }
+  .hz-nav {
+    grid-template-columns: 1fr auto;
+  }
 }
 .hz-navr {
   justify-self: end;
@@ -76,6 +87,7 @@
 }
 .hz-langs {
   display: flex;
+  flex: none;
   padding: 3px;
   border-radius: 999px;
   background: var(--hz-pane);
@@ -92,6 +104,7 @@
   border-radius: 999px;
   background: none;
   font: 600 13px var(--f-ui);
+  white-space: nowrap;
   color: var(--hz-fg);
   opacity: 0.82;
   cursor: pointer;
@@ -328,7 +341,7 @@
   position: absolute;
   z-index: 5;
   left: var(--hz-gutter);
-  right: var(--hz-gutter);
+  right: calc(var(--hz-gutter) + 188px);
   bottom: 26px;
   display: grid;
   grid-template-columns: 112px 1fr;
@@ -471,7 +484,17 @@
     right: 16px;
     width: auto;
     top: auto;
-    bottom: 96px;
+    bottom: 72px;
+    gap: 8px;
+  }
+  .hz-end .hz-go,
+  .hz-end .hz-ghost {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  .hz-end .hz-text {
+    padding: 2px 0;
+    font-size: 14px;
   }
   .hz-rail {
     grid-template-columns: 1fr;

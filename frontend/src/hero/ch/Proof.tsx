@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { CHAPTERS, CH_DATA, CH_UI } from '../chapters.copy';
 import type { Lang } from '../copy';
 import { askNetwork, type Receipt } from './network';
-import { gsap } from './animation';
+import { gsap, ScrollTrigger } from './animation';
 import { asset, CONTRACT, THREAT, THREAT_DOWNLOAD, Title } from './shared';
 
 function NetworkReceipt({ lang }: { lang: Lang }) {
@@ -14,6 +14,8 @@ function NetworkReceipt({ lang }: { lang: Lang }) {
   useEffect(() => () => { controller.current?.abort(); controller.current = null; }, [lang]);
   useEffect(() => {
     if (!receipt || !output.current) return;
+    // the card grows when the answer lands, which moves everything below it
+    const measure = window.setTimeout(() => ScrollTrigger.refresh(), 900);
     const values = [...output.current.querySelectorAll<HTMLElement>('[data-receipt-value]')];
     const text = values.map(value => value.textContent || '');
     const context = gsap.context(() => {
@@ -27,7 +29,7 @@ function NetworkReceipt({ lang }: { lang: Lang }) {
           .to(cursor, { n: text[i].length, duration: Math.max(.25, text[i].length / 65), ease: 'none', onUpdate: () => { value.textContent = text[i].slice(0, Math.round(cursor.n)); } });
       });
     }, output);
-    return () => { context.revert(); values.forEach((value, i) => { value.textContent = text[i]; }); };
+    return () => { window.clearTimeout(measure); context.revert(); values.forEach((value, i) => { value.textContent = text[i]; }); };
   }, [receipt]);
   const ask = async () => {
     controller.current?.abort();
@@ -61,24 +63,31 @@ export function Proof({ lang }: { lang: Lang }) {
   const c = CHAPTERS[lang].proof;
   const u = CH_UI[lang];
   return <section className="ch-proof ch-chapter" data-chapter="4" aria-label={c.kicker}>
-    <div className="ch-stage proof-stage">
-      <div className="proof-grid" aria-hidden="true" />
-      <div className="proof-rule" aria-hidden="true"><i /></div>
-      <div className="proof-heading ch-grid"><Title text={c.big} /><p className="ch-label">{c.kicker}</p></div>
-      <div className="proof-instruments">
-        {c.rows.map((row, i) => <article className={`proof-instrument proof-instrument-${i}`} key={i} data-proof={i}>
-          <div className="proof-description"><span className="ch-label">{CH_DATA.steps[i]}</span><strong className="proof-figure" data-counter={i}>{CH_DATA.figures[i]}</strong><p data-lines>{row}</p>{i === 1 && <p className="proof-caption">{u.refused} <a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></p>}{i === 2 && <p className="proof-caption">{u.tests}</p>}{i === 3 && <p className="proof-caption">{u.fixed}</p>}</div>
+    <div className="proof-wrap">
+      <header className="proof-side">
+        <p className="ch-label">{c.kicker}</p>
+        <Title text={c.big} />
+        <ol className="proof-steps ch-label" aria-hidden="true">{CH_DATA.cultureSteps.map(s => <li key={s}><i />{s}</li>)}</ol>
+      </header>
+      <div className="proof-rows">
+        {c.rows.map((row, i) => <article className={`proof-row proof-row-${i}`} key={i}>
+          <div className="proof-text">
+            <span className="ch-label">{CH_DATA.steps[i]}</span>
+            <strong className="proof-figure" data-figure={i}>{CH_DATA.figures[i]}</strong>
+            <p>{row}</p>
+            {i === 1 && <p className="proof-caption">{u.refused} <a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></p>}
+            {i === 2 && <p className="proof-caption">{u.tests}</p>}
+            {i === 3 && <p className="proof-caption">{u.fixed}</p>}
+          </div>
           <div className="proof-object">
-            {i === 0 && <div className="proof-key" aria-hidden="true"><img src={asset('kunci')} alt="" loading="lazy" />{Array.from({ length: 7 }, (_, n) => <span className="key-shard" key={n}><img src={asset('kunci')} alt="" loading="lazy" /></span>)}</div>}
-            {i === 1 && <><div className="proof-shield" aria-hidden="true"><img src={asset('perisai')} alt="" loading="lazy" /><div className="proof-strikes">{Array.from({ length: 12 }, (_, n) => <i key={n}><b /></i>)}</div><div className="proof-ripples">{Array.from({ length: 12 }, (_, n) => <i key={n} />)}</div></div><div className="proof-attack-window"><ol>{CH_DATA.attacks.map(a => <li key={a}><i aria-hidden="true">↳</i><code>{a}</code><span aria-hidden="true">×</span></li>)}</ol></div></>}
-            {i === 2 && <div className="proof-test-window"><div className="proof-test-scan" aria-hidden="true" /><ol>{CH_DATA.tests.map(test => <li key={test}><span aria-hidden="true">✓</span><code>{test}</code></li>)}</ol></div>}
-            {i === 3 && <div className="proof-seal" aria-hidden="true"><img src={asset('segel')} alt="" loading="lazy" /><svg viewBox="0 0 400 400"><circle className="seal-track" cx="200" cy="200" r="160" /><circle className="seal-arc" cx="200" cy="200" r="160" pathLength="100" /></svg><i className="seal-handle"><b /></i><span className="ch-label">{CH_DATA.figures[3]}</span></div>}
+            {i === 0 && <div className="proof-key" aria-hidden="true"><img className="proof-key-whole" src={asset('kunci')} alt="" loading="lazy" /><img className="proof-key-broken" src={asset('kunci-patah')} alt="" loading="lazy" /></div>}
+            {i === 1 && <div className="proof-shield"><img src={asset('perisai')} alt="" loading="lazy" /><ol className="proof-list">{CH_DATA.attacks.map(a => <li key={a}><code>{a}</code><span aria-hidden="true">×</span></li>)}</ol></div>}
+            {i === 2 && <ol className="proof-list proof-tests">{CH_DATA.tests.map(test => <li key={test}><span aria-hidden="true">✓</span><code>{test}</code></li>)}</ol>}
+            {i === 3 && <div className="proof-seal" aria-hidden="true"><img src={asset('segel')} alt="" loading="lazy" /><svg viewBox="0 0 400 400"><circle className="seal-track" cx="200" cy="200" r="160" /><circle className="seal-arc" cx="200" cy="200" r="160" pathLength="100" /></svg><span className="ch-label">{CH_DATA.figures[3]}</span></div>}
           </div>
         </article>)}
-        <article className="proof-instrument proof-live" data-proof="4"><NetworkReceipt lang={lang} /><p className="ch-honesty">{c.note}</p></article>
+        <article className="proof-live"><NetworkReceipt lang={lang} /><p className="ch-honesty">{c.note}</p></article>
       </div>
-      <div className="proof-steps ch-label" aria-hidden="true">{CH_DATA.cultureSteps.map(s => <span key={s}><i />{s}</span>)}</div>
-      <div className="proof-amber-wipe" aria-hidden="true" />
     </div>
   </section>;
 }

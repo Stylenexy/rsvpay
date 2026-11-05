@@ -5,8 +5,15 @@ export const CONTRACT = 'https://testnet.nearblocks.io/address/amplop-c-mvznhnlx
 export const THREAT = `${import.meta.env.BASE_URL}threat-model.md`;
 export const THREAT_DOWNLOAD = import.meta.env.VITE_THREAT_MODEL_URL ? undefined : 'THREAT-MODEL.md';
 
-export function Cloud({ className = '', second = false, eager = false }: { className?: string; second?: boolean; eager?: boolean }) {
-  return <img className={`ch-cloud ${className}`} src={asset(second ? 'awan-2' : 'awan-1')} alt="" loading={eager ? 'eager' : 'lazy'} decoding="async" />;
+const SKY = ['187', '145', '101', '047'];
+
+/** The sky the story ended on simply carries on: night, gold, day and morning, all from the same time-lapse. */
+export function SkyLayer() {
+  return <div className="ch-sky" aria-hidden="true">
+    {SKY.map(frame => <img src={`${import.meta.env.BASE_URL}langit/hd/${frame}.webp`} alt="" decoding="async" key={frame} />)}
+    <i className="ch-sky-shade" />
+    <div className="ch-sky-clouds"><img src={asset('awan-2')} alt="" decoding="async" /><img src={asset('awan-1')} alt="" decoding="async" /></div>
+  </div>;
 }
 
 export function Title({ text, className = '' }: { text: string; className?: string }) {
