@@ -218,6 +218,8 @@ export function mountChapters(root: HTMLElement) {
         });
       };
       const redrawNames = () => { measureNames(); drawNames(); };
+      // Five large cut-outs: fetch and decode them ahead, so they never land in the middle of a scroll.
+      ScrollTrigger.create({ trigger: names, start: 'top 320%', once: true, onEnter: () => pictures.forEach(picture => { (picture as HTMLImageElement).loading = 'eager'; void (picture as HTMLImageElement).decode().catch(() => undefined); }) });
       redrawNames();
       window.addEventListener('resize', redrawNames);
       removers.push(() => window.removeEventListener('resize', redrawNames));

@@ -180,7 +180,7 @@
 .names-track { display: flex; gap: clamp(24px, 4vw, 64px); width: max-content; height: 100%; padding-inline: var(--hz-gutter) 42vw; will-change: transform; }
 .culture { width: clamp(240px, 25vw, 380px); height: 100%; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 16px; }
 .culture-object { position: relative; min-height: 0; }
-.culture-object img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: contain; filter: drop-shadow(0 24px 32px var(--ch-cast)); will-change: transform; }
+.culture-object img { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: contain; will-change: transform; }
 .culture-copy { display: grid; gap: 2px; justify-items: center; text-align: center; text-shadow: 0 1px 14px var(--ch-cast); }
 .culture-word { font: 500 clamp(30px, 3vw, 46px)/1.3 var(--f-hz); letter-spacing: -.02em; white-space: nowrap; }
 .culture-word:lang(zh) { font-family: 'Noto Serif SC', serif; }
