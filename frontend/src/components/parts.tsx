@@ -1,3 +1,4 @@
+import { titleLines } from '../lib/names';
 import { link } from '../lib/app';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import QRCode from 'qrcode';
@@ -77,8 +78,8 @@ export function EnvelopeStory({ title, date, eyebrow, children, amount = 250000 
   return (
     <section className="envelope-story" ref={root} style={{ '--gift-glow': Math.min(1, 0.25 + amount / 1200000) } as CSSProperties}>
       <span className="story-eyebrow">{eyebrow}</span>
-      <h1>{title.split(/\s*&\s*/).map((part, i) => (
-        <span className="title-mask" key={i}><span className="title-rise">{i > 0 && <em>& </em>}{part}</span></span>
+      <h1>{titleLines(title).map(({ text, connector }, i) => (
+        <span className={`title-mask${connector ? ' title-connector' : ''}`} key={i}><span className="title-rise">{connector ? <em>{text}</em> : text}</span></span>
       ))}</h1>
       {date && <p className="story-date">{formatDate(date)}</p>}
       <div className="envelope-stage" aria-hidden="true"><div className="envelope-halo" /><img className="envelope-float" src="/aset/v2/kaca.webp" alt="" /></div>
