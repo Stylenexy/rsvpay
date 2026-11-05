@@ -105,6 +105,14 @@
   --ch-shade-top: rgba(4, 8, 22, .66);
   --ch-shade-low: rgba(4, 8, 22, .5);
   --ch-plate: rgba(6, 12, 30, .46);
+  --ch-scene-shade: rgba(3, 5, 12, .84);
+  --ch-footer-veil: rgba(7, 14, 32, .62);
+  --ch-footer-floor: rgba(5, 9, 22, .72);
+  --ch-culture-id: #e6bb74;
+  --ch-culture-zh: #f2c766;
+  --ch-culture-ko: #9fdcd2;
+  --ch-culture-ja: #e6d8bc;
+  --ch-culture-vi: #aee0b8;
   --ch-morning-veil: rgba(255, 250, 244, .5);
   --ch-letter-warm: #f4e6d2;
   --ch-ink-soft: rgba(10, 42, 94, .62);

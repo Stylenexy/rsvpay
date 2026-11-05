@@ -1,6 +1,6 @@
 import { gsap, ScrollTrigger, SplitText } from './ch/animation';
 import { clamp, ease, lerp, seg } from './math';
-import { cardFocus, roundFrame } from './ch/layout';
+import { cultureFrame, roundFrame } from './ch/layout';
 
 const SCRUB = .6;
 // Browsers skip painting at opacity 0, so the first visible frame would pay for all of it. This is too faint to see and still paints.
@@ -57,12 +57,14 @@ export function mountChapters(root: HTMLElement) {
       const [, gold, blue, morning] = $$('.ch-sky > img');
       const shade = $('.ch-sky-shade');
       const clouds = $('.ch-sky-clouds');
+      const grounds = $('.ch-sky-scenes');
       // Sky and clouds wake a few screens early, while nothing is moving, and sleep again when their pass is over.
       const wake = (element: HTMLElement, trigger: gsap.DOMTarget, start: string, end: string) => ScrollTrigger.create({ trigger, start, end, onToggle: self => { element.style.visibility = self.isActive ? 'visible' : 'hidden'; } });
       const stayAwake = (element: HTMLElement, trigger: gsap.DOMTarget, start: string) => ScrollTrigger.create({ trigger, start, onEnter: () => { element.style.visibility = 'visible'; }, onLeaveBack: () => { element.style.visibility = 'hidden'; } });
       stayAwake(sky, pin, 'bottom 320%');
       wake(clouds, pin, 'bottom 320%', 'bottom 40%');
       wake(clouds, '.ch-close', 'top 300%', 'top 10%');
+      wake(grounds, '.ch-names', 'top 320%', 'bottom top');
       // Only the layers in play stay awake: a layer sleeps until two screens before its turn and again once it is covered.
       wake(gold, '.ch-names', 'top 300%', 'top -110%');
       wake(blue, '.ch-names', 'top 200%', 'bottom top');
@@ -196,41 +198,64 @@ export function mountChapters(root: HTMLElement) {
       gsap.fromTo('.seal-arc', { '--seal-amount': 0 }, { '--seal-amount': 10, ease: 'power2.out', scrollTrigger: { trigger: '.proof-seal', start: 'top 74%', end: 'center 50%', scrub: SCRUB } });
       gsap.to('.proof-side', { opacity: 0, ease: 'none', scrollTrigger: { trigger: '.ch-proof', start: 'bottom 90%', end: 'bottom 66%', scrub: SCRUB } });
 
-      // ---- 05: the five names slide past at one speed, on the morning arriving behind them
+      // ---- 05: one envelope at a time, each on its own material; the five only meet at the end
       const names = $('.ch-names');
-      const track = $('.names-track');
+      const stage = $('.names-stage');
       const cultures = $$('.culture');
-      const pictures = cultures.map(card => card.querySelector<HTMLElement>('img')!);
-      const captions = cultures.map(card => card.querySelector<HTMLElement>('.culture-copy')!);
-      const windowEl = $('.names-window');
+      const groundImages = $$('.ch-sky-scenes img') as HTMLImageElement[];
+      const scenes = cultures.map(scene => {
+        const word = SplitText.create(scene.querySelector('.culture-word')!, { type: 'chars', mask: 'chars', charsClass: 'culture-char' });
+        splits.push(word);
+        return { scene, copy: scene.querySelector<HTMLElement>('.culture-copy')!, object: scene.querySelector<HTMLElement>('.culture-object')!, chars: word.chars as HTMLElement[] };
+      });
+      const railStops = $$('.culture-rail li');
+      const finaleBlock = $('.culture-finale');
+      const fan = $$('.culture-fan img');
       const nameState = { p: 0 };
-      let centers: number[] = [];
-      let travel = 0;
-      const measureNames = () => {
-        centers = cultures.map(card => card.offsetLeft + card.offsetWidth / 2);
-        travel = Math.max(0, track.scrollWidth - windowEl.clientWidth);
-      };
+      // Grounds and cut-outs arrive and decode well ahead, so none lands in the middle of a scroll.
+      ScrollTrigger.create({ trigger: names, start: 'top 320%', once: true, onEnter: () => {
+        groundImages.forEach(image => { image.src = image.dataset.ground!; void image.decode().catch(() => undefined); });
+        $$('.culture-object img, .culture-fan img').forEach(image => { (image as HTMLImageElement).loading = 'eager'; void (image as HTMLImageElement).decode().catch(() => undefined); });
+      } });
+      gsap.fromTo(grounds, { opacity: FAINT }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: names, start: 'top 90%', end: 'top 5%', scrub: SCRUB } });
       const drawNames = () => {
-        const shift = -travel * nameState.p;
-        track.style.transform = `translate3d(${shift}px,0,0)`;
-        const width = windowEl.clientWidth;
-        const card = cultures[0].offsetWidth;
-        cultures.forEach((_, i) => {
-          const focus = cardFocus(centers[i], shift, width, card);
-          pictures[i].style.opacity = String(.72 + .28 * focus);
-          captions[i].style.opacity = String(.78 + .22 * focus);
-          pictures[i].style.transform = `translate3d(0,${(1 - focus) * 16}px,0) scale(${.92 + .08 * focus}) rotate(${(centers[i] + shift - width / 2) / width * 4}deg)`;
+        const { slot, local, change, clear, finale, leave } = cultureFrame(nameState.p);
+        grounds.style.setProperty('--scene-out', String(clear));
+        groundImages.forEach((image, i) => {
+          const awake = i === slot || i === slot + 1;
+          image.style.visibility = awake ? 'visible' : 'hidden';
+          image.style.opacity = String(i === slot ? 1 - clear : i === slot + 1 ? change : 0);
+          if (awake) image.style.transform = `scale(${1.07 - (i === slot ? local : 0) * .07})`;
         });
+        scenes.forEach(({ scene, copy, object, chars }, i) => {
+          const current = i === slot;
+          const next = i === slot + 1;
+          scene.style.visibility = current || next ? 'visible' : 'hidden';
+          if (!current && !next) return;
+          const out = current ? ease(seg(change, 0, .5)) + clear : 0;
+          const arrive = next ? ease(seg(change, .45, 1)) : 1;
+          copy.style.opacity = String((1 - clamp(out)) * arrive);
+          copy.style.transform = `translate3d(0,${(1 - arrive) * 28 - clamp(out) * 28}px,0)`;
+          object.style.opacity = String((1 - clamp(out)) * arrive);
+          object.style.transform = `translate3d(${(1 - arrive) * 48 - clamp(out) * 48}px,${Math.sin(local * Math.PI) * -10}px,0) rotateY(${(1 - arrive) * -58 + clamp(out) * 44 + (current ? (local - .5) * 7 : 0)}deg)`;
+          chars.forEach((char, n) => { char.style.transform = `translate3d(0,${(1 - clamp(arrive * 1.5 - n * .07)) * 110}%,0)`; });
+        });
+        railStops.forEach((stop, i) => stop.classList.toggle('on', i === (change > .5 ? slot + 1 : slot)));
+        $('.culture-rail').style.opacity = String(1 - clear);
+        finaleBlock.style.visibility = finale > 0 ? 'visible' : 'hidden';
+        finaleBlock.style.opacity = String(finale * (1 - leave));
+        fan.forEach((image, i) => { image.style.transform = `translate3d(0,${(1 - finale) * 96}px,0) rotate(${(i - 2) * (3 + (1 - finale) * 9)}deg)`; });
       };
-      const redrawNames = () => { measureNames(); drawNames(); };
-      // Five large cut-outs: fetch and decode them ahead, so they never land in the middle of a scroll.
-      ScrollTrigger.create({ trigger: names, start: 'top 320%', once: true, onEnter: () => pictures.forEach(picture => { (picture as HTMLImageElement).loading = 'eager'; void (picture as HTMLImageElement).decode().catch(() => undefined); }) });
-      redrawNames();
-      window.addEventListener('resize', redrawNames);
-      removers.push(() => window.removeEventListener('resize', redrawNames));
       gsap.to(nameState, { p: 1, ease: 'none', scrollTrigger: { trigger: names, start: 'top top', end: 'bottom bottom', scrub: SCRUB }, onUpdate: drawNames });
-      gsap.from('.names-head, .names-window', { y: 64, opacity: FAINT, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: names, start: 'top 95%', end: 'top 20%', scrub: SCRUB } });
-      gsap.to('.names-stage', { opacity: 0, ease: 'none', scrollTrigger: { trigger: names, start: 'bottom 114%', end: 'bottom 100%', scrub: SCRUB } });
+      drawNames();
+      gsap.from(stage, { opacity: FAINT, y: 56, ease: 'power2.out', scrollTrigger: { trigger: names, start: 'top 80%', end: 'top 5%', scrub: SCRUB } });
+      if (desktop) {
+        const tilts = $$('.culture-tilt');
+        const lean = tilts.map(tilt => ({ x: gsap.quickTo(tilt, 'rotationY', { duration: .9, ease: 'power3.out' }), y: gsap.quickTo(tilt, 'rotationX', { duration: .9, ease: 'power3.out' }) }));
+        const onLean = (event: PointerEvent) => { const x = event.clientX / window.innerWidth - .5; const y = event.clientY / window.innerHeight - .5; lean.forEach(l => { l.x(x * 16); l.y(y * -12); }); };
+        stage.addEventListener('pointermove', onLean);
+        removers.push(() => stage.removeEventListener('pointermove', onLean));
+      }
 
       // ---- 06: morning, and the envelope opens on its own
       const close = $('.ch-close');
@@ -238,6 +263,12 @@ export function mountChapters(root: HTMLElement) {
       gsap.from('.close-content, .close-qr', { y: 48, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 40%', end: 'top top', scrub: SCRUB } });
       gsap.to('.close-envelope-flap', { rotateX: -155, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
       gsap.from('.close-envelope-light', { scale: .2, opacity: .15, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
+      // ---- the footer rises over the morning as a page of its own, and the name comes up out of the clouds
+      const footer = $('.ch-footer');
+      gsap.to('.close-stage > *', { opacity: .25, scale: .95, ease: 'none', scrollTrigger: { trigger: footer, start: 'top 95%', end: 'top 25%', scrub: SCRUB } });
+      gsap.from('.footer-head, .footer-column', { y: 56, opacity: FAINT, stagger: .05, ease: 'power2.out', scrollTrigger: { trigger: footer, start: 'top 75%', end: 'top 10%', scrub: SCRUB } });
+      gsap.from('[data-wordmark]', { yPercent: 104, ease: 'power3.out', scrollTrigger: { trigger: '.footer-wordmark', start: 'top 98%', end: 'bottom 100%', scrub: SCRUB } });
+      gsap.fromTo('.footer-wordmark', { '--sky-pan': '20%' }, { '--sky-pan': '80%', duration: 26, repeat: -1, yoyo: true, ease: 'none', scrollTrigger: { trigger: footer, start: 'top bottom', end: 'bottom top', toggleActions: 'play pause resume pause' } });
       if (desktop) $$('[data-magnetic]').forEach(button => {
         const move = (event: PointerEvent) => context.add(() => { const r = button.getBoundingClientRect(); gsap.to(button, { x: (event.clientX - r.left - r.width / 2) * .16, y: (event.clientY - r.top - r.height / 2) * .2, duration: .6, ease: 'power3.out', overwrite: true }); });
         const leave = () => context.add(() => { gsap.to(button, { x: 0, y: 0, duration: .8, ease: 'power3.out', overwrite: true }); });
@@ -255,9 +286,19 @@ export function mountChapters(root: HTMLElement) {
   const warm = () => $$('.ch-sky img, .cp-picture img').forEach(image => { void (image as HTMLImageElement).decode().catch(() => undefined); });
   const warmTimer = window.setTimeout(warm, 1500);
   // New language lines and late local/selected language fonts both change measurements.
-  const refresh = () => { if (!disposed) ScrollTrigger.refresh(); };
+  const fitWordmark = () => {
+    const plate = root.querySelector<HTMLElement>('.footer-wordmark')!;
+    plate.style.fontSize = '';
+    const word = root.querySelector<HTMLElement>('[data-wordmark]')!;
+    const range = document.createRange();
+    range.selectNodeContents(word);
+    const measured = range.getBoundingClientRect().width;
+    if (measured > 0) plate.style.fontSize = `${parseFloat(getComputedStyle(plate).fontSize) * plate.clientWidth / measured}px`;
+  };
+  const refresh = () => { if (disposed) return; fitWordmark(); ScrollTrigger.refresh(); };
   const refreshFrame = requestAnimationFrame(refresh);
   void document.fonts.ready.then(refresh);
   document.fonts.addEventListener('loadingdone', refresh);
-  return () => { disposed = true; window.clearTimeout(warmTimer); cancelAnimationFrame(refreshFrame); document.fonts.removeEventListener('loadingdone', refresh); media.revert(); context.revert(); page.classList.remove('ch-footer-on', 'ch-stage-on'); removers.forEach(remove => remove()); splits.forEach(split => split.revert()); };
+  window.addEventListener('resize', fitWordmark);
+  return () => { disposed = true; window.clearTimeout(warmTimer); cancelAnimationFrame(refreshFrame); document.fonts.removeEventListener('loadingdone', refresh); window.removeEventListener('resize', fitWordmark); media.revert(); context.revert(); page.classList.remove('ch-footer-on', 'ch-stage-on'); removers.forEach(remove => remove()); splits.forEach(split => split.revert()); };
 }

@@ -12,7 +12,12 @@ export function roundFrame(progress: number) {
   return { rises, turn, year, fill: ease(seg(p, .02, .83)) };
 }
 
-// The gallery moves at one speed; a card is in focus only while it is near the middle of the screen.
-export function cardFocus(center: number, shift: number, width: number, cardWidth: number) {
-  return ease(clamp(1 - Math.abs(center + shift - width / 2) / (cardWidth * 1.15)));
+// Each envelope holds the stage alone, then the five meet. Only two scenes are ever awake at once.
+export function cultureFrame(progress: number) {
+  const p = clamp(progress);
+  const span = .84 / 5;
+  const slot = Math.min(4, Math.floor(p / span));
+  const local = clamp((p - slot * span) / span);
+  // the last envelope has left before the five arrive, so the two never overlap
+  return { slot, local, change: slot < 4 ? ease(seg(local, .62, 1)) : 0, clear: ease(seg(p, .84, .875)), finale: ease(seg(p, .875, .915)), leave: ease(seg(p, .95, 1)) };
 }

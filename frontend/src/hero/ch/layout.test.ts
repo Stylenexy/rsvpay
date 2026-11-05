@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cardFocus, roundFrame } from './layout';
+import { cultureFrame, roundFrame } from './layout';
 
 const samples = Array.from({ length: 1001 }, (_, i) => i / 1000);
 
@@ -35,13 +35,29 @@ describe('the reply chapter', () => {
   });
 });
 
-describe('the culture gallery', () => {
-  it('focuses the card at the middle of the screen', () => {
-    expect(cardFocus(500, 0, 1000, 300)).toBe(1);
-    expect(cardFocus(1200, 0, 1000, 300)).toBe(0);
+describe('the five envelopes', () => {
+  it('gives each envelope the stage alone before the change starts', () => {
+    for (let i = 0; i < 5; i++) expect(cultureFrame(.168 * i + .08)).toMatchObject({ slot: i, change: 0, finale: 0 });
   });
 
-  it('follows the track', () => {
-    expect(cardFocus(1200, -700, 1000, 300)).toBe(1);
+  it('never moves more than one scene at a time', () => {
+    for (const p of samples) {
+      const { slot, change } = cultureFrame(p);
+      expect(slot).toBeLessThanOrEqual(4);
+      expect(change).toBeGreaterThanOrEqual(0);
+      if (slot === 4) expect(change).toBe(0);
+    }
+  });
+
+  it('clears the last envelope before the five arrive', () => {
+    for (const p of samples) {
+      const { clear, finale } = cultureFrame(p);
+      if (finale > 0) expect(clear).toBe(1);
+    }
+  });
+
+  it('ends with all five together, then clears the stage', () => {
+    expect(cultureFrame(.92)).toMatchObject({ slot: 4, finale: 1, leave: 0 });
+    expect(cultureFrame(1).leave).toBe(1);
   });
 });
