@@ -11,6 +11,8 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - Six languages across the whole app: English, Indonesian, Chinese, Korean, Japanese, Vietnamese.
 - Asset check: every page at two screen sizes, no file may fail and every image must decode.
 - `CLAIMS.md` and this changelog.
+- The book links gifts and replies both ways, and a reply arrives as its own card.
+- Pages for a wrong link, for loading, and for a book with no gifts yet, where the guest QR now comes first.
 
 ### Changed
 - The five envelopes each get the stage alone, on a backdrop made from their own tradition's material, then meet at the end. The backdrops live with the sky, so no edge shows.
