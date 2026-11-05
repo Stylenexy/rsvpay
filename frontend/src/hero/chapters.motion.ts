@@ -233,10 +233,13 @@ export function mountChapters(root: HTMLElement) {
     });
   }, root);
 
+  // Decode what the first transition shows while nothing is moving, so it does not happen mid-scroll.
+  const warm = () => $$('.ch-sky img, .cp-picture img').forEach(image => { void (image as HTMLImageElement).decode().catch(() => undefined); });
+  const warmTimer = window.setTimeout(warm, 1500);
   // New language lines and late local/selected language fonts both change measurements.
   const refresh = () => { if (!disposed) ScrollTrigger.refresh(); };
   const refreshFrame = requestAnimationFrame(refresh);
   void document.fonts.ready.then(refresh);
   document.fonts.addEventListener('loadingdone', refresh);
-  return () => { disposed = true; cancelAnimationFrame(refreshFrame); document.fonts.removeEventListener('loadingdone', refresh); media.revert(); context.revert(); page.classList.remove('ch-footer-on', 'ch-stage-on'); removers.forEach(remove => remove()); splits.forEach(split => split.revert()); };
+  return () => { disposed = true; window.clearTimeout(warmTimer); cancelAnimationFrame(refreshFrame); document.fonts.removeEventListener('loadingdone', refresh); media.revert(); context.revert(); page.classList.remove('ch-footer-on', 'ch-stage-on'); removers.forEach(remove => remove()); splits.forEach(split => split.revert()); };
 }
