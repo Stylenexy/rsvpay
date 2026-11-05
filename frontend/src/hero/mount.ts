@@ -29,10 +29,16 @@ function inkAt(p: number) {
 const START = new Date(2026, 10, 21).getTime();
 const WEDDING = new Date(2028, 10, 18).getTime();
 
+// Opening the audio device blocks for a moment, so it happens behind the loader, never on the ring.
+let bellContext: AudioContext | undefined;
+function warmBell() {
+  if (!bellContext && window.AudioContext) bellContext = new AudioContext();
+}
+
 function bell() {
-  const AC = window.AudioContext;
-  if (!AC) return;
-  const ctx = new AC();
+  const ctx = bellContext;
+  if (!ctx) return;
+  void ctx.resume();
   const now = ctx.currentTime;
   [
     [880, 0.2],
@@ -49,7 +55,6 @@ function bell() {
     o.start(now + i * 0.04);
     o.stop(now + 1.7);
   });
-  window.setTimeout(() => void ctx.close(), 2000);
 }
 
 export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
@@ -321,6 +326,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     loadNum.textContent = String(Math.min(100, Math.round((done / need) * 100)));
     if (done >= need) {
       ready = true;
+      warmBell();
       load.classList.add('done');
       last = performance.now();
       rafId = requestAnimationFrame(tick);
