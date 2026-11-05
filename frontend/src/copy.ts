@@ -188,7 +188,7 @@ const ERRORS: [string, keyof Copy][] = [
   [E.closed, 'beriClosed'], [E.messageTooLong, 'errLong'], [E.depositTooSmall, 'errSmall'],
   [E.notHolder, 'errHolder'], [E.midTransfer, 'errMoving'], [E.alreadyReplied, 'errReplied'],
   [E.nothingFree, 'bukuNothing'], [E.noSuchAmplop, 'missing'], ['helper 429', 'errLimit'],
-  ['not enough balance', 'errBalance'], ['NotEnoughBalance', 'errBalance'], ['enough balance', 'errBalance'], ['LackBalance', 'errBalance'], ['insufficient', 'errBalance'],
+  ['not enough balance', 'errBalance'], ['NotEnoughBalance', 'errBalance'], ['enough balance', 'errBalance'], ['lacks balance', 'errBalance'], ['insufficient', 'errBalance'],
 ];
 
 export function plainError(err: unknown, lang: Lang = 'en'): string {

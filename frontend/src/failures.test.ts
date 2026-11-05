@@ -22,6 +22,13 @@ describe('what a person sees when something fails', () => {
     expect(plainError(new Error('helper 429: too many requests'), 'id')).toMatch(/dibatasi/);
   });
 
+  it('names a low balance in the words the network really uses', () => {
+    const shown = 'There is not enough play money for this gift.';
+    expect(plainError(new Error('Not enough balance for budi.testnet (balance: 1, cost: 2)'))).toBe(shown);
+    expect(plainError(new Error('Not enough balance for deposit for budi.testnet (balance: 1, cost: 2, reason: x)'))).toBe(shown);
+    expect(plainError(new Error('Account budi.testnet lacks balance 5 yoctoNear for state'))).toBe(shown);
+  });
+
   it('never shows raw technical text for an unknown failure', () => {
     const shown = plainError(new Error('wasm trap: StackOverflow at 0xdeadbeef'), 'id');
     expect(shown).toBe('Ada yang gagal. Coba lagi.');
