@@ -13,6 +13,11 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - New name and marks: RSVPay, a glass seal for large moments and a flat seal for small sizes.
 
 ### Changed
+- One glass envelope now travels the whole landing: out of the clouds, onto each guest-table panel, into the reply story, past the proof, into each country's envelope, and into the morning. Desktop only.
+- "Don't trust us" is one screen with one fact and one button; the full list of checks is folded.
+- Make an envelope: the names and date are written on the envelope itself.
+- First visit downloads half as much: 3.0 MB before scrolling, down from 6.0 MB.
+- Small labels above headings and the chapter counter are gone.
 - The book links gifts and replies both ways, and the product name lives in one file.
 - Plain words replace "keeper" everywhere.
 - A couple's names read on three lines: name, connector, name.
