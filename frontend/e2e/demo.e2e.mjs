@@ -20,7 +20,7 @@ const { context, page } = await open({ width: 1366, height: 768 });
 const shot = (tab, name) => (SHOTS ? tab.screenshot({ path: `${SHOTS}/${name}.png` }) : null);
 const layout = () => page.evaluate(() => {
   const y = (s) => Math.round(document.querySelector(s).getBoundingClientRect().top + scrollY);
-  return { form: y('.form-panel'), stage: y('.envelope-stage'), line: y('.story-line'), height: document.documentElement.scrollHeight };
+  return { form: y('.form-panel'), letter: y('.letter'), line: y('.story-line'), height: document.documentElement.scrollHeight };
 });
 
 await page.goto(`${BASE}/?mock#/buka`, { waitUntil: 'load' });
@@ -39,16 +39,10 @@ const heading = await page.locator('.envelope-story h1').innerText();
 await page.locator('.open-page input').first().fill('Siti dan Andi');
 await page.locator('.open-page input[type=date]').fill('2026-12-12');
 await page.waitForTimeout(800);
-const typed = await page.evaluate(() => { const names = document.querySelector('.story-names'); return { text: names.textContent, opacity: +getComputedStyle(names).opacity }; });
 say(await page.locator('.envelope-story h1').innerText() === heading, 'the heading keeps its words while typing', heading.replace(/\s+/g, ' '));
-say(typed.text === 'Siti dan Andi' && typed.opacity > .9, 'the names arrive under it', JSON.stringify(typed));
+say(await page.locator('.letter-names').inputValue() === 'Siti dan Andi', 'the names are written on the envelope');
 say(JSON.stringify(await layout()) === JSON.stringify(resting), 'typing moves nothing');
 await shot(page, 'names-typed');
-await page.locator('.open-page input').first().fill('');
-await page.waitForTimeout(800);
-say(await page.evaluate(() => +getComputedStyle(document.querySelector('.story-names')).opacity) < .05, 'clearing fades the names away');
-say(await page.locator('.envelope-story h1').innerText() === heading, 'the heading is still there after clearing');
-await page.locator('.open-page input').first().fill('Siti dan Andi');
 
 const pill = () => page.evaluate(() => { const box = document.querySelector('.app-languages'); const p = box.querySelector('.lang-pill').getBoundingClientRect(); return { x: Math.round(p.left), width: Math.round(p.width), chosen: box.querySelector('[aria-pressed="true"]').textContent, peek: box.hasAttribute('data-peek') }; });
 const atRest = await pill();

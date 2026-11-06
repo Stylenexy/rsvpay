@@ -60,12 +60,10 @@ export function EnvelopeObject({ className = '' }: { className?: string }) {
   return <img className={`obj ${className}`} src="/aset/v2/kaca.webp" alt="" aria-hidden="true" />;
 }
 
-export function EnvelopeStory({ title, date, children, amount = 250000, names }: {
-  title: string; date?: string; children: ReactNode; amount?: number; names?: string;
+export function EnvelopeStory({ title, date, children, amount = 250000, plain = false }: {
+  title: string; date?: string; children: ReactNode; amount?: number; plain?: boolean;
 }) {
   const root = useRef<HTMLElement>(null);
-  const lastNames = useRef('');
-  if (names) lastNames.current = names;
   const { date: formatDate } = useFormat();
   useLayoutEffect(() => {
     const media = gsap.matchMedia();
@@ -83,9 +81,8 @@ export function EnvelopeStory({ title, date, children, amount = 250000, names }:
       <h1>{titleLines(title).map(({ text, connector }, i) => (
         <span className={`title-mask${connector ? ' title-connector' : ''}`} key={i}><span className="title-rise">{connector ? <em>{text}</em> : text}</span></span>
       ))}</h1>
-      {names !== undefined && <p className={`story-names${names ? ' on' : ''}`}>{lastNames.current}</p>}
-      {(date || names !== undefined) && <p className={`story-date${date ? '' : ' off'}`}>{date ? formatDate(date) : '\u00a0'}</p>}
-      <div className="envelope-stage" aria-hidden="true"><div className="envelope-halo" /><img className="envelope-float" src="/aset/v2/kaca.webp" alt="" /></div>
+      {date && <p className="story-date">{formatDate(date)}</p>}
+      {!plain && <div className="envelope-stage" aria-hidden="true"><div className="envelope-halo" /><img className="envelope-float" src="/aset/v2/kaca.webp" alt="" /></div>}
       <p className="story-line">{children}</p>
     </section>
   );

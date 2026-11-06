@@ -16,7 +16,11 @@ export function Guide({ role, line, step, done, next }: { role: GuideRole; line:
   useEffect(() => {
     setBubble(true);
     const timer = window.setTimeout(() => setBubble(false), done ? 16000 : 7000);
-    return () => window.clearTimeout(timer);
+    // the first touch on the page means they are busy; a finished step stays until it has been read
+    const away = () => { if (!done) setBubble(false); };
+    window.addEventListener('pointerdown', away);
+    window.addEventListener('keydown', away);
+    return () => { window.clearTimeout(timer); window.removeEventListener('pointerdown', away); window.removeEventListener('keydown', away); };
   }, [role, step, done]);
   if (tourActive()) return null;
   const who = { couple: t.guideYouCouple, guest: t.guideYouGuest, visitor: t.guideYouVisitor, demo: t.guideYouWatch }[role];

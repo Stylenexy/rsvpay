@@ -55,17 +55,13 @@ export function Buka() {
     <>
       <Guide role="couple" line={t.guideBuka} step={0} />
       <main className="app-grid open-page" ref={root}>
-        <EnvelopeStory title={t.bukaTitle} names={title} date={date} amount={bps * 100}>{t.bukaStory}</EnvelopeStory>
-        <form className="glass card form-panel" onSubmit={submit}>
-          <h2>{t.bukaForm}</h2>
-          <label className="field">
-            <span className="label">{t.bukaNames}</span>
-            <input className="input" value={title} placeholder={t.bukaNamesHint} maxLength={80} onChange={(e) => setTitle(e.target.value)} />
-          </label>
-          <label className="field">
-            <span className="label">{t.bukaDate}</span>
-            <input className="input" type="date" value={date} placeholder={t.bukaDateHint} maxLength={32} onChange={(e) => setDate(e.target.value)} />
-          </label>
+        <EnvelopeStory title={t.bukaTitle} plain amount={bps * 100}>{t.bukaStory}</EnvelopeStory>
+        <form className="form-panel open-form" aria-label={t.bukaForm} onSubmit={submit}>
+          <div className="letter">
+            <img className="letter-glass" src="/aset/v2/kaca.webp" alt="" />
+            <input className="input letter-names" aria-label={t.bukaNames} value={title} placeholder={t.bukaNamesHint} maxLength={80} onChange={(e) => setTitle(e.target.value)} />
+            <input className="input letter-date" aria-label={t.bukaDate} type="date" value={date} placeholder={t.bukaDateHint} maxLength={32} onChange={(e) => setDate(e.target.value)} />
+          </div>
           {!account && (
             <label className="field">
               <span className="label">{t.bukaHost}</span>
