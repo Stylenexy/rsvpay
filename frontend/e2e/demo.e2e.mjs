@@ -28,12 +28,15 @@ await page.locator('.guide-pill').waitFor();
 await page.waitForTimeout(1600);
 const resting = await layout();
 
-await page.locator('.guide-pill').click();
-await page.waitForTimeout(300);
+await page.locator('.guide-pill').hover();
+await page.waitForTimeout(600);
+say(await page.locator('.guide-panel').evaluate((e) => +getComputedStyle(e).opacity) > .95, 'hovering opens the guide');
 say(JSON.stringify(await layout()) === JSON.stringify(resting), 'opening the guide moves nothing', JSON.stringify(resting));
 say(await page.evaluate(() => getComputedStyle(document.querySelector('.guide')).position) === 'fixed', 'the guide floats');
 await shot(page, 'guide-open');
-await page.locator('.guide-pill').click();
+await page.mouse.move(700, 500);
+await page.waitForTimeout(800);
+say(await page.locator('.guide-panel').evaluate((e) => getComputedStyle(e).visibility) === 'hidden', 'leaving closes the guide');
 
 const heading = await page.locator('.envelope-story h1').innerText();
 await page.locator('.open-page input').first().fill('Siti dan Andi');
@@ -78,7 +81,8 @@ await page.waitForTimeout(500);
 const kept = (await page.locator('.guide-bubble').innerText()).replace(/\s+/g, ' ');
 say(kept.includes('Step 3 done') && kept.includes('Time for step 4'), 'the book says what comes next', kept);
 
-await page.locator('.guide-pill').click();
+await page.locator('.guide-pill').hover();
+await page.waitForTimeout(600);
 await page.getByRole('button', { name: 'Show me, step by step' }).click();
 await page.locator('.tour-card').waitFor({ timeout: 15000 });
 
@@ -120,7 +124,7 @@ for (const [label, viewport, extra] of [['laptop', { width: 1366, height: 768 },
   const story = await open(viewport, extra);
   await story.page.goto(`${BASE}/?mock#/coba`, { waitUntil: 'load' });
   await story.page.locator('[data-step="ring"][data-state="done"]').waitFor({ timeout: 60000 });
-  await story.page.getByRole('button', { name: 'Give back to Budi' }).click({ timeout: 8000 });
+  await story.page.getByRole('button', { name: 'Give back to Sam' }).click({ timeout: 8000 });
   await story.page.locator('[data-story-complete]').waitFor({ timeout: 30000 });
   say(true, `the story button stays reachable on a ${label}`);
   await story.context.close();
