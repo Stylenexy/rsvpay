@@ -4,6 +4,9 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 
 ## 2026-11-07
 
+### Changed
+- `/api/dana` limits itself to six accounts per address per hour and one top-up per account, checks before it retries, and reports what is left.
+
 ### Docs
 - Numbers in README and CLAIMS now match the evidence files. Story runs are listed in `docs/evidence/coba-e2e-runs.txt`. The stale verification note left the README.
 - The toolchain is pinned and CI prints the wasm hash.
