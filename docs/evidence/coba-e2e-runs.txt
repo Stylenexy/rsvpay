@@ -1,0 +1,14 @@
+Every recorded run of frontend/e2e/coba.e2e.mjs on the live site, including the pause at the reply.
+Taken from the history of coba-e2e-report.txt. Asia/Jakarta time.
+
+2026-11-05 03.48  27.6 s
+2026-11-05 04.34  29.5 s
+2026-11-05 04.39  29.4 s
+2026-11-05 15.58  60.9 s
+2026-11-06 02.07  28.8 s
+2026-11-06 02.34  28.6 s
+2026-11-06 15.53  37.4 s
+2026-11-06 16.25  45.0 s
+2026-11-07 01.58  26.9 s  (rsvpay.testnet)
+
+Fastest 26.9 s, slowest 60.9 s, target 60 s.

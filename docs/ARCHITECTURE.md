@@ -1,6 +1,6 @@
 # Architecture
 
-RSVPay has two parts and no server of its own.
+RSVPay has two parts and one small helper function: the contract, the static site, and `/api/dana`, which funds throwaway testnet accounts.
 
 ```mermaid
 flowchart LR
@@ -9,7 +9,9 @@ flowchart LR
   G -. first visit: new test account .-> K[NEAR testnet helper]
   H -. first visit: new test account .-> K
   R --> C[amplop-balas contract<br/>no access keys]
-  V[Vercel<br/>static files only] --> G
+  V[Vercel<br/>static files] --> G
+  D[/api/dana<br/>testnet purse/] -->|funds throwaway accounts| R
+  G -->|asks for a test account| D
   V --> H
 ```
 

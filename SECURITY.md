@@ -12,7 +12,7 @@ RSVPay is a hackathon project on NEAR testnet. It is not audited and holds only 
 
 **Never paste** a private key, seed phrase or real account into an issue, pull request or test file. Test accounts are throwaway: the scripts make them with random keys and keep them in memory.
 
-**What the site can do.** The site is static. It has no server, no database and no secrets. Keys of test accounts stay in the browser that made them (`localStorage`), so anything able to run script on the page could read them. The Content Security Policy in `frontend/vercel.json` limits where the page can connect. This is acceptable for testnet keys and would not be acceptable for real money; see [Roadmap](docs/ROADMAP.md).
+**What the site can do.** The site is static apart from one function, `frontend/api/dana.ts`, which holds a testnet key for the purse described below. It has no database and no other secrets. The keys of the throwaway accounts stay in each visitor's browser.
 
 **Known limits** are listed in [the threat model](docs/THREAT-MODEL.md#not-defended). You do not need to report those.
 

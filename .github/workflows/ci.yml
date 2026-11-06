@@ -24,6 +24,8 @@ jobs:
           workspaces: contracts
       - run: cargo test
       - run: cargo build --target wasm32-unknown-unknown --release
+      - name: Print the wasm hash to compare with the code hash on chain
+        run: sha256sum target/wasm32-unknown-unknown/release/amplop_balas.wasm
 
   frontend:
     runs-on: ubuntu-latest

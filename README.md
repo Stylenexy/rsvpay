@@ -18,7 +18,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Contract (testnet) | [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL`, equal to the hash of a release build of this source |
-| Tests | 48 Rust, 68 web, 13 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 28.6 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
+| Tests | 48 Rust, 68 web, 13 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 26.9 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 ## Try the whole story on one device
@@ -27,7 +27,7 @@ Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the l
 
 The browser requests one throwaway account for Maya from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Maya funds Sam's sub-account from her own test balance. It then opens Maya's wedding, sends Sam's gift, advances the story date by two years and opens Sam's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Sam**.
 
-Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; live checks took between 28.6 s and 60.9 s including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
+Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; nine live checks took between 26.9 s and 60.9 s ([runs](docs/evidence/coba-e2e-runs.txt)) including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Sam's opening receipt.
 
@@ -96,7 +96,7 @@ Run the frontend locally as described below. The app uses only the fixed testnet
 
 The ordinary `#/buka`, `#/beri/<id>` and `#/buku/<id>` pages remain available for a two-device walkthrough: open a celebration, share its QR, give from the second device, then open the guest's own celebration and reply from the first device.
 
-Accounts are throwaway testnet accounts created by the browser. Their keys stay on that device. There is no server key. Clearing browser storage removes access to those accounts.
+Accounts are throwaway testnet accounts. The browser makes the key, which stays on that device, and a small testnet purse (`frontend/api/dana.ts`) funds them. That purse's one key is a Vercel secret and guards play money only. Clearing browser storage removes access to those accounts.
 
 History checks the public Nearblocks testnet API without a key and verifies indexed transaction logs against testnet RPC receipts. The scan is limited to the latest 100 indexed contract transactions and labels truncated or missing coverage. Public receipt references for transactions made on this device are also saved locally and verified through RPC when read again. Failed payouts are shown as refunds, never as money paid out. This is not a complete archive when the public index is missing data.
 
@@ -112,7 +112,7 @@ See `test result: ok. 48 passed`. On Windows without NASM, set `AWS_LC_SYS_PREBU
 ```bash
 cd frontend && npm ci && npm test
 ```
-The regular suite includes pure-logic and in-memory tests. The live-network test is skipped unless `LIVE=1`. See the verification note below for the latest checked result.
+The regular suite includes pure-logic and in-memory tests. The live-network test is skipped unless `LIVE=1`. See 68 passed, 2 skipped.
 
 ```bash
 cd frontend && npm run dev
@@ -129,12 +129,12 @@ See `1 passed`: the web client opens, gives, rings, replies and withdraws on tes
 ```bash
 cd scripts && npm ci && node attacks.mjs
 ```
-See 12 `PASS` lines, one per attack, against the deployed contract. Report: [`docs/evidence/attacks-report.txt`](docs/evidence/attacks-report.txt).
+See 13 `PASS` lines, one per attack, against the deployed contract. Report: [`docs/evidence/attacks-report.txt`](docs/evidence/attacks-report.txt).
 
 ```bash
 cd frontend && node e2e/alur.e2e.mjs
 ```
-See `PASS` on every line: the whole story on the deployed site in a real browser engine, the guest on a 360 px touch screen. Set `CHROME` to your browser's path if it is not the Windows default. Report and screenshots: [`docs/evidence/`](docs/evidence/).
+See `PASS` on every line: the whole story on a local build against the deployed contract, in a real browser engine, the guest on a 360 px touch screen. Set `CHROME` to your browser's path if it is not the Windows default. Report and screenshots: [`docs/evidence/`](docs/evidence/).
 
 Rebuild the wasm (optional, the deployed contract already matches this source):
 
@@ -143,14 +143,6 @@ rustup target add wasm32-unknown-unknown
 cd contracts && cargo build --target wasm32-unknown-unknown --release
 ```
 `.cargo/config.toml` adds `--cfg near`. Without it every on-chain panic loses its message.
-
-### Verification of this change
-
-- `cd frontend` then `npm run typecheck` and `npx vitest run`: typecheck passed; 44 tests passed and 2 live tests skipped. Live tests remain opt-in.
-- Read-only curl with a browser `Origin` header: Nearblocks returned HTTP 200 and `Access-Control-Allow-Origin: *`, but empty results. RPC returned the known successful withdrawal callback; a reduced public fixture is used in unit tests. See [source checks](docs/evidence/history-source-check.txt).
-- [`frontend/e2e/coba.e2e.mjs`](frontend/e2e/coba.e2e.mjs) is a manual testnet script for the one-device story, its pause, the three laptop sizes and passing the envelope on. It has not been run. No browser was launched for this change.
-- One native sub-account funding call passed on testnet, using one helper account and in-memory keys. It created a child with exactly 0.4 test NEAR and waited for finality. The opt-in check is `LIVE_SUBACCOUNT=1 npx vitest run src/chain/subaccount-check.test.ts` (use your shell's environment-variable syntax). No Amplop contract methods were called.
-- The new story's full network path, NFT transfer through the browser, 60-second target, rendered layout and full indexed history remain unverified. No browser or e2e was run, and nothing was deployed.
 
 ## How control moves when the NFT is transferred
 
@@ -198,7 +190,7 @@ Other measurements:
 | What | Result | When | Source |
 |---|---|---|---|
 | Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
-| New guest gives on the deployed site, 360 px emulated touch screen, account already seated | 5.3 s | 4 Nov 2026 | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| New guest gives, local build against the deployed contract, 360 px emulated touch screen, account made on the way | 10.7 s | 4 Nov 2026 | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
 | Storage a gift pays for its own entry | 0.0015 NEAR | 2 Nov 2026 | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
 | Live attacks refused | 13 of 13 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
 

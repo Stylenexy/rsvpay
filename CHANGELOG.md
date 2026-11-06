@@ -4,6 +4,10 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 
 ## 2026-11-07
 
+### Docs
+- Numbers in README and CLAIMS now match the evidence files. Story runs are listed in `docs/evidence/coba-e2e-runs.txt`. The stale verification note left the README.
+- The toolchain is pinned and CI prints the wasm hash.
+
 ### Security
 - `reciprocate` now also refuses a target amplop that is mid-transfer. Before this, a host could park a guest's seed in a decoy that only looked like the guest's during `nft_transfer_call`, take the decoy back, and withdraw the seed. Reported in issue #1 (T18).
 - The contract moved to `rsvpay.testnet`, because a keyless contract cannot be patched. The demo book is now #3.
