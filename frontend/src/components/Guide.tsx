@@ -37,7 +37,7 @@ export function Guide({ role, line, step, done, next }: { role: GuideRole; line:
       {!open && bubble && <div className="guide-bubble" role="status">
         {done ? <><b>{say(t.stepDone, done)}</b>{next && steps[done] && <a href={next}>{say(t.stepNext, done + 1)}: {steps[done][0]} ↗</a>}</> : <><b>{who}</b><span>{line}</span></>}
       </div>}
-      <button type="button" className="guide-pill" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? '×' : '?'}<span>{t.guideHow}</span></button>
+      <button type="button" className="guide-pill" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? '×' : '?'}<span>{t.guideHow}</span><b>{say(t.guideStepOf, Math.min(at + 1, 4))}</b></button>
     </aside>
   );
 }

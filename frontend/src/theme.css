@@ -71,6 +71,11 @@
   /* huruf */
   --f-disp: 'Zodiak', Georgia, serif;
   --f-body: 'Satoshi', 'Figtree', system-ui, sans-serif;
+  --paper: #fbfaf6;
+  --paper-warm: #f4e6d2;
+  --paper-ink: #0a2a5e;
+  --paper-line: rgba(10, 42, 94, 0.2);
+  --paper-amber: #9a5a12;
   --f-mono: 'DM Mono', ui-monospace, monospace;
 
   /* gerak */

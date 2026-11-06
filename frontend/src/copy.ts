@@ -73,6 +73,7 @@ const words = {
   tourLine5: ["One tap gives back, with the kept share already in it.", "Satu ketuk untuk membalas, simpanannya sudah di dalam.", "一键回礼，留存份额已在其中。", "한 번 누르면 보답돼요. 남겨 둔 몫도 함께 가요.", "ワンタップでお返し。残した分もそのまま入ります。", "Một chạm để mừng lại, phần giữ lại đã có sẵn."],
   tourLine6: ["The guest's new book shows the gift came back.", "Buku baru tamu menunjukkan hadiahnya kembali.", "宾客的新礼簿显示礼金回来了。", "하객의 새 장부에 선물이 돌아왔다고 보여요.", "ゲストの新しい帳簿に、贈り物が戻ったと表示されます。", "Sổ mới của khách cho thấy món quà đã trở lại."],
   stepDone: ["Step {0} done.", "Langkah {0} selesai.", "第 {0} 步完成。", "{0}단계 완료.", "ステップ {0} 完了。", "Xong bước {0}."],
+  guideStepOf: ["Step {0} of 4", "Langkah {0} dari 4", "第 {0} 步，共 4 步", "4단계 중 {0}단계", "全4ステップ中 {0}", "Bước {0}/4"],
   guideYouCouple: ["You are the couple", "Kamu pasangan yang menikah", "你是新人", "당신은 신랑 신부예요", "あなたは新郎新婦です", "Bạn là đôi uyên ương"],
   guideYouGuest: ["You are a guest", "Kamu tamu", "你是宾客", "당신은 하객이에요", "あなたはゲストです", "Bạn là khách mời"],
   guideYouVisitor: ["You are visiting", "Kamu pengunjung", "你是访客", "방문 중이에요", "見学中です", "Bạn đang ghé thăm"],
