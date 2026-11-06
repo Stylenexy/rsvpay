@@ -18,10 +18,28 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Contract (testnet) | [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL`, equal to the hash of a release build of this source |
-| Tests | 48 Rust, 68 web, 13 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 26.9 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
+| Tests | 48 Rust, 68 web, 13 live attacks. What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
-## Try the whole story on one device
+## What it does
+
+1. **A host opens a hajatan** (celebration). The contract mints one NFT, the *amplop*, to the host. The host fixes a *reply seed* of 0–10%, which can never change.
+2. **A guest scans a QR and gives.** No wallet to install. The gift becomes an entry in the NFT: who, how much, the wish, when. The seed part (say 5%) stays locked in that guest's name. The rest is free for the host to withdraw.
+3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Sam gave $500. Seed $25 is ready. Add $475?"* One tap releases the seed plus the top-up into Sam's amplop as a new entry linked to the old one. Saying "later" changes nothing.
+
+Each reply is itself an entry with its own seed, so the chain of giving back can continue between two families for decades.
+
+![The host's book when an old guest hosts: the amplop rings](docs/evidence/5-amplop-rings.png)
+
+Words used below:
+
+- **Envelope (amplop):** the NFT. It holds the money and the book of who gave what.
+- **Celebration (hajatan):** the wedding or party an envelope belongs to.
+- **Share kept (`seed` in the contract):** the part of a gift that stays locked for giving back to that guest.
+- **Ring:** the signal that an old guest now has their own celebration.
+- **Maya and Sam** here are the same two roles as **Siti and Budi** in the Indonesian interface, the tests and the evidence files.
+
+## Try it
 
 Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
 
@@ -41,48 +59,7 @@ curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"
 
 The read-only check on 5 November 2026 (Asia/Jakarta) returned `"keys":[]`.
 
-## Track requirements and where to check them
-
-Track **NFTs That Do Something**, from its [official prompt](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/10-nfts.md). Open Innovation has no written requirements.
-
-| Requirement | Status | Check it |
-|---|---|---|
-| NEP-171 contract plus logic that ties each token to its money | Done, with one difference: the money is booked per token id inside one keyless contract, not in a sub-account per token | [`contracts/src/lib.rs`](contracts/src/lib.rs), [how control moves](#how-control-moves-when-the-nft-is-transferred) |
-| README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
-| Gated page only current holders can open | Done at screen level: the book is hidden from anyone but the holder, while amounts stay public on chain | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
-| History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from successful transaction receipts. The public indexer currently returns no rows for this contract | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
-| Tests for the transfer path, including a sale in the middle of a payout | Done | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
-| Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
-
-## What it does
-
-1. **A host opens a hajatan** (celebration). The contract mints one NFT, the *amplop*, to the host. The host fixes a *reply seed* of 0–10%, which can never change.
-2. **A guest scans a QR and gives.** No wallet to install. The gift becomes an entry in the NFT: who, how much, the wish, when. The seed part (say 5%) stays locked in that guest's name. The rest is free for the host to withdraw.
-3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Sam gave $500. Seed $25 is ready. Add $475?"* One tap releases the seed plus the top-up into Sam's amplop as a new entry linked to the old one. Saying "later" changes nothing.
-
-Each reply is itself an entry with its own seed, so the chain of giving back can continue between two families for decades.
-
-![The host's book when an old guest hosts: the amplop rings](docs/evidence/5-amplop-rings.png)
-
-## Why an NFT, not a database
-
-| Claim | Proof |
-|---|---|
-| **The cycle outlives apps.** Giving back takes 5 to 20 years. This book belongs to the family, not to a company. | The book is contract state, readable with `hajatan(token_id)` without our site |
-| **The money is held by the token, not by us.** No admin, no owner function, no access keys. | Live attack L1: 0 keys |
-| **The rights move with the NFT.** The money, the book and the promises travel with it. The previous holder is locked out. | Step A11 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt), test `old_owner_cannot_withdraw_after_transfer`, live attack L9 |
-| **The seed is a promise kept by code.** It can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; live attacks L6, L11 |
-
-## Why NEAR
-
-- **A contract can give up every key.** The account behind this contract has none, so the rules cannot change. That is what makes a 20-year promise believable.
-- **Whoever adds data pays for its storage.** Each gift covers the storage of its own entry, so a long guest list does not fall on the host, and spam pays for itself.
-- **Accounts have names.** A guest is `budi-….testnet`, not a hex string, which matters when a family reads its own book.
-- **The missing pieces are native.** Google login (NEAR Auth) and sponsored gas (NEP-366) are the next steps on the [roadmap](docs/ROADMAP.md), not add-ons from elsewhere.
-
-## Try it
-
-Run the frontend locally as described below. The app uses only the fixed testnet deployment `rsvpay.testnet`. It offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Rupiah amounts use a labelled display rate of 1 NEAR = $500; testnet NEAR has no market price.
+The app uses only the fixed testnet deployment `rsvpay.testnet` and offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Amounts show in rupiah in Indonesian and in dollars elsewhere, at a demo rate of 1 NEAR = Rp500.000 = $500.
 
 | Do | See |
 |---|---|
@@ -100,6 +77,35 @@ Accounts are throwaway testnet accounts. The browser makes the key, which stays 
 
 History checks the public Nearblocks testnet API without a key and verifies indexed transaction logs against testnet RPC receipts. The scan is limited to the latest 100 indexed contract transactions and labels truncated or missing coverage. Public receipt references for transactions made on this device are also saved locally and verified through RPC when read again. Failed payouts are shown as refunds, never as money paid out. This is not a complete archive when the public index is missing data.
 
+## Track requirements and where to check them
+
+Track **NFTs That Do Something**, from its [official prompt](https://github.com/nearai/near-hackathon-prompt-examples/blob/main/tracks/10-nfts.md). Open Innovation has no written requirements.
+
+| Requirement | Status | Check it |
+|---|---|---|
+| NEP-171 contract plus logic that ties each token to its money | Done, with one difference: the money is booked per token id inside one keyless contract, not in a sub-account per token | [`contracts/src/lib.rs`](contracts/src/lib.rs), [how control moves](#how-control-moves-when-the-nft-is-transferred) |
+| README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
+| Gated page only current holders can open | Done at screen level: the book is hidden from anyone but the holder, while amounts stay public on chain | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from successful transaction receipts. The public indexer currently returns no rows for this contract | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
+| Tests for the transfer path, including a sale in the middle of a payout | Done | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
+| Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
+
+## Why an NFT, not a database
+
+| Claim | Proof |
+|---|---|
+| **The cycle outlives apps.** Giving back takes 5 to 20 years. This book belongs to the family, not to a company. | The book is contract state, readable with `hajatan(token_id)` without our site |
+| **The money is held by the token, not by us.** No admin, no owner function, no access keys. | Live attack L1: 0 keys |
+| **The rights move with the NFT.** The money, the book and the promises travel with it. The previous holder is locked out. | Step A11 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt), test `old_owner_cannot_withdraw_after_transfer`, live attack L9 |
+| **The seed is a promise kept by code.** It can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; live attacks L6, L11 |
+
+## Why NEAR
+
+- **A contract can give up every key.** The account behind this contract has none, so the rules cannot change. That is what makes a 20-year promise believable.
+- **Whoever adds data pays for its storage.** Each gift covers the storage of its own entry, so a long guest list does not fall on the host, and spam pays for itself.
+- **Accounts have names.** A guest is `budi-….testnet`, not a hex string, which matters when a family reads its own book.
+- **The missing pieces are native.** Google login (NEAR Auth) and sponsored gas (NEP-366) are the next steps on the [roadmap](docs/ROADMAP.md), not add-ons from elsewhere.
+
 ## Run it from zero
 
 Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_NASM=1` before cargo.
@@ -107,7 +113,7 @@ Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_
 ```bash
 cd contracts && cargo test
 ```
-See `test result: ok. 48 passed`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first.
+See `test result: ok. 48 passed`.
 
 ```bash
 cd frontend && npm ci && npm test
