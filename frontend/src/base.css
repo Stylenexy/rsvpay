@@ -371,4 +371,5 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
   .guest-page .rate-note { display: none; }
   .guest-page .give-card { gap: 10px; padding: 16px; }
   .guest-page { gap: 12px; padding-top: 8px; }
+  .guide:not(.tour-card) .guide-bubble { position: fixed; top: max(12px, env(safe-area-inset-top)); left: 16px; right: 16px; width: auto; }
 }
