@@ -4,14 +4,17 @@ import { rememberHistoryTransaction } from './history';
 
 /**
  * Live client on NEAR TESTNET. No secrets ship with the site:
- * - each device makes its own test accounts through the public testnet helper
- *   (the helper funds them with test NEAR), and keeps their keys in localStorage;
+ * - each device makes its own test accounts, funded with test NEAR by the project's small
+ *   testnet purse (/api/dana) or else the public helper, and keeps their keys in localStorage;
  * - the contract is the keyless deployment from SPK-A1 (nobody, us included, can change it).
  * Testnet only: the keys here guard play money.
  */
 
 const RPC = 'https://test.rpc.fastnear.com';
 const HELPER = 'https://helper.nearprotocol.com/account';
+const PURSE = '/api/dana';
+// room for gas and storage on top of what a call sends
+const SPARE = 10n ** 23n;
 export const DEFAULT_CONTRACT = 'amplop-c-mvznhnlx.testnet';
 const GAS = teraToGas('100');
 const KEYS = 'amplop.kunci';
@@ -100,15 +103,8 @@ export class NearAmplopClient implements AmplopClient {
   }
 
   async createAccount(name: string): Promise<AccountId> {
-    const id = `${slug(name)}-${Date.now().toString(36).slice(-5)}${Math.random().toString(36).slice(2, 4)}.testnet`;
     const kp = KeyPair.fromRandom('ed25519');
-    const res = await fetch(HELPER, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ newAccountId: id, newAccountPublicKey: kp.getPublicKey().toString() }),
-      signal: AbortSignal.timeout(20_000),
-    });
-    if (!res.ok) throw new Error(`helper ${res.status}: ${(await res.text()).slice(0, 160)}`);
+    const id = (await this.fromPurse(name, kp.getPublicKey().toString())) ?? (await this.fromHelper(name, kp.getPublicKey().toString()));
     // keep the key before anything else can fail, or the funded account is lost
     this.store.saveKey(id, kp.toString());
     this.store.setActive(id);
@@ -121,6 +117,34 @@ export class NearAmplopClient implements AmplopClient {
       }
     }
     throw new Error('account did not appear in time');
+  }
+
+  private async fromPurse(name: string, publicKey: string): Promise<AccountId | null> {
+    try {
+      const res = await fetch(PURSE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ask: 'akun', name, publicKey }), signal: AbortSignal.timeout(25_000) });
+      return res.ok ? ((await res.json()) as { accountId: AccountId }).accountId : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private async fromHelper(name: string, publicKey: string): Promise<AccountId> {
+    const id = `${slug(name)}-${Date.now().toString(36).slice(-5)}${Math.random().toString(36).slice(2, 4)}.testnet`;
+    const res = await fetch(HELPER, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ newAccountId: id, newAccountPublicKey: publicKey }),
+      signal: AbortSignal.timeout(20_000),
+    });
+    if (!res.ok) throw new Error(`helper ${res.status}: ${(await res.text()).slice(0, 160)}`);
+    return id;
+  }
+
+  /** Play money should never be the reason a test stops, so a low account asks the purse before it sends. */
+  private async topUp(deposit: bigint) {
+    const accountId = this.account();
+    if (!accountId || BigInt(await this.balance(accountId)) >= deposit + SPARE) return;
+    await fetch(PURSE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ask: 'isi', accountId }), signal: AbortSignal.timeout(25_000) }).catch(() => undefined);
   }
 
   async balance(accountId: AccountId): Promise<Yocto> {
@@ -153,6 +177,7 @@ export class NearAmplopClient implements AmplopClient {
   }
 
   private async call<T>(methodName: string, args: Record<string, unknown>, deposit: bigint = 0n): Promise<Sent<T>> {
+    if (deposit > 1n) await this.topUp(deposit).catch(() => undefined);
     const res = await this.signer().callFunctionRaw({
       contractId: this.contractId,
       methodName,

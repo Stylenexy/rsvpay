@@ -22,7 +22,7 @@ const page = await ctx.newPage();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 let helpers = 0;
-page.on('request', (r) => { if (r.url() === 'https://helper.nearprotocol.com/account' && r.method() === 'POST') helpers++; });
+page.on('request', (r) => { if (/helper\.nearprotocol\.com\/account|\/api\/dana/.test(r.url()) && r.method() === 'POST' && (r.postData() ?? '').includes('ublicKey')) helpers++; });
 
 try {
   await page.goto(URL_BASE);
@@ -38,7 +38,7 @@ try {
     check((await page.locator('[data-recording]').innerText()).includes('past run, not this visit'), 'recording cannot be mistaken for this visit');
     throw new Error('Live story unverified: account service or network refused; recording checked separately.');
   }
-  check(helpers === 1, 'one public helper call for both families', String(helpers));
+  check(helpers === 1, 'one account request for both families', String(helpers));
   check(await page.locator('[data-step="family"] .txlink').count() === 1, 'child-account funding has a real receipt');
   check(await page.locator('.story-timeline .txlink').count() === 4, 'funding, opening, gift and second opening each have a receipt');
   await page.waitForTimeout(1200);
@@ -49,7 +49,7 @@ try {
   const seconds = (Date.now() - start) / 1000;
   check(seconds <= 60, 'whole story including the pause in 60 seconds', `${seconds.toFixed(1)} s`);
   check(await page.locator('[data-step="reply"] .txlink').count() === 1, 'reply has a real receipt');
-  check(helpers === 1, 'no second helper request while replying');
+  check(helpers === 1, 'no second account request while replying');
   await page.screenshot({ path: `${OUT}coba-reply.png`, fullPage: true });
   await page.getByRole('link', { name: 'Open Budi’s book' }).click();
   await page.getByRole('button', { name: 'Pass the envelope on' }).waitFor({ timeout: 20_000 });
