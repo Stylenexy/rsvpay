@@ -1,10 +1,10 @@
 Manual testnet run: https://rsvpay.vercel.app
-2026-11-06T09:15:34.934Z
+2026-11-06T18:53:47.589Z
 PASS | one account request for both families | 1
 PASS | child-account funding has a real receipt
 PASS | funding, opening, gift and second opening each have a receipt
 PASS | the reply waits for a tap
-PASS | whole story including the pause in 60 seconds | 45.0 s
+PASS | whole story including the pause in 60 seconds | 26.9 s
 PASS | reply has a real receipt
 PASS | no second account request while replying
 PASS | book layout at 1366x768 | {"separated":true,"overflow":0}

@@ -30,7 +30,7 @@ if (PARENT) {
 }
 await ctx.addInitScript(() => localStorage.setItem('amplop-lang', 'id'));
 const page = await ctx.newPage();
-await page.goto(`${URL_BASE}/#/beri/${process.env.DEMO ?? '60'}`);
+await page.goto(`${URL_BASE}/#/beri/${process.env.DEMO ?? '3'}`);
 await page.getByText('Kamu memberi').waitFor({ timeout: 20_000 });
 if (!PARENT) await page.getByPlaceholder('Budi').fill('Juri');
 const t0 = Date.now();

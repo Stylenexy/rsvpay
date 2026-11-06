@@ -16,8 +16,8 @@ export const CH_DATA = {
   words: ['amplop', '礼金', '축의금', 'ご祝儀', 'tiền mừng'],
   languages: ['English', 'Bahasa Indonesia', '中文', '한국어', '日本語', 'Tiếng Việt'],
   figures: ['0', '12/12', '45', '10%'],
-  account: 'amplop-c-mvznhnlx.testnet',
-  hash: '4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U',
+  account: 'rsvpay.testnet',
+  hash: 'G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL',
   methods: ['view_access_key_list', 'view_account'],
   attacks: [
     'Seller keeps withdrawing after the sale',

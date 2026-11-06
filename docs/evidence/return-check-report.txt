@@ -1,4 +1,4 @@
-2026-11-06 Asia/Jakarta, https://rsvpay.vercel.app
+2026-11-07 Asia/Jakarta, https://rsvpay.vercel.app
 PASS | closing page is whole on the way down | {"envelope":1,"words":1,"stage":1}
 PASS | closing page is whole on the way back up | {"envelope":1,"words":1,"stage":1}
 PASS | the app page opens at its top

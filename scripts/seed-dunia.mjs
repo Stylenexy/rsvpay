@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const require = createRequire(new URL('../frontend/package.json', import.meta.url));
 const { Account, JsonRpcProvider, KeyPair, nearToYocto, teraToGas } = require('near-api-js');
 
-const CONTRACT = 'amplop-c-mvznhnlx.testnet';
+const CONTRACT = 'rsvpay.testnet';
 const provider = new JsonRpcProvider({ url: 'https://test.rpc.fastnear.com' });
 const purse = JSON.parse(readFileSync(fileURLToPath(new URL('.dana.json', import.meta.url)), 'utf8'));
 const dana = new Account(purse.accountId, provider, purse.secret);

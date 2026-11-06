@@ -1,14 +1,15 @@
-Live attacks, contract amplop-c-mvznhnlx.testnet
-2026-11-04T04:06:15.365Z
+Live attacks, contract rsvpay.testnet
+2026-11-06T18:52:03.409Z
 PASS | L1 contract has zero access keys: no admin, cannot be changed | 0 keys
 PASS | L2 stranger withdraws from someone else's amplop | refused: Smart contract panicked: only the current holder of the amplop can do this
 PASS | L3 forged failed-payout callback to inflate the balance | refused: Smart contract panicked: Method on_withdraw_done is private
 PASS | L4 forged transfer resolver to take the amplop | refused: Smart contract panicked: Method nft_resolve_transfer is private
 PASS | L5 1 yocto gift that cannot pay its storage | refused: Smart contract panicked: deposit must cover storage and leave a gift
 PASS | L6 host redirects a guest's seed into another person's hajatan | refused: Smart contract panicked: reply must go to a hajatan held by the original giver
-PASS | L7 amplop rings only for the original giver | to #22
+PASS | L7 amplop rings only for the original giver | to #6
 PASS | L8 reply twice from the same seed | refused: Smart contract panicked: this gift was already replied to
 PASS | L9 old owner withdraws after selling the amplop | refused: Smart contract panicked: only the current holder of the amplop can do this
-PASS | L10 new holder withdraws free money, guest seeds stay locked | seed 9931500000000000000000
+PASS | L10 new holder withdraws free money, guest seeds stay locked | seed 9929500000000000000000
 PASS | L11 withdraw seeds after free money is gone | refused: Smart contract panicked: nothing to withdraw
 PASS | L12 give into a closed hajatan | refused: Smart contract panicked: this hajatan is not accepting gifts
+PASS | L13 host replies a guest's seed into a decoy mid-transfer | refused: Smart contract panicked: the giver's hajatan is mid-transfer, try after it settles

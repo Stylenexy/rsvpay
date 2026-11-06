@@ -2,6 +2,12 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-07
+
+### Security
+- `reciprocate` now also refuses a target amplop that is mid-transfer. Before this, a host could park a guest's seed in a decoy that only looked like the guest's during `nft_transfer_call`, take the decoy back, and withdraw the seed. Reported in issue #1 (T18).
+- The contract moved to `rsvpay.testnet`, because a keyless contract cannot be patched. The demo book is now #3.
+
 ## 2026-11-06
 
 ### Added

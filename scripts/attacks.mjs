@@ -9,7 +9,7 @@ import { Account, JsonRpcProvider, KeyPair, nearToYocto, teraToGas } from "near-
 
 const RPC = process.env.NEAR_RPC ?? "https://test.rpc.fastnear.com";
 const HELPER = "https://helper.nearprotocol.com/account";
-const CONTRACT = process.argv[2] ?? "amplop-c-mvznhnlx.testnet";
+const CONTRACT = process.argv[2] ?? "rsvpay.testnet";
 const provider = new JsonRpcProvider({ url: RPC });
 const GAS = teraToGas("100");
 const run = Date.now().toString(36).slice(-6);
@@ -74,7 +74,7 @@ say(keys.keys.length === 0, "L1 contract has zero access keys: no admin, cannot 
 const rootFile = process.env.ATTACK_ROOT;
 const rootKeys = rootFile ? JSON.parse(fs.readFileSync(rootFile, "utf8")) : null;
 const root = rootKeys ? new Account(rootKeys.accountId, provider, rootKeys.secret) : await helperAccount("attack-root");
-const siti = await sub(root, "siti", "0.7");
+const siti = await sub(root, "siti", "1.4");
 const budi = await sub(root, "budi", "1");
 const maling = await sub(root, "maling", "0.7");
 const pembeli = await sub(root, "pembeli", "0.3");
@@ -127,6 +127,34 @@ await refused("L11 withdraw seeds after free money is gone", () => call(pembeli,
 
 await call(maling, "set_open", { token_id: M, open: false });
 await refused("L12 give into a closed hajatan", () => call(budi, "give", { token_id: M, message: "x" }, nearToYocto("0.1")), "not accepting gifts", () => view("hajatan", { token_id: M }));
+
+// L13 (issue #1): reply a guest's seed into a decoy while nft_transfer_call shows the guest as its owner.
+// The reply is sent from a second key so it can land between the transfer and its resolver.
+const E = await open(siti, `Umpan asal ${run}`);
+await call(budi, "give", { token_id: E, message: "selamat" }, nearToYocto("0.1"));
+const stateE = () => view("hajatan", { token_id: E });
+const spare = KeyPair.fromRandom("ed25519");
+await siti.addFullAccessKey(spare.getPublicKey());
+const sitiSpare = new Account(siti.accountId, provider, spare.toString());
+const before13 = JSON.stringify(await stateE());
+let inFlight = false;
+let last = "";
+for (const wait of [700, 1100, 1500, 1900, 2300, 900, 1300, 1700]) {
+  const D = await open(siti, `Umpan ${run} ${wait}`);
+  const transfer = siti.callFunction({ contractId: CONTRACT, methodName: "nft_transfer_call", args: { receiver_id: budi.accountId, token_id: D, msg: "" }, gas: teraToGas("120"), deposit: 1n, waitUntil: "FINAL" }).catch(() => null);
+  await sleep(wait);
+  try {
+    await sitiSpare.callFunction({ contractId: CONTRACT, methodName: "reciprocate", args: { token_id: E, entry: 0, to_token_id: D, message: "x" }, gas: GAS, waitUntil: "FINAL" });
+    last = "ATTACK SUCCEEDED";
+  } catch (e) {
+    last = String(e?.message ?? e);
+  }
+  await transfer;
+  if (last.includes("mid-transfer") || last === "ATTACK SUCCEEDED") { inFlight = true; break; }
+}
+const moved = JSON.stringify(await stateE()) !== before13;
+if (inFlight) say(last.includes("mid-transfer") && !moved, "L13 host replies a guest's seed into a decoy mid-transfer", `refused: ${last.slice(0, 90)}`);
+else console.log(`SKIP | L13 the reply never landed inside the transfer window | last: ${last.slice(0, 90)} | state moved: ${moved}`);
 
 const report = `Live attacks, contract ${CONTRACT}\n${new Date().toISOString()}\n${lines.join("\n")}\n`;
 fs.writeFileSync(new URL(`../docs/evidence/attacks-report.txt`, import.meta.url), report);

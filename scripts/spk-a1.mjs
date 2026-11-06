@@ -25,7 +25,24 @@ const say = (ok, name, detail = "") => {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const near = (y) => yoctoToNear(BigInt(y).toString(), 4);
 
+// The helper rate-limits by address. SPK_PURSE names a JSON file { accountId, secret }, and accounts then start from it:
+// the contract as a top-level name through the testnet registrar, the people under the purse.
+const purse = process.env.SPK_PURSE ? JSON.parse(fs.readFileSync(process.env.SPK_PURSE, "utf8")) : null;
+async function fromPurse(prefix) {
+  const dana = new Account(purse.accountId, provider, purse.secret);
+  const kp = KeyPair.fromRandom("ed25519");
+  if (prefix === "amplop-c") {
+    const id = process.env.SPK_CONTRACT ?? `rsvpay-c-${run.slice(-6)}.testnet`;
+    await dana.callFunction({ contractId: "testnet", methodName: "create_account", args: { new_account_id: id, new_public_key: kp.getPublicKey().toString() }, gas: teraToGas("100"), deposit: nearToYocto("7"), waitUntil: "FINAL" });
+    return new Account(id, provider, kp.toString());
+  }
+  const id = `${prefix}-${run.slice(-6)}.${purse.accountId}`;
+  await dana.createAccount({ newAccountId: id, publicKey: kp.getPublicKey(), nearToTransfer: nearToYocto("7.2") });
+  return new Account(id, provider, kp.toString());
+}
+
 async function helperAccount(prefix) {
+  if (purse) return fromPurse(prefix);
   const kp = KeyPair.fromRandom("ed25519");
   const id = `${prefix}-${run}.testnet`;
   const res = await fetch(HELPER, {

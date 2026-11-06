@@ -6,7 +6,7 @@
                                                  "logs":  [
                                                               "amplop:withdraw token=5 holder=siti-oighzb5.testnet yocto=993607000000000000000000"
                                                           ],
-                                                 "executor_id":  "amplop-c-mvznhnlx.testnet",
+                                                 "executor_id":  "rsvpay.testnet",
                                                  "status":  {
                                                                 "SuccessReceiptId":  "6grSQreqvjo7qiTW6LUXjXCmLya1dj3X4tsZzBz7ynvF"
                                                             }
@@ -42,7 +42,7 @@
                                                  "logs":  [
                                                               "amplop:paid token=5 yocto=993607000000000000000000"
                                                           ],
-                                                 "executor_id":  "amplop-c-mvznhnlx.testnet",
+                                                 "executor_id":  "rsvpay.testnet",
                                                  "status":  {
                                                                 "SuccessValue":  ""
                                                             }
@@ -74,7 +74,7 @@
                              }
                          ],
     "transaction":  {
-                        "receiver_id":  "amplop-c-mvznhnlx.testnet",
+                        "receiver_id":  "rsvpay.testnet",
                         "signer_id":  "siti-oighzb5.testnet",
                         "hash":  "CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45"
                     }

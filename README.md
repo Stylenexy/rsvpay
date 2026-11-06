@@ -2,9 +2,9 @@
 
 **A wedding gift that remembers, and gives back.**
 
-RSVP is the reply to a wedding invitation; here the reply is a gift, years later. The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract keeps that name, `amplop-c-mvznhnlx.testnet`, because it has no keys and can never be renamed.
+RSVP is the reply to a wedding invitation; here the reply is a gift, years later. The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay.testnet`.
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay.testnet)
 
 At Indonesian weddings, guests give money in envelopes (*amplop*) and families keep a notebook of who gave what, so they can return the favour at the guest's own celebration years later. The notebook gets lost. RSVPay makes that notebook an NFT that holds its own money and remembers.
 
@@ -15,10 +15,10 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | | |
 |---|---|
 | Live demo | https://rsvpay.vercel.app |
-| Contract (testnet) | [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet), zero access keys |
+| Contract (testnet) | [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
-| Code on chain | `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U`, equal to the hash of a release build of this source |
-| Tests | 45 Rust, 68 web, 12 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 28.6 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
+| Code on chain | `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL`, equal to the hash of a release build of this source |
+| Tests | 48 Rust, 68 web, 13 live attacks, 13 of 14 browser steps, and the one-button story run on the live site in 28.6 s to 60.9 s, depending on the public testnet ([reports](docs/evidence/)) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 ## Try the whole story on one device
@@ -36,7 +36,7 @@ To watch instead of waiting on the network, open **How it works** on any inner p
 To inspect the fixed deployment's keys:
 
 ```bash
-curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"amplop-c-mvznhnlx.testnet"}}'
+curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"rsvpay.testnet"}}'
 ```
 
 The read-only check on 5 November 2026 (Asia/Jakarta) returned `"keys":[]`.
@@ -82,7 +82,7 @@ Each reply is itself an entry with its own seed, so the chain of giving back can
 
 ## Try it
 
-Run the frontend locally as described below. The app uses only the fixed testnet deployment `amplop-c-mvznhnlx.testnet`. It offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Rupiah amounts use a labelled display rate of 1 NEAR = $500; testnet NEAR has no market price.
+Run the frontend locally as described below. The app uses only the fixed testnet deployment `rsvpay.testnet`. It offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Rupiah amounts use a labelled display rate of 1 NEAR = $500; testnet NEAR has no market price.
 
 | Do | See |
 |---|---|

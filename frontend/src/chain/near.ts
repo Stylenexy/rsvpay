@@ -15,7 +15,7 @@ const HELPER = 'https://helper.nearprotocol.com/account';
 const PURSE = '/api/dana';
 // room for gas and storage on top of what a call sends
 const SPARE = 10n ** 23n;
-export const DEFAULT_CONTRACT = 'amplop-c-mvznhnlx.testnet';
+export const DEFAULT_CONTRACT = 'rsvpay.testnet';
 const GAS = teraToGas('100');
 const KEYS = 'amplop.kunci';
 const ACTIVE = 'amplop.akun';

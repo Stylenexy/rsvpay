@@ -2,14 +2,14 @@
 
 Every claim this project makes, and where to check it. Checked on 5 November 2026 unless a row says otherwise. Where this file and the chain disagree, trust the chain.
 
-Contract: [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/amplop-c-mvznhnlx.testnet). Live site: https://rsvpay.vercel.app
+Contract: [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testnet). Live site: https://rsvpay.vercel.app. The contract moved here on 7 November to close issue #1 (T18); reports dated earlier ran against the previous deployment, `amplop-c-mvznhnlx.testnet`, which differs by that one check.
 
 ## On chain
 
 | Claim | Proof | Check it yourself |
 |---|---|---|
 | Nobody can change the rules. The contract account has zero access keys. | RPC answer on 5 November at block 276,347,018: 0 keys. Attack L1 in [`attacks-report.txt`](docs/evidence/attacks-report.txt). | The `curl` line in the [README](README.md), or **Ask the network now** on the site |
-| The code on chain is this source. | Hash `4TwL5AiugAkZSC3UEzpRyqcQdzhGK35vLLrzrTPGEe8U` read from RPC on 5 November, equal to the local release build in [`measured-testnet.txt`](docs/evidence/measured-testnet.txt) (4 November). | `cd scripts && node measure.mjs` |
+| The code on chain is this source. | Hash `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL` read from RPC on 7 November, equal to the local release build in [`measured-testnet.txt`](docs/evidence/measured-testnet.txt) (4 November). | `cd scripts && node measure.mjs` |
 | 12 of 12 live attacks fail against the deployed contract. | [`attacks-report.txt`](docs/evidence/attacks-report.txt). Nine are refused calls; L1, L7 and L10 confirm the expected safe state. | `cd scripts && node attacks.mjs` |
 | The rights move with the NFT, and the old holder is locked out. | Steps A11 and A12 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt); test `old_owner_cannot_withdraw_after_transfer`; attack L9. | `cd contracts && cargo test` |
 | A kept share can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; attacks L6, L11. | same |
