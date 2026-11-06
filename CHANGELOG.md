@@ -13,6 +13,9 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - New name and marks: RSVPay, a glass seal for large moments and a flat seal for small sizes.
 
 ### Changed
+- Readers outside Indonesian meet Maya, Leo, Sam and Nina and see play dollars at Rp1,000 = $1. Indonesian keeps Siti, Andi, Budi, Rina and rupiah.
+- The demo book is now #60, with guests and wishes in English.
+- How it works rests past the page margin on a laptop and opens on hover.
 - One glass envelope now travels the whole landing: out of the clouds, onto each guest-table panel, into the reply story, past the proof, into each country's envelope, and into the morning. Desktop only.
 - "Don't trust us" is one screen with one fact and one button; the full list of checks is folded.
 - Make an envelope: the names and date are written on a card rising out of the envelope.

@@ -1,6 +1,8 @@
 2026-11-06 Asia/Jakarta, https://rsvpay.vercel.app
+PASS | hovering opens the guide
 PASS | opening the guide moves nothing | {"form":127,"letter":127,"line":514,"height":854}
 PASS | the guide floats
+PASS | leaving closes the guide
 PASS | the heading keeps its words while typing | A beginning worth keeping.
 PASS | the names are written on the envelope
 PASS | typing moves nothing
