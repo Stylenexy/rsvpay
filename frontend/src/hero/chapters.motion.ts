@@ -22,23 +22,14 @@ export function mountChapters(root: HTMLElement) {
   ScrollTrigger.refresh();
 
   const context = gsap.context(() => {
+    // Whatever sits past the story waits until the story is nearly over, then decodes while nothing is moving.
+    ScrollTrigger.create({ trigger: pin, start: 'bottom 420%', once: true, onEnter: () => {
+      for (const image of $$('[data-late]') as HTMLImageElement[]) { image.src = image.dataset.late!; void image.decode().catch(() => undefined); }
+    } });
     ScrollTrigger.create({ trigger: '.ch-footer', start: 'top 88px', end: 'bottom top', toggleClass: { targets: page, className: 'ch-footer-on' } });
     ScrollTrigger.create({ trigger: '.ch-round', start: 'top 60%', endTrigger: '.ch-close', end: 'bottom top', toggleClass: { targets: page, className: 'ch-stage-on' } });
-    const index = $('.ch-index');
-    const indexNames = $$('.ch-index-names > span');
-    let active = -1;
-    const selectIndex = (n: number, progress: number) => {
-      $('.ch-index-track i').style.transform = `scaleY(${progress})`;
-      if (n === active) return;
-      active = n;
-      gsap.to('.ch-digit-roll', { y: -n * 24, duration: .8, ease: 'expo.inOut', overwrite: true });
-      gsap.to(indexNames, { y: -8, opacity: 0, duration: .35, ease: 'power3.out', overwrite: true });
-      gsap.fromTo(indexNames[n - 2], { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .7, ease: 'power3.out', overwrite: true });
-    };
-
     media.add({ reduced: '(prefers-reduced-motion: reduce)', desktop: '(min-width: 761px)', phone: '(max-width: 760px)' }, (mm) => {
       const { reduced, desktop } = mm.conditions!;
-      active = -1;
       const originals = [root, ...$$('*')].map(element => ({ element, style: element.getAttribute('style'), expanded: element.getAttribute('aria-expanded') }));
       const originalNumbers = $$('[data-split]').map(element => ({ element, text: element.textContent }));
       const restore = () => {
@@ -90,13 +81,6 @@ export function mountChapters(root: HTMLElement) {
         });
         splits.push(split);
       }
-
-      gsap.set(index, { autoAlpha: 0 });
-      ScrollTrigger.create({ trigger: root, start: 'top 60%', end: 'bottom bottom', onEnter: () => gsap.to(index, { autoAlpha: 1, duration: .4 }), onLeaveBack: () => gsap.to(index, { autoAlpha: 0, duration: .3 }) });
-      ScrollTrigger.create({ trigger: '.ch-close', start: 'top 60%', onEnter: () => gsap.to(index, { autoAlpha: 0, duration: .3 }), onLeaveBack: () => gsap.to(index, { autoAlpha: 1, duration: .3 }) });
-      $$('.ch-chapter').forEach(section => {
-        ScrollTrigger.create({ trigger: section, start: 'top 45%', end: 'bottom 45%', onToggle: self => { if (self.isActive) selectIndex(Number(section.dataset.chapter), self.progress); }, onUpdate: self => { if (self.isActive) selectIndex(Number(section.dataset.chapter), self.progress); } });
-      });
 
       // ---- 02: scroll opens the four panels in turn; the pointer can borrow them for a moment
       const wedding = $('.ch-table');
@@ -282,9 +266,6 @@ export function mountChapters(root: HTMLElement) {
     });
   }, root);
 
-  // Decode what the first transition shows while nothing is moving, so it does not happen mid-scroll.
-  const warm = () => $$('.ch-sky img, .cp-picture img').forEach(image => { void (image as HTMLImageElement).decode().catch(() => undefined); });
-  const warmTimer = window.setTimeout(warm, 1500);
   // New language lines and late local/selected language fonts both change measurements.
   const fitWordmark = () => {
     const plate = root.querySelector<HTMLElement>('.footer-wordmark')!;
@@ -300,5 +281,5 @@ export function mountChapters(root: HTMLElement) {
   void document.fonts.ready.then(refresh);
   document.fonts.addEventListener('loadingdone', refresh);
   window.addEventListener('resize', fitWordmark);
-  return () => { disposed = true; window.clearTimeout(warmTimer); cancelAnimationFrame(refreshFrame); document.fonts.removeEventListener('loadingdone', refresh); window.removeEventListener('resize', fitWordmark); media.revert(); context.revert(); page.classList.remove('ch-footer-on', 'ch-stage-on'); removers.forEach(remove => remove()); splits.forEach(split => split.revert()); };
+  return () => { disposed = true; cancelAnimationFrame(refreshFrame); document.fonts.removeEventListener('loadingdone', refresh); window.removeEventListener('resize', fitWordmark); media.revert(); context.revert(); page.classList.remove('ch-footer-on', 'ch-stage-on'); removers.forEach(remove => remove()); splits.forEach(split => split.revert()); };
 }

@@ -82,7 +82,7 @@ export function Coba() {
   const p = session?.pending;
   return <><Guide role="demo" line={t.guideCoba} step={3} /><main className="app-grid coba-page" ref={root}>
     <div className="story-column">
-      <EnvelopeStory title={t.cobaTitle} date={marks.some((m) => m.step === 'years') ? '2028-11-20' : '2026-11-21'} eyebrow={t.cobaStart}>{t.cobaIntro}</EnvelopeStory>
+      <EnvelopeStory title={t.cobaTitle} date={marks.some((m) => m.step === 'years') ? '2028-11-20' : '2026-11-21'}>{t.cobaIntro}</EnvelopeStory>
       <ol className="story-timeline glass" aria-label={t.cobaStart} aria-live="polite">
         {ORDER.map((step) => {
           const done = marks.find((m) => m.step === step);

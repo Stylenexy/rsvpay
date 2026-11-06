@@ -14,9 +14,8 @@ export function Wedding({ lang }: { lang: Lang }) {
         <div className="cp-row">
           {c.panels.map((panel, i) => (
             <button type="button" className="cp" data-panel={i} key={i} aria-expanded={i === 0}>
-              <span className="cp-picture"><img src={asset(PHOTOS[i])} alt="" loading="eager" decoding="async" /></span>
+              <span className="cp-picture"><img data-late={asset(PHOTOS[i])} alt="" decoding="async" /></span>
               <span className="cp-shade" />
-              <span className="cp-no ch-label">{CH_DATA.steps[i]}</span>
               {i === 2 && <span className="cp-split">
                 <span><b data-split="95000">{CH_DATA.splitAmounts[0]}</b><span>{u.forSiti}</span></span>
                 <span><b data-split="5000">{CH_DATA.splitAmounts[1]}</b><span>{u.kept}</span></span>

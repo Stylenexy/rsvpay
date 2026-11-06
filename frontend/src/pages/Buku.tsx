@@ -180,7 +180,7 @@ export function Buku({ id }: { id: string }) {
       <Guide role={holder ? 'couple' : 'visitor'} line={holder ? t.guideBukuOwner : t.guideBukuVisitor} step={2} done={holder ? (h.entries === 0 ? 1 : 3) : undefined} next={h.entries === 0 ? link.beri(id) : link.coba()} />
       <main className={`app-grid book-page${ringing ? ' is-ringing' : ''}`}>
         <div className="story-column">
-          <EnvelopeStory title={h.title} date={h.date} eyebrow={locked ? t.bukuVisitorEyebrow : t.bukuEyebrow}>{locked ? t.bukuVisitorStory : t.bukuStory}</EnvelopeStory>
+          <EnvelopeStory title={h.title} date={h.date}>{locked ? t.bukuVisitorStory : t.bukuStory}</EnvelopeStory>
           {!locked && (<div className="field-stars" aria-hidden="true">
               <i className="free" style={{ boxShadow: [stars.ambient, stars.plain].filter(Boolean).join(',') }} />
               {stars.seeded && <i className="seed" style={{ boxShadow: stars.seeded }} />}
@@ -195,7 +195,7 @@ export function Buku({ id }: { id: string }) {
               })}
             </div>)}
         </div>
-        <section className="form-panel book-panel" aria-label={locked ? t.bukuVisitorEyebrow : t.bukuEyebrow}>
+        <section className="form-panel book-panel" aria-label={h.title}>
         {transfer?.to && <div className="glass card" role="status"><p className="history-account">{say(t.passDone, transfer.to)}</p><TxLink hash={transfer.hash} /></div>}
         {holder && (
           <div className="gate" role="radiogroup" aria-label={t.bukuView}>

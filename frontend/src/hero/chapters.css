@@ -50,15 +50,6 @@
 .ch-sky-clouds img:last-child { bottom: 0; }
 
 /* The index belongs to the whole take, not to the individual scenes. */
-.ch-index { position: fixed; z-index: 25; left: var(--hz-gutter); bottom: 24px; display: grid; grid-template-columns: 1px auto 1fr; align-items: center; gap: 16px; max-width: min(540px, 75vw); opacity: 0; visibility: hidden; pointer-events: none; color: var(--ch-fg); }
-.ch-index-track { width: 1px; height: 40px; background: var(--ch-line); }
-.ch-index-track i { display: block; width: 1px; height: 100%; background: var(--ch-fg); transform: scaleY(0); transform-origin: top; }
-.ch-index-count { display: flex; align-items: baseline; white-space: pre; font: 500 13px/24px var(--f-ui); font-variant-numeric: tabular-nums; }
-.ch-digit-mask { height: 24px; overflow: clip; }
-.ch-digit-roll, .ch-digit-roll > span { display: block; height: 24px; }
-.ch-index-total { opacity: .5; }
-.ch-index-names { display: grid; font: 500 13px/1.4 var(--f-ui); letter-spacing: .08em; text-transform: uppercase; }
-.ch-index-names > span { grid-area: 1/1; opacity: 0; }
 .hz-page.ch-stage-on .hz-what { display: none; }
 .hz-page.ch-stage-on .hz-nav { grid-template-columns: 1fr auto; }
 .hz-page.ch-stage-on ~ .landing-doors { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
@@ -77,7 +68,6 @@
 .cp-picture { overflow: clip; }
 .cp-picture img { max-width: none; object-fit: cover; transform: scale(1.14); }
 .cp-shade { background: linear-gradient(180deg, var(--ch-cast), transparent 30%, var(--ch-scrim) 100%); opacity: .85; }
-.cp-no { position: absolute; z-index: 3; left: 24px; top: 20px; }
 .cp-text { position: absolute; z-index: 3; left: 32px; bottom: 36px; width: var(--panel-copy, min(36vw, 560px)); display: grid; gap: 12px; pointer-events: none; opacity: clamp(0, calc((var(--open) - .78) * 4.6), 1); }
 .cp-text strong { display: block; font: 500 var(--ch-title)/1.15 var(--f-hz); letter-spacing: -.02em; }
 .cp-description { display: block; max-width: 28em; color: var(--ch-soft); }
@@ -94,7 +84,6 @@
 .ch-round { height: 340svh; }
 .round-stage { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ch-gap); align-items: center; padding: var(--ch-top) var(--hz-gutter) var(--ch-foot); }
 .round-copy { grid-column: 1/6; display: grid; gap: 20px; }
-.round-copy > .ch-label { color: var(--ch-amber); }
 .round-copy .ch-heading { font-size: var(--ch-mid); }
 .round-line { max-width: 27em; color: var(--ch-soft); }
 .round-scene { grid-column: 6/-1; height: 100%; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 28px; }
@@ -116,16 +105,10 @@
 .ch-proof { padding: 6svh var(--hz-gutter) 20svh; }
 .proof-wrap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ch-gap); }
 .proof-side { grid-column: 1/4; position: sticky; top: var(--ch-top); align-self: start; display: grid; gap: 20px; }
-.proof-side > p.ch-label { color: var(--ch-amber); }
 .proof-side .ch-heading { font-size: var(--ch-mid); }
-.proof-steps { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 12px; color: var(--ch-mut); }
-.proof-steps li { display: flex; align-items: center; gap: 6px; transition: color .4s ease; }
-.proof-steps i { width: 10px; height: 1px; background: currentColor; }
-.proof-steps li.on { color: var(--ch-ice); }
 .proof-rows { grid-column: 4/-1; display: grid; gap: 2svh; }
 .proof-row { min-height: 62svh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(24px, 3vw, 56px); align-items: center; }
 .proof-text { display: grid; gap: 12px; align-content: center; min-width: 0; }
-.proof-text > .ch-label { color: var(--ch-amber); }
 .proof-figure { display: block; font: 500 clamp(96px, 9.5vw, 176px)/1 var(--f-hz); letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .proof-text > p { color: var(--ch-fg); font-size: clamp(17px, 1.4vw, 21px); line-height: 1.4; max-width: 24em; }
 .proof-text .proof-caption { font-size: 15px; color: var(--ch-soft); }
@@ -183,8 +166,6 @@
 .culture-ja { --culture-accent: var(--ch-culture-ja); }
 .culture-vi { --culture-accent: var(--ch-culture-vi); }
 .culture-copy { position: relative; z-index: 2; grid-column: 1/8; min-width: 0; display: grid; gap: 16px; will-change: transform, opacity; }
-.culture-copy > .ch-label { display: flex; align-items: center; gap: 16px; color: var(--culture-accent); }
-.culture-copy > .ch-label i { width: 48px; height: 1px; background: currentColor; }
 .culture-word { font: 500 clamp(64px, 10vw, 184px)/1.2 var(--f-hz); letter-spacing: -.02em; white-space: nowrap; }
 .culture-word:lang(zh) { font-family: 'Noto Serif SC', serif; }
 .culture-word:lang(ko) { font-family: 'Noto Serif KR', serif; }
@@ -266,14 +247,12 @@
 
 @media (max-width: 760px) {
   .ch { --ch-gap: 12px; --ch-top: 112px; --ch-foot: 32px; --row-top: 112; --ch-mid: clamp(28px, 8vw, 44px); }
-  .ch-index { display: none; }
   .ch-table { --ch-foot: 64px; }
   .wedding-heading { display: block; }
   .wedding-heading > p { display: none; }
   .cp-row { flex-direction: column; gap: 6px; bottom: var(--ch-foot); }
   .cp { min-height: 44px; border-radius: 12px; }
   .cp-picture img { object-position: center 45%; }
-  .cp-no { top: 12px; left: 16px; }
   .cp-text { left: 16px; right: 16px; bottom: 16px; width: auto; gap: 6px; }
   .cp-description { font-size: 15px; line-height: 1.4; }
   .cp-fold-title { left: 56px; right: auto; top: 12px; bottom: auto; white-space: nowrap; font: 500 14px/1.4 var(--f-ui); letter-spacing: 0; }
@@ -293,7 +272,6 @@
   .ch-proof { padding-block: 12svh; }
   .proof-wrap { display: block; }
   .proof-side { position: relative; top: auto; margin-bottom: 40px; }
-  .proof-steps { display: none; }
   .proof-rows { gap: 56px; }
   .proof-row { min-height: 0; grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .proof-figure { font-size: clamp(88px, 26vw, 128px); }
@@ -347,7 +325,7 @@
   .ch-stage { position: relative; height: auto; min-height: 100svh; overflow: visible; }
   .ch-table, .ch-round, .ch-names { height: auto; }
   .ch-sky-scenes { display: none; }
-  .ch-index, .ch-sky-clouds, .proof-key-whole, .proof-steps { display: none; }
+  .ch-sky-clouds, .proof-key-whole { display: none; }
   .proof-key-broken { opacity: 1; }
   .wedding-heading { margin-bottom: 32px; }
   .cp-row { position: relative; left: auto; right: auto; top: auto; bottom: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }

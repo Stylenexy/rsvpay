@@ -60,8 +60,8 @@ export function EnvelopeObject({ className = '' }: { className?: string }) {
   return <img className={`obj ${className}`} src="/aset/v2/kaca.webp" alt="" aria-hidden="true" />;
 }
 
-export function EnvelopeStory({ title, date, eyebrow, children, amount = 250000, names }: {
-  title: string; date?: string; eyebrow: string; children: ReactNode; amount?: number; names?: string;
+export function EnvelopeStory({ title, date, children, amount = 250000, names }: {
+  title: string; date?: string; children: ReactNode; amount?: number; names?: string;
 }) {
   const root = useRef<HTMLElement>(null);
   const lastNames = useRef('');
@@ -80,7 +80,6 @@ export function EnvelopeStory({ title, date, eyebrow, children, amount = 250000,
   }, []);
   return (
     <section className="envelope-story" ref={root} style={{ '--gift-glow': Math.min(1, 0.25 + amount / 1200000) } as CSSProperties}>
-      <span className="story-eyebrow">{eyebrow}</span>
       <h1>{titleLines(title).map(({ text, connector }, i) => (
         <span className={`title-mask${connector ? ' title-connector' : ''}`} key={i}><span className="title-rise">{connector ? <em>{text}</em> : text}</span></span>
       ))}</h1>

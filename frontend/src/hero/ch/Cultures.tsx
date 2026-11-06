@@ -9,7 +9,6 @@ export function Cultures({ lang }: { lang: Lang }) {
       <div className="ch-stage names-stage">
         {CULTURES.map((id, i) => <article className={`culture culture-${id}`} key={id}>
           <div className="culture-copy">
-            <p className="ch-label">{CH_DATA.cultureSteps[i]}<i />{c.lands[i]}</p>
             <h3 className="culture-word" lang={id}>{CH_DATA.words[i]}</h3>
             <p className="culture-custom">{CH_UI[lang].customs[i]}</p>
           </div>

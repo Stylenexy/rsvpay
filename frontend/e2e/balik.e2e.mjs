@@ -24,10 +24,9 @@ const toBottom = async () => {
 const check = async (name) => {
   const hero = await page.evaluate(() => {
     const cs = (s) => getComputedStyle(document.querySelector(s));
-    return { nav: Math.round(document.querySelector('.hz-nav').getBoundingClientRect().top), hz: Math.round(document.querySelector('.hz').getBoundingClientRect().top), index: cs('.ch-index').visibility, sky: cs('.ch-sky').visibility, skyOpacity: +cs('.ch-sky').opacity, past: document.querySelector('.hz-page').className };
+    return { nav: Math.round(document.querySelector('.hz-nav').getBoundingClientRect().top), hz: Math.round(document.querySelector('.hz').getBoundingClientRect().top), sky: cs('.ch-sky').visibility, skyOpacity: +cs('.ch-sky').opacity, past: document.querySelector('.hz-page').className };
   });
   say(hero.nav === 0 && hero.hz === 0, `${name}: story fills the screen`, JSON.stringify({ nav: hero.nav, hz: hero.hz }));
-  say(hero.index === 'hidden', `${name}: no chapter label over the story`, hero.index);
   say(hero.sky === 'hidden' || hero.skyOpacity < .05, `${name}: chapter sky stays off the story`, `${hero.sky} ${hero.skyOpacity}`);
   say(hero.past === 'hz-page', `${name}: no leftover page state`, hero.past);
   await page.mouse.wheel(0, 120);

@@ -2,6 +2,9 @@
 
 const KEEP = 30;
 const DECODING = 5;
+const KEY = 8;
+const AHEAD = 24;
+const FETCHING = 3;
 
 export class Frames {
   readonly count: number;
@@ -10,6 +13,8 @@ export class Frames {
   private blobs: (Blob | null)[];
   private decoded = new Map<number, ImageBitmap>();
   private pending = new Set<number>();
+  private asked = new Set<number>();
+  private fetching = 0;
   private dead = false;
 
   constructor(url: (i: number) => string, count: number, step = 1) {
@@ -19,27 +24,32 @@ export class Frames {
     this.blobs = new Array(count).fill(null);
   }
 
-  /** Every 8th frame first, so the sky can move before the rest arrive. */
+  /** Every 8th frame up front, so the sky can move. The rest follow the playhead: nobody downloads a story they skipped. */
   async load(onProgress: (done: number) => void) {
     const order: number[] = [];
-    for (let s = 8; s >= this.step; s = s >> 1) {
-      for (let i = 0; i < this.count; i += s) if (!order.includes(i)) order.push(i);
-    }
+    for (let i = 0; i < this.count; i += KEY) order.push(i);
     let done = 0;
     let next = 0;
     const worker = async () => {
       while (next < order.length && !this.dead) {
-        const i = order[next++];
-        try {
-          const r = await fetch(this.url(i));
-          this.blobs[i] = await r.blob();
-        } catch {
-          // a missing frame only means the neighbours are blended for longer
-        }
+        await this.fetch(order[next++]);
         onProgress(++done);
       }
     };
     await Promise.all([worker(), worker(), worker(), worker(), worker(), worker()]);
+  }
+
+  private async fetch(i: number) {
+    if (this.asked.has(i)) return;
+    this.asked.add(i);
+    this.fetching++;
+    try {
+      const r = await fetch(this.url(i));
+      this.blobs[i] = await r.blob();
+    } catch {
+      // a missing frame only means the neighbours are blended for longer
+    }
+    this.fetching--;
   }
 
   private decode(i: number) {
@@ -60,6 +70,14 @@ export class Frames {
     const dir = direction >= 0 ? 1 : -1;
     // nearest first, then ahead in the direction of travel, so the next frame is ready before it is needed
     const at = Math.round(index);
+    const key = Math.floor(at / KEY) * KEY;
+    this.decode(key);
+    this.decode(key + KEY);
+    const grid = Math.round(at / this.step) * this.step;
+    for (let o = 0; o <= AHEAD && this.fetching < FETCHING; o += this.step) {
+      const i = grid + o * dir;
+      if (i >= 0 && i < this.count) void this.fetch(i);
+    }
     for (const o of [0, 1, -1, dir * 2, dir * 3, -dir * 2, dir * 4, dir * 6, dir * 8, dir * 10, dir * 12]) {
       const i = at + o;
       if (i >= 0 && i < this.count) this.decode(i);

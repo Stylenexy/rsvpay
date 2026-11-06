@@ -43,7 +43,6 @@ main { display: flex; flex-direction: column; gap: 18px; }
 .form-panel { position: relative; }
 .story-column { position: relative; display: grid; gap: 16px; }
 .envelope-story { position: relative; display: grid; justify-items: start; align-content: start; gap: 16px; padding: 12px 0; }
-.story-eyebrow { font-size: 12px; font-weight: 600; color: var(--mut); margin-bottom: 0; }
 .envelope-story h1 .title-connector { font-size: .46em; line-height: 1.1; }
 .envelope-story h1 { margin: 0; font: 400 clamp(46px, 5.8vw, 88px)/1.12 var(--f-disp); letter-spacing: -0.055em; overflow-wrap: anywhere; text-wrap: balance; }
 .title-mask { display: block; overflow: hidden; padding-bottom: 0.1em; margin-bottom: -0.06em; }
@@ -131,10 +130,10 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
 .story-entry { box-shadow: 0 10px 40px var(--shadow); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .coba-page { align-items: start; }
 .coba-page .envelope-story { grid-template-columns: minmax(0, 1fr) 120px; gap: 10px 16px; }
-.coba-page .story-eyebrow, .coba-page .story-line { grid-column: 1 / -1; }
+.coba-page .story-line { grid-column: 1 / -1; }
 .coba-page .envelope-story h1 { font-size: clamp(32px, 3.1vw, 44px); }
 .coba-page .story-date { grid-column: 1; }
-.coba-page .envelope-stage { grid-column: 2; grid-row: 2 / 4; height: 120px; align-self: center; }
+.coba-page .envelope-stage { grid-column: 2; grid-row: 1 / 3; height: 120px; align-self: center; }
 .story-result { display: grid; gap: 20px; position: sticky; top: 28px; }
 .story-timeline { list-style: none; padding: 12px 20px; margin: 0; }
 .story-timeline li { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 10px; padding-block: 6px; font-size: 13px; }
@@ -248,7 +247,6 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
   .acct select { padding: 3px 6px; }
   .app-grid { display: flex; flex-direction: column; gap: 20px; align-items: stretch; min-height: 0; padding: 16px 0 22px; }
   .envelope-story { justify-items: center; padding: 0; text-align: center; gap: 12px; }
-  .story-eyebrow { margin-bottom: 0; font-size: 11px; }
   .envelope-story h1 { font-size: clamp(40px, 10vw, 62px); letter-spacing: -0.05em; }
   .story-date { margin-top: 0; font-size: 12px; }
   .envelope-stage { width: 240px; height: 140px; margin: 0 auto; }

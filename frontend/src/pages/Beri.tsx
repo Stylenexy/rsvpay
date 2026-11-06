@@ -86,7 +86,7 @@ export function Beri({ id }: { id: string }) {
       <Guide role="guest" line={t.guideBeri} step={1} done={phase === 'done' ? 2 : undefined} next={link.buku(id)} />
       <main className="app-grid guest-page">
         <div className="story-column">
-          <EnvelopeStory title={hajatan.title} date={hajatan.date} eyebrow={t.beriFor} amount={rp}>{t.beriStory}</EnvelopeStory>
+          <EnvelopeStory title={hajatan.title} date={hajatan.date} amount={rp}>{t.beriStory}</EnvelopeStory>
         </div>
         <section className="form-panel gift-panel" aria-label={t.beriYouGive}>
           <div className="glass card give-card" ref={card} inert={phase === 'done'}>

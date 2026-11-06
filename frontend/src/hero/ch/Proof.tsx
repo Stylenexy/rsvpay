@@ -65,14 +65,11 @@ export function Proof({ lang }: { lang: Lang }) {
   return <section className="ch-proof ch-chapter" data-chapter="4" aria-label={c.kicker}>
     <div className="proof-wrap">
       <header className="proof-side">
-        <p className="ch-label">{c.kicker}</p>
         <Title text={c.big} />
-        <ol className="proof-steps ch-label" aria-hidden="true">{CH_DATA.cultureSteps.map(s => <li key={s}><i />{s}</li>)}</ol>
       </header>
       <div className="proof-rows">
         {c.rows.map((row, i) => <article className={`proof-row proof-row-${i}`} key={i}>
           <div className="proof-text">
-            <span className="ch-label">{CH_DATA.steps[i]}</span>
             <strong className="proof-figure" data-figure={i}>{CH_DATA.figures[i]}</strong>
             <p>{row}</p>
             {i === 1 && <p className="proof-caption">{u.refused} <a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></p>}

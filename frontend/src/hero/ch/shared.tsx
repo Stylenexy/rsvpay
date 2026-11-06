@@ -11,10 +11,10 @@ export const CULTURES = ['id', 'zh', 'ko', 'ja', 'vi'];
 /** The sky the story ended on simply carries on: night, gold, day and morning, all from the same time-lapse. */
 export function SkyLayer() {
   return <div className="ch-sky" aria-hidden="true">
-    {SKY.map(frame => <img src={`${import.meta.env.BASE_URL}langit/hd/${frame}.webp`} alt="" decoding="async" key={frame} />)}
+    {SKY.map(frame => <img data-late={`${import.meta.env.BASE_URL}langit/hd/${frame}.webp`} alt="" decoding="async" key={frame} />)}
     <i className="ch-sky-shade" />
     <div className="ch-sky-scenes">{CULTURES.map(id => <img data-ground={asset(`latar-${id}`)} alt="" decoding="async" key={id} />)}<i /></div>
-    <div className="ch-sky-clouds"><img src={asset('awan-2')} alt="" decoding="async" /><img src={asset('awan-1')} alt="" decoding="async" /></div>
+    <div className="ch-sky-clouds"><img data-late={asset('awan-2')} alt="" decoding="async" /><img data-late={asset('awan-1')} alt="" decoding="async" /></div>
   </div>;
 }
 
