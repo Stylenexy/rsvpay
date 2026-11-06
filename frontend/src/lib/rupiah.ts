@@ -12,6 +12,8 @@ export const GIFT_STEPS = [100_000, 250_000, 500_000, 1_000_000] as const;
 
 /** extra NEAR attached on top of a gift so the contract can pay the storage of the entry */
 export const STORAGE_MARGIN_YOCTO = (YOCTO_PER_NEAR * 3n) / 1000n; // 0,003 NEAR
+/** a reply carries the same amount as the gift it answers, so it only adds what its own entry costs */
+export const REPLY_MARGIN_YOCTO = (YOCTO_PER_NEAR * 2n) / 1000n; // 0,002 NEAR
 
 /** NEAR attached when opening a hajatan; covers the amplop's storage, the rest becomes free balance */
 export const OPEN_DEPOSIT_YOCTO = (YOCTO_PER_NEAR * 5n) / 100n; // 0,05 NEAR

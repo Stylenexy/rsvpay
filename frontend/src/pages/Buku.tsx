@@ -6,7 +6,7 @@ import { useAmplop } from '../context';
 import { absoluteLink, copyText, link, shortName, useCountUp, usePoll } from '../lib/app';
 import { useFormat, useLang } from '../lib/lang';
 import { useBookMotion, usePageMotion } from '../lib/motion';
-import { STORAGE_MARGIN_YOCTO, chainRp } from '../lib/rupiah';
+import { REPLY_MARGIN_YOCTO, chainRp } from '../lib/rupiah';
 import { validReceiver } from '../lib/accounts';
 import { Guide } from '../components/Guide';
 import { History } from '../components/History';
@@ -120,7 +120,7 @@ export function Buku({ id }: { id: string }) {
         entry: p.entry,
         toTokenId: p.to_token_id,
         message: say(t.bukuReplyWish, shortName(p.giver)),
-        depositYocto: (rest + STORAGE_MARGIN_YOCTO).toString(),
+        depositYocto: (rest + REPLY_MARGIN_YOCTO).toString(),
       });
       setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: r.txHash, err: '' } }));
       await load();
@@ -240,7 +240,7 @@ export function Buku({ id }: { id: string }) {
             </div>
             <div className="legend">
               <span>
-                {t.bukuFree}
+                {h.entries === 0 ? t.bukuDepositLeft : t.bukuFree}
                 <b>{formatRp(freeRp)}</b>
               </span>
               <span>

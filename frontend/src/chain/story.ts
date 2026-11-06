@@ -1,5 +1,5 @@
 import type { AmplopClient, Entry, PendingReply, Sent } from './types';
-import { OPEN_DEPOSIT_YOCTO, STORAGE_MARGIN_YOCTO, rupiahToYocto } from '../lib/rupiah';
+import { OPEN_DEPOSIT_YOCTO, REPLY_MARGIN_YOCTO, STORAGE_MARGIN_YOCTO, rupiahToYocto } from '../lib/rupiah';
 
 export type StoryStep = 'account' | 'family' | 'wedding' | 'gift' | 'years' | 'celebration' | 'ring' | 'reply';
 export interface StoryMark { step: StoryStep; ms: number; hash: string | null }
@@ -13,7 +13,7 @@ export const RECORDED = [
 ] as const;
 
 export function replyDeposit(p: Pick<PendingReply, 'amount' | 'seed'>): string {
-  return (BigInt(p.amount) - BigInt(p.seed) + STORAGE_MARGIN_YOCTO).toString();
+  return (BigInt(p.amount) - BigInt(p.seed) + REPLY_MARGIN_YOCTO).toString();
 }
 
 /** The same calls as the ordinary pages. Time travel changes the story date, never the chain clock. */

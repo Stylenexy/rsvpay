@@ -23,6 +23,8 @@ export function Coba() {
   const live = useRef(true);
   const beginning = useRef(0);
   const replying = useRef(false);
+  // on a phone the one button the story waits for sits below the timeline
+  const bring = (card: HTMLDivElement | null) => { if (card && matchMedia('(max-width: 760px)').matches) card.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
   const [marks, setMarks] = useState<StoryMark[]>([]);
   const [active, setActive] = useState<StoryStep>('account');
   const [session, setSession] = useState<StorySession | null>(null);
@@ -100,7 +102,7 @@ export function Coba() {
     </div>
     <section className="form-panel story-result" aria-live="polite">
       {!session && !failure && <div className="glass card"><h2>{labels[active]}</h2><p className="note">{seconds(elapsed)}</p>{elapsed > 60_000 && <p>{t.cobaSlow}</p>}</div>}
-      {p && !landed && <div className="glass card ring-card">
+      {p && !landed && <div className="glass card ring-card" ref={bring}>
         <i className="ring-orbit" aria-hidden="true" />
         <EnvelopeObject />
         <span className="label">{t.cobaRing}</span>
