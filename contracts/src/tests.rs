@@ -277,16 +277,16 @@ fn full_cycle_budi_hosts_later_and_siti_replies_with_seed_plus_top_up() {
 }
 
 #[test]
-fn reply_with_seed_only_needs_no_deposit() {
+fn reply_with_only_the_storage_deposit_delivers_the_seed() {
     let mut c = fresh();
     let a = open(&mut c, siti(), 1000);
     give(&mut c, &a, budi(), ONE_NEAR);
     let b = open(&mut c, budi(), 0);
     let seed = entry(&c, &a, 0).seed.0;
-    testing_env!(ctx(siti(), 0).build());
+    testing_env!(ctx(siti(), 3 * MILLI_NEAR).build());
     let j = c.reciprocate(a.clone(), 0, b.clone(), String::new());
     let reply = entry(&c, &b, j);
-    assert!(reply.amount.0 > 0 && reply.amount.0 < seed);
+    assert!(reply.amount.0 >= seed);
     check_invariants(&c, &a);
     check_invariants(&c, &b);
 }
@@ -348,7 +348,7 @@ fn new_holder_inherits_the_duty_and_the_seed() {
     let b = open(&mut c, budi(), 500);
     testing_env!(ctx(siti(), 1).build());
     c.nft_transfer(buyer(), a.clone(), None, None);
-    testing_env!(ctx(buyer(), 0).build());
+    testing_env!(ctx(buyer(), 3 * MILLI_NEAR).build());
     let j = c.reciprocate(a.clone(), 0, b.clone(), String::new());
     assert_eq!(entry(&c, &b, j).giver, buyer());
     check_invariants(&c, &a);
@@ -465,19 +465,6 @@ fn sale_reverted_by_receiver_returns_amplop_and_unlocks() {
     assert_eq!(after.balance.0, before.balance.0);
 }
 
-#[test]
-fn stale_lock_releases_after_lock_max_blocks() {
-    let mut c = fresh();
-    let a = open(&mut c, siti(), 500);
-    give(&mut c, &a, budi(), ONE_NEAR);
-    testing_env!(ctx(siti(), 1).build());
-    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, "x".to_string());
-    let mut later = ctx(buyer(), 0);
-    later.block_height(1000 + LOCK_MAX_BLOCKS + 1);
-    testing_env!(later.build());
-    assert!(!c.is_locked(a.clone()));
-    let _ = c.withdraw(a);
-}
 
 #[test]
 fn failed_payout_refunds_into_the_amplop() {
@@ -614,10 +601,10 @@ fn new_holder_inherits_the_promise_and_can_reply() {
     let b = open(&mut c, budi(), 500);
     testing_env!(ctx(siti(), 1).build());
     c.nft_transfer(buyer(), a.clone(), None, None);
-    testing_env!(ctx(buyer(), 0).build());
+    testing_env!(ctx(buyer(), 3 * MILLI_NEAR).build());
     let j = c.reciprocate(a.clone(), 0, b.clone(), "dari ahli waris".to_string());
     assert_eq!(entry(&c, &b, j).giver, buyer());
-    assert!(entry(&c, &b, j).amount.0 < seed);
+    assert!(entry(&c, &b, j).amount.0 >= seed);
     check_invariants(&c, &a);
     check_invariants(&c, &b);
 }
@@ -718,40 +705,146 @@ fn reply_into_a_settled_transfer_still_works() {
         vec![near_sdk::PromiseResult::Successful(b"false".to_vec())]
     );
     assert!(c.nft_resolve_transfer(siti(), budi(), gift.clone(), None));
-    testing_env!(ctx(siti(), 0).build());
+    testing_env!(ctx(siti(), 3 * MILLI_NEAR).build());
     c.reciprocate(a.clone(), 0, gift.clone(), String::new());
     assert!(entry(&c, &a, 0).replied.is_some());
 }
 
-// Not fixed, written down: issue #1 also asks what happens if the resolver runs later than LOCK_MAX_BLOCKS.
-// The lock stops protecting, so whoever holds the amplop on paper can withdraw, and the resolver can still hand it back.
+// Issue #7: a slow receiver gets no window. The lock holds for any delay a transaction's gas could buy.
 #[test]
-fn stale_lock_lets_the_paper_owner_withdraw_before_the_resolver_runs() {
+#[should_panic(expected = "mid-transfer")]
+fn lock_holds_past_any_delay_until_the_resolver_runs() {
     let mut c = fresh();
-    let a = open(&mut c, siti(), 1000);
+    let a = open(&mut c, siti(), 500);
     give(&mut c, &a, budi(), ONE_NEAR);
-    let free_before = c.hajatan(a.clone()).unwrap().free.0;
-    assert!(free_before > 0);
     testing_env!(ctx(siti(), 1).build());
     let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
+    let mut later = ctx(buyer(), 0);
+    later.block_height(1000 + 100_000);
+    testing_env!(later.build());
+    assert!(c.is_locked(a.clone()));
+    let _ = c.withdraw(a);
+}
 
+// If a resolver ever failed, the amplop must not freeze for good, because nobody can repair a keyless contract.
+#[test]
+fn a_lock_whose_resolver_never_ran_lets_go_after_the_long_bound() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
     let mut later = ctx(buyer(), 0);
     later.block_height(1000 + LOCK_MAX_BLOCKS + 1);
     testing_env!(later.build());
     assert!(!c.is_locked(a.clone()));
-    let _ = c.withdraw(a.clone());
-    assert_eq!(c.hajatan(a.clone()).unwrap().free.0, 0);
+    let _ = c.withdraw(a);
+}
 
-    // The receiver now refuses, and the emptied amplop goes back to the seller.
-    let mut back = ctx(accounts(0), 0);
-    back.block_height(1000 + LOCK_MAX_BLOCKS + 2);
+// Issue #7: the first resolver must not clear the lock of a second transfer still in flight.
+#[test]
+#[should_panic(expected = "mid-transfer")]
+fn audit_second_transfer_keeps_its_lock_after_the_first_resolver() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 0);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
+    let mut later = ctx(buyer(), 1);
+    later.block_height(1301);
+    testing_env!(later.build());
+    let _ = c.nft_transfer_call(stranger(), a.clone(), None, None, String::new());
+    let mut first = ctx(accounts(0), 0);
+    first.block_height(1302);
     testing_env!(
-        back.build(),
+        first.build(),
         near_sdk::test_vm_config(),
         near_sdk::RuntimeFeesConfig::test(),
         Default::default(),
         vec![near_sdk::PromiseResult::Successful(b"true".to_vec())]
     );
-    assert!(!c.nft_resolve_transfer(siti(), buyer(), a.clone(), None));
-    assert_eq!(c.hajatan(a).unwrap().owner_id, siti());
+    assert!(c.nft_resolve_transfer(siti(), buyer(), a.clone(), None));
+    assert!(c.is_locked(a.clone()));
+    let mut s = ctx(stranger(), 0);
+    s.block_height(1303);
+    testing_env!(s.build());
+    let _ = c.withdraw(a);
+}
+
+// Issue #7: a former guest who holds the amplop on paper cannot release their own seed before the sale settles.
+#[test]
+#[should_panic(expected = "mid-transfer")]
+fn audit_paper_owner_cannot_reciprocate_before_the_resolver() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 1000);
+    give(&mut c, &a, buyer(), ONE_NEAR);
+    let g = open(&mut c, buyer(), 0);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
+    let mut later = ctx(buyer(), 0);
+    later.block_height(1301);
+    testing_env!(later.build());
+    c.reciprocate(a, 0, g, String::new());
+}
+
+// Issue #8: the owner on paper cannot close the celebration and then hand it back closed.
+#[test]
+#[should_panic(expected = "mid-transfer")]
+fn audit_paper_owner_cannot_close_hajatan_mid_transfer() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
+    testing_env!(ctx(buyer(), 0).build());
+    c.set_open(a, false);
+}
+
+// Issue #8: a long message is the caller's cost, never the guest's seed.
+#[test]
+#[should_panic(expected = "deposit must cover storage of the reply")]
+fn audit_long_reply_message_cannot_eat_the_seed() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 1000);
+    give(&mut c, &a, budi(), 200 * MILLI_NEAR);
+    let b = open(&mut c, budi(), 0);
+    testing_env!(ctx(siti(), 0).build());
+    c.reciprocate(a, 0, b, "\u{1F600}".repeat(MAX_MESSAGE_CHARS));
+}
+
+#[test]
+fn reply_delivers_the_whole_seed_when_the_caller_pays_the_storage() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 1000);
+    give(&mut c, &a, budi(), 200 * MILLI_NEAR);
+    let seed = entry(&c, &a, 0).seed.0;
+    let b = open(&mut c, budi(), 0);
+    let before = c.hajatan(b.clone()).unwrap().free.0;
+    testing_env!(ctx(siti(), 30 * MILLI_NEAR).build());
+    c.reciprocate(a, 0, b.clone(), "\u{1F600}".repeat(MAX_MESSAGE_CHARS));
+    assert!(c.hajatan(b).unwrap().free.0 - before >= seed);
+}
+
+// Not a hole, written down for sellers: plain nft_transfer follows NEP-171 and the lock does not stop it.
+#[test]
+fn audit_plain_nft_transfer_is_not_gated_by_the_lock() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 500);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
+    testing_env!(ctx(buyer(), 1).build());
+    c.nft_transfer(stranger(), a.clone(), None, None);
+    assert_eq!(c.hajatan(a.clone()).unwrap().owner_id, stranger());
+    testing_env!(ctx(stranger(), 0).build());
+    assert!(c.is_locked(a.clone()));
+    testing_env!(
+        ctx(accounts(0), 0).build(),
+        near_sdk::test_vm_config(),
+        near_sdk::RuntimeFeesConfig::test(),
+        Default::default(),
+        vec![near_sdk::PromiseResult::Successful(b"true".to_vec())]
+    );
+    assert!(c.nft_resolve_transfer(siti(), buyer(), a.clone(), None));
+    assert_eq!(c.hajatan(a.clone()).unwrap().owner_id, stranger());
+    assert!(!c.is_locked(a));
 }

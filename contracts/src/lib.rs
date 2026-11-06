@@ -35,8 +35,11 @@ pub const MAX_TITLE_CHARS: usize = 80;
 pub const MAX_DATE_CHARS: usize = 32;
 /// Reply seed is capped at 10% (1000 basis points).
 pub const MAX_SEED_BPS: u16 = 1000;
-/// A transfer lock older than this many blocks is treated as stale.
-pub const LOCK_MAX_BLOCKS: u64 = 300;
+/// A transfer lock holds until the resolver runs. The resolver is scheduled with the transfer, but this contract
+/// has no keys and can never be repaired, so if a resolver ever failed the amplop and every guest's seed would
+/// freeze for good. This bound only exists for that case: about twelve days, far past the few thousand blocks
+/// that yields chained within one transaction's gas could stretch a transfer.
+pub const LOCK_MAX_BLOCKS: u64 = 1_000_000;
 const GAS_FOR_PAYOUT_CALLBACK: Gas = Gas::from_tgas(10);
 
 #[derive(BorshStorageKey)]
@@ -288,7 +291,8 @@ impl Contract {
         old.replied = Some(EntryRef { token_id: to_token_id.clone(), entry: new_index });
         self.entries.insert(&key, &old);
         let cost = self.storage_cost_since(storage_before);
-        require!(total > cost, "seed plus deposit must cover storage of the reply");
+        // the caller pays for the reply's storage, so the seed reaches the guest whole
+        require!(deposit >= cost && total > cost, "deposit must cover storage of the reply");
         let (amount, _) = self.credit(&to_token_id, new_index, total - cost);
         env::log_str(&format!(
             "amplop:reply from={token_id} entry={entry} to={to_token_id} to_entry={new_index} yocto={amount}"
@@ -327,6 +331,7 @@ impl Contract {
     pub fn set_open(&mut self, token_id: TokenId, open: bool) {
         let caller = env::predecessor_account_id();
         self.require_holder(&token_id, &caller);
+        require!(!self.lock_active(&token_id), "amplop is mid-transfer, try after it settles");
         let mut h = self.hajatan_or_panic(&token_id);
         h.open = open;
         self.hajatans.insert(&token_id, &h);
