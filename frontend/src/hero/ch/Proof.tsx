@@ -63,27 +63,26 @@ export function Proof({ lang }: { lang: Lang }) {
   const c = CHAPTERS[lang].proof;
   const u = CH_UI[lang];
   return <section className="ch-proof ch-chapter" data-chapter="4" aria-label={c.kicker}>
-    <div className="proof-wrap">
-      <header className="proof-side">
+    <div className="ch-stage proof-stage">
+      <div className="proof-copy">
         <Title text={c.big} />
-      </header>
-      <div className="proof-rows">
-        {c.rows.map((row, i) => <article className={`proof-row proof-row-${i}`} key={i}>
-          <div className="proof-text">
-            <strong className="proof-figure" data-figure={i}>{CH_DATA.figures[i]}</strong>
-            <p>{row}</p>
-            {i === 1 && <p className="proof-caption">{u.refused} <a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></p>}
-            {i === 2 && <p className="proof-caption">{u.tests}</p>}
-            {i === 3 && <p className="proof-caption">{u.fixed}</p>}
+        <p className="proof-fact"><strong>{CH_DATA.figures[0]}</strong><span>{c.rows[0]}</span></p>
+        <details className="proof-more">
+          <summary>{u.allChecks}</summary>
+          <div className="proof-more-body">
+            <ul className="proof-facts">{[1, 2, 3].map(i => <li key={i}><strong>{CH_DATA.figures[i]}</strong><span>{c.rows[i]}</span></li>)}</ul>
+            <p className="proof-caption">{u.refused} <a href={THREAT} download={THREAT_DOWNLOAD} target="_blank" rel="noreferrer">{u.threat} ↗</a></p>
+            <ol className="proof-list">{CH_DATA.attacks.map(a => <li key={a}><code>{a}</code><span aria-hidden="true">×</span></li>)}</ol>
+            <p className="proof-caption">{u.tests}</p>
+            <ol className="proof-list proof-tests">{CH_DATA.tests.map(test => <li key={test}><span aria-hidden="true">✓</span><code>{test}</code></li>)}</ol>
+            <p className="proof-caption">{u.fixed}</p>
           </div>
-          <div className="proof-object">
-            {i === 0 && <div className="proof-key" aria-hidden="true"><img className="proof-key-whole" src={asset('kunci')} alt="" loading="lazy" /><img className="proof-key-broken" src={asset('kunci-patah')} alt="" loading="lazy" /></div>}
-            {i === 1 && <div className="proof-shield"><img src={asset('perisai')} alt="" loading="lazy" /><ol className="proof-list">{CH_DATA.attacks.map(a => <li key={a}><code>{a}</code><span aria-hidden="true">×</span></li>)}</ol></div>}
-            {i === 2 && <ol className="proof-list proof-tests">{CH_DATA.tests.map(test => <li key={test}><span aria-hidden="true">✓</span><code>{test}</code></li>)}</ol>}
-            {i === 3 && <div className="proof-seal" aria-hidden="true"><img src={asset('segel')} alt="" loading="lazy" /><svg viewBox="0 0 400 400"><circle className="seal-track" cx="200" cy="200" r="160" /><circle className="seal-arc" cx="200" cy="200" r="160" pathLength="100" /></svg><span className="ch-label">{CH_DATA.figures[3]}</span></div>}
-          </div>
-        </article>)}
-        <article className="proof-live"><NetworkReceipt lang={lang} /><p className="ch-honesty">{c.note}</p></article>
+        </details>
+      </div>
+      <div className="proof-side">
+        <div className="proof-place"><img className="proof-envelope" src={asset('kaca')} alt="" loading="lazy" decoding="async" /></div>
+        <NetworkReceipt lang={lang} />
+        <p className="ch-honesty">{c.note}</p>
       </div>
     </div>
   </section>;

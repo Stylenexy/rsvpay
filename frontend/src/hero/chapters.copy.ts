@@ -49,7 +49,7 @@ type ChapterUI = {
   keys: string; hash: string; block: string; elapsed: string; receipt: string;
   refused: string; tests: string; fixed: string; threat: string;
   try: string; check: string; languages: string; copyHash: string; copied: string; guest: string; host: string; replay: string;
-  trial: string; customs: string[]; tipGuest: string; tipHost: string; tipStory: string; tipAsk: string;
+  trial: string; customs: string[]; tipGuest: string; tipHost: string; tipStory: string; tipAsk: string; allChecks: string;
 };
 
 export const CH_UI: Record<Lang, ChapterUI> = {
@@ -64,6 +64,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     fixed: 'Set once. Held for good.', threat: 'Threat model', try: 'Try', check: 'Check', languages: 'Languages',
     copyHash: 'Copy code hash', copied: 'Copied', guest: 'Be a guest', host: 'Make an envelope', replay: 'Replay the story',
     trial: 'Trial version on NEAR testnet. Play money.',
+    allChecks: "See every check",
     customs: ['A gift today. A return at their celebration.', 'A red envelope carries a wish for good fortune.', 'A wedding gift, remembered between families.', 'A knot tied around a wish for the couple.', 'A gift of joy, returned when the time comes.'], tipGuest: "Give a gift to a sample wedding.", tipHost: "Set up a gift book for your own wedding.", tipStory: "Watch two families use it, in about a minute.", tipAsk: "Reads the contract directly. Nothing is sent.",
   },
   id: {
@@ -76,6 +77,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     refused: '12 dari 12 ditolak di kontrak yang berjalan. Daftar lengkap di model ancaman.', tests: '45 tes kontrak lulus.',
     fixed: 'Sekali ditentukan. Selamanya tetap.', threat: 'Model ancaman', try: 'Coba', check: 'Periksa', languages: 'Bahasa',
     copyHash: 'Salin hash kode', copied: 'Tersalin', guest: 'Jadi tamu', host: 'Buat amplop', replay: 'Putar ulang cerita', trial: 'Versi uji di NEAR testnet. Uang mainan.',
+    allChecks: "Lihat semua pemeriksaan",
     customs: ['Memberi hari ini. Membalas di hajatan mereka.', 'Amplop merah membawa doa keberuntungan.', 'Pemberian pernikahan yang diingat antarkeluarga.', 'Simpul yang mengikat doa untuk pengantin.', 'Tanda sukacita, dibalas saat waktunya tiba.'], tipGuest: "Beri hadiah ke pernikahan contoh.", tipHost: "Siapkan buku hadiah untuk pernikahanmu.", tipStory: "Lihat dua keluarga memakainya, sekitar semenit.", tipAsk: "Membaca kontrak langsung. Tidak ada yang dikirim.",
   },
   zh: {
@@ -87,6 +89,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     refused: '线上合约拒绝了全部 12 次检查。完整清单见威胁模型。', tests: '45 项合约测试通过。',
     fixed: '设定一次，永远不变。', threat: '威胁模型', try: '体验', check: '核查', languages: '语言',
     copyHash: '复制代码哈希', copied: '已复制', guest: '成为宾客', host: '创建红包', replay: '重看故事', trial: 'NEAR 测试网试用版。仅使用测试币。',
+    allChecks: "查看全部检查",
     customs: ['今天送礼，在对方的喜事上回礼。', '一封红包，寄托美好的祝愿。', '一份贺礼，两家人铭记。', '一枚水引结，系住对新人的祝福。', '一份喜悦，待来日相报。'], tipGuest: "给示例婚礼送一份礼金。", tipHost: "为你的婚礼创建礼金簿。", tipStory: "看两个家庭使用，大约一分钟。", tipAsk: "直接读取合约，不会发送任何内容。",
   },
   ko: {
@@ -99,6 +102,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     refused: '실제 컨트랙트에서 12건 모두 거부했습니다. 전체 목록은 위협 모델에 있습니다.', tests: '컨트랙트 테스트 45개 통과.',
     fixed: '한 번 정하면 영원히 그대로.', threat: '위협 모델', try: '체험', check: '확인', languages: '언어',
     copyHash: '코드 해시 복사', copied: '복사됨', guest: '하객 되기', host: '봉투 만들기', replay: '이야기 다시 보기', trial: 'NEAR 테스트넷 체험판. 실제 돈이 아닙니다.',
+    allChecks: "모든 점검 보기",
     customs: ['오늘의 선물, 그들의 잔칫날에 답례로.', '붉은 봉투에 행운을 빕니다.', '두 가족이 기억하는 결혼 축하의 마음.', '신랑 신부를 위한 소망을 매듭에 담아.', '기쁨을 나누고, 때가 되면 돌려줍니다.'], tipGuest: "예시 결혼식에 축의금을 보내 보세요.", tipHost: "내 결혼식 장부를 만드세요.", tipStory: "두 가족의 이야기를 1분쯤 지켜보세요.", tipAsk: "컨트랙트를 바로 읽어요. 보내는 것은 없어요.",
   },
   ja: {
@@ -111,6 +115,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     refused: '稼働中のコントラクトで全12件を拒否。全一覧は脅威モデルに。', tests: '45件のコントラクトテストに合格。',
     fixed: '一度決めたら、ずっとそのまま。', threat: '脅威モデル', try: '体験', check: '確認', languages: '言語',
     copyHash: 'コードハッシュをコピー', copied: 'コピーしました', guest: 'ゲストになる', host: '袋をつくる', replay: '物語をもう一度', trial: 'NEAR テストネットの試用版。テスト用のお金です。',
+    allChecks: "すべての検証を見る",
     customs: ['今日の贈り物を、相手のお祝いでお返し。', '紅い包みに、幸運への願いを。', '両家の記憶に残る、お祝いの気持ち。', '水引の結びに、新郎新婦への願いを。', '喜びを贈り、時が来たらお返しを。'], tipGuest: "サンプルの結婚式にご祝儀を贈ります。", tipHost: "自分の結婚式の帳簿を作ります。", tipStory: "二つの家族の使い方を約 1 分で見られます。", tipAsk: "コントラクトを直接読みます。送信はありません。",
   },
   vi: {
@@ -123,6 +128,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
     refused: 'Cả 12 kiểm tra đều bị từ chối trên hợp đồng đang chạy. Xem đủ trong mô hình đe dọa.', tests: '45 bài kiểm tra hợp đồng đạt.',
     fixed: 'Đặt một lần. Giữ mãi mãi.', threat: 'Mô hình đe dọa', try: 'Thử', check: 'Kiểm tra', languages: 'Ngôn ngữ',
     copyHash: 'Sao chép mã băm', copied: 'Đã sao chép', guest: 'Làm khách', host: 'Tạo phong bì', replay: 'Xem lại câu chuyện', trial: 'Bản thử trên NEAR testnet. Tiền thử nghiệm.',
+    allChecks: "Xem mọi kiểm tra",
     customs: ['Mừng hôm nay, đáp lại vào ngày vui của họ.', 'Phong bao đỏ mang lời chúc may mắn.', 'Món quà cưới được hai gia đình ghi nhớ.', 'Nút thắt gửi lời chúc đến đôi uyên ương.', 'Trao niềm vui, đáp lại khi đến lúc.'], tipGuest: "Gửi quà cho một đám cưới mẫu.", tipHost: "Tạo sổ quà cho đám cưới của bạn.", tipStory: "Xem hai gia đình dùng thử, khoảng một phút.", tipAsk: "Đọc trực tiếp hợp đồng. Không gửi gì cả.",
   },
 };

@@ -101,23 +101,25 @@
 .round-rail li { position: relative; font-variant-numeric: tabular-nums; transition: color .5s ease; }
 .round-rail li.on { color: var(--ch-fg); }
 
-/* 04: the page itself scrolls past the proof; nothing is pinned, nothing is swapped. */
-.ch-proof { padding: 6svh var(--hz-gutter) 20svh; }
-.proof-wrap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ch-gap); }
-.proof-side { grid-column: 1/4; position: sticky; top: var(--ch-top); align-self: start; display: grid; gap: 20px; }
-.proof-side .ch-heading { font-size: var(--ch-mid); }
-.proof-rows { grid-column: 4/-1; display: grid; gap: 2svh; }
-.proof-row { min-height: 62svh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(24px, 3vw, 56px); align-items: center; }
-.proof-text { display: grid; gap: 12px; align-content: center; min-width: 0; }
-.proof-figure { display: block; font: 500 clamp(96px, 9.5vw, 176px)/1 var(--f-hz); letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.proof-text > p { color: var(--ch-fg); font-size: clamp(17px, 1.4vw, 21px); line-height: 1.4; max-width: 24em; }
-.proof-text .proof-caption { font-size: 15px; color: var(--ch-soft); }
-.proof-object { position: relative; min-width: 0; display: grid; place-items: center; }
-.proof-key { position: relative; width: 100%; max-width: 440px; aspect-ratio: 1; }
-.proof-key img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
-.proof-key-broken { opacity: .01; }
-.proof-shield { position: relative; width: 100%; display: grid; gap: 12px; justify-items: center; }
-.proof-shield > img { width: 148px; height: 104px; object-fit: contain; }
+/* 04: one screen and one fact. The full list stays folded until someone asks for it. */
+.ch-proof { height: 230svh; }
+.proof-stage { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ch-gap); align-items: center; padding: var(--ch-top) var(--hz-gutter) 32px; }
+.proof-copy { grid-column: 1/7; display: grid; gap: 28px; justify-items: start; }
+.proof-copy .ch-heading { font-size: var(--ch-mid); }
+.proof-fact { display: flex; align-items: center; gap: 24px; max-width: 26em; font-size: var(--ch-text); line-height: 1.4; }
+.proof-fact strong { font: 500 clamp(88px, 8vw, 132px)/1 var(--f-hz); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.proof-more summary { cursor: pointer; font-size: 15px; font-weight: 600; color: var(--ch-ice); }
+.proof-more-body { margin-top: 12px; max-height: 36svh; display: grid; align-content: start; gap: 14px; padding: 16px; overflow: auto; border: 1px solid var(--ch-line); border-radius: 14px; background: var(--ch-deep); }
+.proof-facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.proof-facts li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; font-size: 15px; line-height: 1.4; }
+.proof-facts strong { font: 500 32px/1 var(--f-hz); font-variant-numeric: tabular-nums; }
+.proof-caption { font-size: 15px; color: var(--ch-soft); }
+.proof-side { grid-column: 7/-1; min-width: 0; display: grid; gap: 14px; justify-items: center; }
+.proof-place { position: relative; width: min(100%, 300px, 34svh); aspect-ratio: 1376/768; }
+.proof-place::before { content: ''; position: absolute; inset: -60%; z-index: -1; border-radius: 50%; background: radial-gradient(closest-side, var(--ch-amber-haze), transparent); }
+.proof-envelope { width: 100%; height: 100%; max-width: none; }
+.ch-carrier { position: fixed; z-index: 5; left: 0; top: 0; width: 640px; max-width: none; height: auto; visibility: hidden; pointer-events: none; transform-origin: 50% 50%; will-change: transform, opacity; filter: drop-shadow(0 18px 40px var(--ch-cast)); }
+@media (min-width: 761px) and (prefers-reduced-motion: no-preference) { .proof-envelope { visibility: hidden; } }
 .proof-list { list-style: none; width: 100%; margin: 0; padding: 8px 16px; border: 1px solid var(--ch-line); border-radius: 14px; background: var(--ch-plate); font: 400 14px/1.45 var(--f-ui); }
 .proof-list li { display: flex; align-items: center; gap: 12px; padding-block: 5px; }
 .proof-list li + li { border-top: 1px solid var(--ch-line); }
@@ -127,13 +129,6 @@
 .proof-tests { font-family: 'DM Mono', monospace; font-size: 13px; }
 .proof-tests li { padding-block: 9px; }
 .proof-tests li span { color: var(--ch-blue); }
-.proof-seal { position: relative; width: 100%; max-width: 400px; aspect-ratio: 1; }
-.proof-seal img { width: 100%; height: 100%; object-fit: contain; }
-.proof-seal svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 3; transform: rotate(-90deg); }
-.seal-track { stroke: var(--ch-line); }
-.seal-arc { stroke: var(--ch-amber); stroke-linecap: round; stroke-dasharray: var(--seal-amount, 10) 100; }
-.proof-seal > span { position: absolute; left: 0; right: 0; top: 50%; translate: 0 -50%; text-align: center; font-size: 15px; }
-.proof-live { min-height: 62svh; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
 .network-receipt { position: relative; width: 100%; padding: 28px; border: 1px solid var(--ch-glass-rim); border-radius: 20px; background: linear-gradient(135deg, var(--ch-glass-light), var(--ch-glass)); box-shadow: inset 0 1px 0 var(--hz-white-50), 0 32px 96px var(--ch-cast); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .network-top { display: flex; justify-content: space-between; gap: 16px; color: var(--ch-mut); }
 .network-top > span:first-child { display: flex; align-items: center; gap: 8px; }
@@ -235,8 +230,6 @@
 .landing-doors > .btn.story-entry { padding: 10px 16px; border: 1px solid var(--ch-glass-rim); background: var(--ch-bar); color: var(--ch-fg); box-shadow: none; font-size: 13px; transition: opacity .35s ease, visibility .35s ease; }
 
 @media (max-width: 1100px) and (min-width: 761px) {
-  .proof-side { grid-column: 1/-1; position: relative; top: auto; margin-bottom: 32px; }
-  .proof-rows { grid-column: 1/-1; }
   .round-copy { grid-column: 1/7; }
   .round-scene { grid-column: 7/-1; }
 }
@@ -269,19 +262,16 @@
   .round-letter p { font-size: 22px; }
   .round-letter b { font-size: 14px; }
   .round-rail { display: none; }
-  .ch-proof { padding-block: 12svh; }
-  .proof-wrap { display: block; }
-  .proof-side { position: relative; top: auto; margin-bottom: 40px; }
-  .proof-rows { gap: 56px; }
-  .proof-row { min-height: 0; grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .proof-figure { font-size: clamp(88px, 26vw, 128px); }
-  .proof-key, .proof-seal { max-width: 240px; }
-  .proof-live { min-height: 0; }
   .network-receipt { padding: 20px 16px; }
   .network-action .ch-button { font-size: 18px; min-height: 64px; padding-inline: 16px; }
   .network-values { font-size: 14px; }
   .network-values > div { grid-template-columns: 1fr 2fr; gap: 8px; }
   .culture { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); align-items: start; row-gap: 8px; padding-bottom: 56px; }
+  .ch-proof { height: auto; padding-block: 12svh; }
+  .proof-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; position: relative; height: auto; padding-block: 0; overflow: visible; }
+  .proof-copy, .proof-side { grid-column: 1; }
+  .proof-fact strong { font-size: clamp(72px, 22vw, 104px); }
+  .proof-more-body { max-height: none; }
   .culture-copy { grid-column: 1; gap: 8px; }
   .culture-word { font-size: clamp(44px, 14vw, 72px); }
   .culture-custom { font-size: 16px; }
@@ -325,8 +315,8 @@
   .ch-stage { position: relative; height: auto; min-height: 100svh; overflow: visible; }
   .ch-table, .ch-round, .ch-names { height: auto; }
   .ch-sky-scenes { display: none; }
-  .ch-sky-clouds, .proof-key-whole { display: none; }
-  .proof-key-broken { opacity: 1; }
+  .ch-sky-clouds { display: none; }
+  .ch-proof { height: auto; }
   .wedding-heading { margin-bottom: 32px; }
   .cp-row { position: relative; left: auto; right: auto; top: auto; bottom: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cp, .cp:first-child { --open: 1; min-height: 420px; }

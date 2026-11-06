@@ -21,3 +21,10 @@ export function cultureFrame(progress: number) {
   // the last envelope has left before the five arrive, so the two never overlap
   return { slot, local, change: slot < 4 ? ease(seg(local, .62, 1)) : 0, clear: ease(seg(p, .84, .875)), finale: ease(seg(p, .875, .915)), leave: ease(seg(p, .95, 1)) };
 }
+
+/** Which two stops of the envelope's route the page is between, and how far along. */
+export function routeFrame(stops: number[], at: number) {
+  let i = 0;
+  while (i < stops.length - 2 && at >= stops[i + 1]) i++;
+  return { i, t: ease(clamp((at - stops[i]) / (stops[i + 1] - stops[i] || 1))) };
+}

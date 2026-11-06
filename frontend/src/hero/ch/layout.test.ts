@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cultureFrame, roundFrame } from './layout';
+import { cultureFrame, roundFrame, routeFrame } from './layout';
 
 const samples = Array.from({ length: 1001 }, (_, i) => i / 1000);
 
@@ -59,5 +59,17 @@ describe('the five envelopes', () => {
   it('ends with all five together, then clears the stage', () => {
     expect(cultureFrame(.92)).toMatchObject({ slot: 4, finale: 1, leave: 0 });
     expect(cultureFrame(1).leave).toBe(1);
+  });
+});
+
+describe('the route of the one envelope', () => {
+  const stops = [100, 200, 201, 400];
+  it('holds its first stop before the route starts and its last after it ends', () => {
+    expect(routeFrame(stops, 0)).toEqual({ i: 0, t: 0 });
+    expect(routeFrame(stops, 900)).toEqual({ i: 2, t: 1 });
+  });
+  it('crosses a one-pixel handover at once', () => {
+    expect(routeFrame(stops, 200.5).i).toBe(1);
+    expect(routeFrame(stops, 201).i).toBe(2);
   });
 });

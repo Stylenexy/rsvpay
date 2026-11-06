@@ -1,6 +1,6 @@
 import { gsap, ScrollTrigger, SplitText } from './ch/animation';
 import { clamp, ease, lerp, seg } from './math';
-import { cultureFrame, roundFrame } from './ch/layout';
+import { cultureFrame, roundFrame, routeFrame } from './ch/layout';
 
 const SCRUB = .6;
 // Browsers skip painting at opacity 0, so the first visible frame would pay for all of it. This is too faint to see and still paints.
@@ -92,6 +92,7 @@ export function mountChapters(root: HTMLElement) {
       const locale = root.closest<HTMLElement>('[data-lang]')?.dataset.lang || 'en';
       const control = { selected: 0, mix: 0 };
       const weddingState = { p: 0 };
+      let panelAt = 0;
       let rowFrom = 0;
       let column = 0;
       const measureRow = () => {
@@ -105,6 +106,7 @@ export function mountChapters(root: HTMLElement) {
         const auto = seg(p, .13, .93) * 3;
         const position = auto * (1 - control.mix) + control.selected * control.mix;
         const exit = ease(seg(p, .96, 1));
+        panelAt = position;
         heading.style.opacity = String(1 - gone);
         row.style.top = `${lerp(rowFrom, parseFloat(getComputedStyle(row).getPropertyValue('--row-top')) || 96, gone)}px`;
         row.style.opacity = String(1 - exit);
@@ -165,22 +167,9 @@ export function mountChapters(root: HTMLElement) {
       gsap.from('.round-copy, .round-scene', { y: 64, opacity: FAINT, stagger: .08, ease: 'power2.out', scrollTrigger: { trigger: round, start: 'top 100%', end: 'top 30%', scrub: SCRUB } });
       gsap.to('.round-stage', { opacity: 0, ease: 'none', scrollTrigger: { trigger: round, start: 'bottom 114%', end: 'bottom 100%', scrub: SCRUB } });
 
-      // ---- 04: the page itself scrolls; each row arrives, makes its point, and clears the bar above
-      const proofRows = $$('.proof-row, .proof-live');
-      const steps = $$('.proof-steps li');
-      proofRows.forEach((proofRow, i) => {
-        gsap.from([...proofRow.children], { y: 56, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: proofRow, start: 'top 92%', end: 'top 58%', scrub: SCRUB } });
-        gsap.to(proofRow, { opacity: 0, ease: 'none', scrollTrigger: { trigger: proofRow, start: i === 4 ? 'center 20%' : 'center 36%', end: i === 4 ? 'center 2%' : 'center 16%', scrub: SCRUB } });
-        ScrollTrigger.create({ trigger: proofRow, start: 'top 60%', end: 'bottom 60%', toggleClass: { targets: steps[i], className: 'on' } });
-      });
-      gsap.timeline({ scrollTrigger: { trigger: '.proof-row-0', start: 'top 55%', end: 'center 40%', scrub: SCRUB } })
-        .to('.proof-key-whole', { opacity: 0, duration: .5, ease: 'none' }, .25)
-        .fromTo('.proof-key-broken', { opacity: FAINT, scale: .97 }, { opacity: 1, scale: 1, duration: .6, ease: 'none' }, .2);
-      $$('.proof-list').forEach(list => {
-        gsap.fromTo(list.children, { opacity: .28 }, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: list, start: 'top 72%', end: 'bottom 52%', scrub: SCRUB } });
-      });
-      gsap.fromTo('.seal-arc', { '--seal-amount': 0 }, { '--seal-amount': 10, ease: 'power2.out', scrollTrigger: { trigger: '.proof-seal', start: 'top 74%', end: 'center 50%', scrub: SCRUB } });
-      gsap.to('.proof-side', { opacity: 0, ease: 'none', scrollTrigger: { trigger: '.ch-proof', start: 'bottom 90%', end: 'bottom 66%', scrub: SCRUB } });
+      // ---- 04: one screen, one fact; the full list stays folded until someone asks
+      gsap.from('.proof-copy > *, .proof-side > :not(.proof-place)', { y: 56, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: '.ch-proof', start: 'top 80%', end: 'top 15%', scrub: SCRUB } });
+      gsap.to('.proof-stage', { opacity: 0, ease: 'none', scrollTrigger: { trigger: '.ch-proof', start: 'bottom 116%', end: 'bottom 100%', scrub: SCRUB } });
 
       // ---- 05: one envelope at a time, each on its own material; the five only meet at the end
       const names = $('.ch-names');
@@ -241,9 +230,96 @@ export function mountChapters(root: HTMLElement) {
         removers.push(() => stage.removeEventListener('pointermove', onLean));
       }
 
+      // ---- one envelope from the clouds to the morning: it travels between chapters and hands over to the object each chapter owns
+      if (desktop) {
+        const carrier = $('.ch-carrier');
+        const WIDTH = 640;
+        const HEIGHT = WIDTH * 768 / 1376;
+        type Spot = () => { x: number; y: number; w: number };
+        type Stop = { at: number; spot: Spot; r: number; o: number };
+        const screen = (x: number, y: number, w: number): Spot => () => ({ x: window.innerWidth * x, y: window.innerHeight * y, w });
+        const on = (selector: string, w?: number): Spot => () => {
+          const box = $(selector).getBoundingClientRect();
+          return { x: box.left + box.width / 2, y: box.top + box.height / 2, w: w ?? box.width };
+        };
+        const onPanel: Spot = () => {
+          const box = row.getBoundingClientRect();
+          return { x: box.left + panelAt * (column + 12) + column * 1.8, y: box.top + box.height * .36, w: 170 };
+        };
+        const flight = on('.round-flight');
+        const rest = on('.proof-place');
+        const china = on('.culture-object');
+        const fanSpot = on('.culture-fan', 320);
+        const morning = on('.close-envelope');
+        let stops: Stop[] = [];
+        let inRound = [0, 0];
+        const measure = () => {
+          const h = window.innerHeight;
+          const top = (selector: string) => $(selector).getBoundingClientRect().top + window.scrollY;
+          const span = (selector: string) => $(selector).offsetHeight - h;
+          const end = pin.getBoundingClientRect().bottom + window.scrollY;
+          const table = top('.ch-table');
+          const roundIn = top('.ch-round');
+          const roundOut = roundIn + span('.ch-round') - .14 * h;
+          const proofIn = top('.ch-proof');
+          const namesIn = top('.ch-names');
+          const closeIn = top('.ch-close');
+          inRound = [roundIn, roundOut];
+          stops = [
+            { at: end - 1.25 * h, spot: screen(.5, .62, 220), r: -6, o: 0 },
+            { at: end - h, spot: screen(.5, .5, 320), r: -4, o: 1 },
+            { at: end - .55 * h, spot: screen(.7, .3, 300), r: -4, o: 1 },
+            { at: table + .02 * span('.ch-table'), spot: screen(.7, .22, 280), r: -4, o: 1 },
+            { at: table + .13 * span('.ch-table'), spot: onPanel, r: -8, o: 1 },
+            { at: table + .93 * span('.ch-table'), spot: onPanel, r: -6, o: 1 },
+            { at: table + .985 * span('.ch-table'), spot: screen(.6, .5, 300), r: 0, o: 1 },
+            { at: roundIn, spot: flight, r: 0, o: 1 },
+            { at: roundIn + 1, spot: flight, r: 0, o: 0 },
+            { at: roundOut, spot: flight, r: 0, o: 0 },
+            { at: roundOut + 1, spot: flight, r: 0, o: 1 },
+            { at: proofIn, spot: rest, r: 4, o: 1 },
+            { at: proofIn + span('.ch-proof') - .16 * h, spot: rest, r: 4, o: 1 },
+            { at: namesIn - .25 * h, spot: china, r: 8, o: 1 },
+            { at: namesIn + .02 * h, spot: china, r: 8, o: 0 },
+            { at: namesIn + .955 * span('.ch-names'), spot: fanSpot, r: 0, o: 0 },
+            { at: namesIn + span('.ch-names'), spot: fanSpot, r: 0, o: 1 },
+            { at: closeIn - .45 * h, spot: morning, r: 0, o: 1 },
+            { at: closeIn - .3 * h, spot: morning, r: 0, o: 0 },
+          ];
+        };
+        const trip = { p: 0 };
+        const drawRoute = () => {
+          // the tween renders once more while it is being reverted, after its trigger has gone
+          const line = route.scrollTrigger;
+          if (!line) return;
+          const y = line.start + trip.p * (line.end - line.start);
+          envelope.style.visibility = y >= inRound[0] && y < inRound[1] ? 'visible' : 'hidden';
+          const { i, t } = routeFrame(stops.map(stop => stop.at), y);
+          const from = stops[i];
+          const to = stops[i + 1];
+          const o = lerp(from.o, to.o, t);
+          carrier.style.visibility = o > .01 ? 'visible' : 'hidden';
+          if (o <= .01) return;
+          const a = from.spot();
+          const b = to.spot();
+          const w = lerp(a.w, b.w, t);
+          carrier.style.opacity = String(o);
+          carrier.style.transform = `translate3d(${lerp(a.x, b.x, t) - WIDTH / 2}px,${lerp(a.y, b.y, t) - HEIGHT / 2}px,0) rotate(${lerp(from.r, to.r, t)}deg) scale(${w / WIDTH})`;
+        };
+        const route = gsap.to(trip, { p: 1, ease: 'none', scrollTrigger: { trigger: pin, start: 'bottom 130%', endTrigger: '.ch-close', end: 'top 25%', scrub: SCRUB }, onUpdate: drawRoute });
+        measure();
+        drawRoute();
+        ScrollTrigger.addEventListener('refresh', measure);
+        removers.push(() => ScrollTrigger.removeEventListener('refresh', measure));
+        // the receipt grows when the answer lands, and the resting place moves with it
+        const resting = new ResizeObserver(drawRoute);
+        resting.observe($('.proof-side'));
+        removers.push(() => resting.disconnect());
+      }
+
       // ---- 06: morning, and the envelope opens on its own
       const close = $('.ch-close');
-      gsap.fromTo('.close-envelope', { y: 96, opacity: FAINT, rotateZ: -4 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 45%', end: 'top top', scrub: SCRUB } });
+      gsap.fromTo('.close-envelope', { y: 96, opacity: FAINT, rotateZ: -4 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 55%', end: 'top 32%', scrub: SCRUB } });
       gsap.from('.close-content, .close-qr', { y: 48, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 40%', end: 'top top', scrub: SCRUB } });
       gsap.to('.close-envelope-flap', { rotateX: -155, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
       gsap.from('.close-envelope-light', { scale: .2, opacity: .15, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
