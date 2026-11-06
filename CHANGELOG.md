@@ -15,7 +15,8 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ### Changed
 - One glass envelope now travels the whole landing: out of the clouds, onto each guest-table panel, into the reply story, past the proof, into each country's envelope, and into the morning. Desktop only.
 - "Don't trust us" is one screen with one fact and one button; the full list of checks is folded.
-- Make an envelope: the names and date are written on the envelope itself.
+- Make an envelope: the names and date are written on a card rising out of the envelope.
+- How it works sits under the logo on a laptop and by the thumb on a phone, and says which step you are on.
 - First visit downloads half as much: 3.0 MB before scrolling, down from 6.0 MB.
 - Small labels above headings and the chapter counter are gone.
 - The book links gifts and replies both ways, and the product name lives in one file.
@@ -24,6 +25,8 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - The heading on the make-an-envelope page stays put; the couple's names fade in beneath it.
 
 ### Fixed
+- The closing page stays whole on the way down and on the way back up, and holds long enough for the envelope to open.
+- Test accounts no longer depend on the public helper or run out mid-test: a testnet purse creates and tops them up.
 - The landing stayed broken after someone made an envelope, with space below the footer and no hero. The landing no longer renders an app block for returning accounts.
 - Low balance errors now read in plain words, using the wording the network really sends.
 

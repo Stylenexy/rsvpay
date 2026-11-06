@@ -17,3 +17,7 @@ RSVPay is a hackathon project on NEAR testnet. It is not audited and holds only 
 **Known limits** are listed in [the threat model](docs/THREAT-MODEL.md#not-defended). You do not need to report those.
 
 We aim to answer within 72 hours during NEAR HACKATHON (until 15 November 2026) and within a week afterwards.
+
+## Testnet purse
+
+`frontend/api/dana.ts` holds one testnet key in a Vercel secret. It guards play money only. It can create sub-accounts of itself and top them up. Anyone can call it, so the worst case is an empty test purse, after which the site falls back to the public helper.

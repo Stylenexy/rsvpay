@@ -25,7 +25,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 
 Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
 
-The browser requests one throwaway account for Siti from NEAR's public testnet helper. Siti funds Budi's sub-account from her own test balance. It then opens Siti's wedding, sends Budi's gift, advances the story date by two years and opens Budi's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Budi**.
+The browser requests one throwaway account for Siti from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Siti funds Budi's sub-account from her own test balance. It then opens Siti's wedding, sends Budi's gift, advances the story date by two years and opens Budi's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Budi**.
 
 Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; live checks took between 28.6 s and 60.9 s including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
 

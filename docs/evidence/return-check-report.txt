@@ -1,4 +1,6 @@
 2026-11-06 Asia/Jakarta, https://rsvpay.vercel.app
+PASS | closing page is whole on the way down | {"envelope":1,"words":1,"stage":1}
+PASS | closing page is whole on the way back up | {"envelope":1,"words":1,"stage":1}
 PASS | the app page opens at its top
 PASS | logo: story fills the screen | {"nav":0,"hz":0}
 PASS | logo: chapter sky stays off the story | hidden 0.01
@@ -18,7 +20,7 @@ PASS | after making an envelope: no leftover page state | hz-page
 PASS | after making an envelope: wedding panels are visible | 1
 PASS | after making an envelope: first letter is visible | 1
 PASS | after making an envelope: morning sky holds at the very bottom | visible visible
-PASS | nothing below the footer | {"extra":0,"end":-0.109375}
+PASS | nothing below the footer | {"extra":0,"end":0.5}
 PASS | still drawing after 18 returns
 PASS | no page errors
 PASS | landing survives every way back

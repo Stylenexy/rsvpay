@@ -22,7 +22,7 @@ Contract: [`amplop-c-mvznhnlx.testnet`](https://testnet.nearblocks.io/address/am
 
 | Claim | Proof | Check it yourself |
 |---|---|---|
-| The whole story runs on real testnet from one button, with a receipt per transaction. | [`coba-e2e-report.txt`](docs/evidence/coba-e2e-report.txt): 14 of 14 checks on the last run the public helper allowed, 6 November 02.34 Asia/Jakarta. A later attempt was refused with 429 and the page offered the labelled recording: [`coba-refused-report.txt`](docs/evidence/coba-refused-report.txt). | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
+| The whole story runs on real testnet from one button, with a receipt per transaction. | [`coba-e2e-report.txt`](docs/evidence/coba-e2e-report.txt): all checks on the last run, 6 November, 37.4 s, while the public helper was refusing this address. Accounts now come from a small testnet purse. If both fail, the page offers the labelled recording: [`coba-refused-report.txt`](docs/evidence/coba-refused-report.txt). | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
 | The story takes about a minute or less. | Between 28.6 s and 60.9 s, target 60 s. It depends on the public testnet. If the public helper refuses, the page says so and offers a run clearly labelled as a recording. | same |
 | A guest gives from a phone in 20 s or less, with nothing to install. | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt): 10.7 s, signed in the browser. | `cd frontend && node e2e/alur.e2e.mjs` |
 | Guest pages fit a 360 px screen. | Step E3: 0 px overflow. | same |
