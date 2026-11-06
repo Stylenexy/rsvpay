@@ -321,11 +321,11 @@ export function mountChapters(root: HTMLElement) {
       const close = $('.ch-close');
       gsap.fromTo('.close-envelope', { y: 96, opacity: FAINT, rotateZ: -4 }, { y: 0, opacity: 1, rotateZ: 0, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 55%', end: 'top 32%', scrub: SCRUB } });
       gsap.from('.close-content, .close-qr', { y: 48, opacity: FAINT, stagger: .06, ease: 'power2.out', scrollTrigger: { trigger: close, start: 'top 40%', end: 'top top', scrub: SCRUB } });
-      gsap.to('.close-envelope-flap', { rotateX: -155, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
-      gsap.from('.close-envelope-light', { scale: .2, opacity: .15, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 30%', end: 'top -10%', scrub: SCRUB } });
+      gsap.to('.close-envelope-flap', { rotateX: -155, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 5%', end: 'top -55%', scrub: SCRUB } });
+      gsap.from('.close-envelope-light', { scale: .2, opacity: .15, ease: 'power2.inOut', scrollTrigger: { trigger: close, start: 'top 5%', end: 'top -55%', scrub: SCRUB } });
       // ---- the footer rises over the morning as a page of its own, and the name comes up out of the clouds
       const footer = $('.ch-footer');
-      gsap.to('.close-stage > *', { opacity: .25, scale: .95, ease: 'none', scrollTrigger: { trigger: footer, start: 'top 95%', end: 'top 25%', scrub: SCRUB } });
+      gsap.to('.close-stage', { opacity: .25, scale: .95, ease: 'none', scrollTrigger: { trigger: footer, start: 'top 95%', end: 'top 25%', scrub: SCRUB } });
       gsap.from('.footer-head, .footer-column', { y: 56, opacity: FAINT, stagger: .05, ease: 'power2.out', scrollTrigger: { trigger: footer, start: 'top 75%', end: 'top 10%', scrub: SCRUB } });
       gsap.from('[data-wordmark]', { yPercent: 104, ease: 'power3.out', scrollTrigger: { trigger: '.footer-wordmark', start: 'top 98%', end: 'bottom 100%', scrub: SCRUB } });
       gsap.fromTo('.footer-wordmark', { '--sky-pan': '20%' }, { '--sky-pan': '80%', duration: 26, repeat: -1, yoyo: true, ease: 'none', scrollTrigger: { trigger: footer, start: 'top bottom', end: 'bottom top', toggleActions: 'play pause resume pause' } });

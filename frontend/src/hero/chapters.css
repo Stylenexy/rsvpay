@@ -202,7 +202,7 @@
 .close-qr-specular { display: none; }
 
 /* The footer is a page of its own: night again, the whole site on one screen, and the name rising out of the clouds. */
-.ch-footer { position: relative; z-index: 3; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto auto; gap: clamp(20px, 3.4svh, 40px); padding: var(--ch-top) var(--hz-gutter) 20px; overflow: clip; color: var(--ch-fg); background: var(--ch-navy); border-radius: 40px 40px 0 0; box-shadow: 0 -1px 0 var(--ch-ice), 0 -32px 96px var(--ch-blue-haze); }
+.ch-footer { position: relative; z-index: 3; margin-top: 80svh; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto auto; gap: clamp(20px, 3.4svh, 40px); padding: var(--ch-top) var(--hz-gutter) 20px; overflow: clip; color: var(--ch-fg); background: var(--ch-navy); border-radius: 40px 40px 0 0; box-shadow: 0 -1px 0 var(--ch-ice), 0 -32px 96px var(--ch-blue-haze); }
 .footer-sky { position: absolute; z-index: -1; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: center 62%; opacity: .92; }
 .ch-footer::before { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(var(--ch-navy) 8%, var(--ch-footer-veil) 48%, transparent 72%, var(--ch-footer-floor)); }
 .footer-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--ch-gap); align-items: center; }
@@ -332,6 +332,7 @@
   .culture-finale { position: relative; inset: auto; visibility: visible; min-height: 100svh; }
   .culture-rail { display: none; }
   .close-stage { position: relative; height: auto; min-height: 100svh; }
+  .ch-footer { margin-top: 0; }
   .footer-wordmark > span { background-position: 50% 50%; }
   .close-stage { color: var(--ch-fg); }
   .ch-button-glass { color: var(--ch-fg) !important; }

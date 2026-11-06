@@ -53,6 +53,24 @@ const check = async (name) => {
   say(stops.bottomSky === 'visible' && stops.bottomMorning === 'visible', `${name}: morning sky holds at the very bottom`, `${stops.bottomSky} ${stops.bottomMorning}`);
 };
 
+// the closing page must look the same arriving from above and coming back up from the footer
+const closing = async () => page.evaluate(async () => {
+  const close = document.querySelector('.ch-close');
+  window.scrollTo({ top: close.getBoundingClientRect().top + scrollY + innerHeight * .5, behavior: 'instant' });
+  await new Promise((r) => setTimeout(r, 1500));
+  const opacity = (s) => +getComputedStyle(document.querySelector(s)).opacity;
+  return { envelope: opacity('.close-envelope'), words: opacity('.close-content'), stage: opacity('.close-stage') };
+});
+const shown = (o) => o.envelope > .95 && o.words > .95 && o.stage > .95;
+await page.goto(`${BASE}/`, { waitUntil: 'load' });
+await landed();
+const down = await closing();
+say(shown(down), 'closing page is whole on the way down', JSON.stringify(down));
+await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
+await page.waitForTimeout(1800);
+const up = await closing();
+say(shown(up), 'closing page is whole on the way back up', JSON.stringify(up));
+
 await page.goto(`${BASE}/`, { waitUntil: 'load' });
 await landed();
 await toBottom();
