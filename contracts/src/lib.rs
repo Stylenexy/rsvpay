@@ -262,6 +262,8 @@ impl Contract {
         require!(old.replied.is_none(), "this gift was already replied to");
         let target = self.hajatan_or_panic(&to_token_id);
         require!(target.open, "the giver's hajatan is not accepting gifts");
+        // during nft_transfer_call the receiver is only the owner on paper; the resolver can still take it back
+        require!(!self.lock_active(&to_token_id), "the giver's hajatan is mid-transfer, try after it settles");
         let target_owner = self.owner_of(&to_token_id);
         require!(target_owner == old.giver, "reply must go to a hajatan held by the original giver");
 

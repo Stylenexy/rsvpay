@@ -26,6 +26,7 @@ Written from the point of view of someone trying to keep or steal money.
 | T15 | Rounding on tiny gifts breaks the books | Seed rounds down; invariants hold | Unit `seed_rounding_on_tiny_gifts_never_breaks_the_books` |
 | T16 | Gifts into a closed or missing amplop | Refused | Unit `closed_hajatan_refuses_gifts`, `gift_to_a_missing_amplop_rejected`; Live L12 |
 | T17 | The developer changes the rules later | Zero access keys on the contract account | Live L1 |
+| T18 | A host parks a guest's seed in a decoy amplop while `nft_transfer_call` shows the guest as owner, takes the decoy back, and withdraws. Found in team review | Refused: `reciprocate` also checks the lock on the target | Unit `audit_host_redirects_guest_seed_through_reverted_transfer_call` |
 
 `#[private]` runs in the wasm entry point, so T10 and T11 can only be proven on chain, not in a unit test.
 

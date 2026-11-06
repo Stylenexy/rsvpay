@@ -678,3 +678,80 @@ fn sale_during_a_payout_in_flight_keeps_every_coin_with_the_token() {
     assert_eq!(c.hajatan(a.clone()).unwrap().free.0, 0);
     check_invariants(&c, &a);
 }
+
+// Reported in issue #1: a host could park a guest's seed in a decoy amplop that only looks like the guest's
+// while a nft_transfer_call is in flight, then take the decoy back and withdraw the seed.
+#[test]
+#[should_panic(expected = "mid-transfer")]
+fn audit_host_redirects_guest_seed_through_reverted_transfer_call() {
+    let mut c = fresh();
+    // Siti hosts with 10% kept; Budi gives 1 NEAR. Budi never hosts.
+    let a = open(&mut c, siti(), 1000);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    assert!(entry(&c, &a, 0).seed.0 > 0);
+
+    // Siti opens a decoy with 0% kept and sends it to Budi with nft_transfer_call.
+    let decoy = open(&mut c, siti(), 0);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(budi(), decoy.clone(), None, None, String::new());
+    assert_eq!(c.hajatan(decoy.clone()).unwrap().owner_id, budi());
+
+    // While the transfer is in flight, Siti tries to "reply" Budi's gift into the decoy.
+    testing_env!(ctx(siti(), 0).build());
+    c.reciprocate(a.clone(), 0, decoy.clone(), String::new());
+}
+
+// Once the decoy has really settled on the guest, the reply goes through as before.
+#[test]
+fn reply_into_a_settled_transfer_still_works() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 1000);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let gift = open(&mut c, siti(), 0);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(budi(), gift.clone(), None, None, String::new());
+    testing_env!(
+        ctx(accounts(0), 0).build(),
+        near_sdk::test_vm_config(),
+        near_sdk::RuntimeFeesConfig::test(),
+        Default::default(),
+        vec![near_sdk::PromiseResult::Successful(b"false".to_vec())]
+    );
+    assert!(c.nft_resolve_transfer(siti(), budi(), gift.clone(), None));
+    testing_env!(ctx(siti(), 0).build());
+    c.reciprocate(a.clone(), 0, gift.clone(), String::new());
+    assert!(entry(&c, &a, 0).replied.is_some());
+}
+
+// Not fixed, written down: issue #1 also asks what happens if the resolver runs later than LOCK_MAX_BLOCKS.
+// The lock stops protecting, so whoever holds the amplop on paper can withdraw, and the resolver can still hand it back.
+#[test]
+fn stale_lock_lets_the_paper_owner_withdraw_before_the_resolver_runs() {
+    let mut c = fresh();
+    let a = open(&mut c, siti(), 1000);
+    give(&mut c, &a, budi(), ONE_NEAR);
+    let free_before = c.hajatan(a.clone()).unwrap().free.0;
+    assert!(free_before > 0);
+    testing_env!(ctx(siti(), 1).build());
+    let _ = c.nft_transfer_call(buyer(), a.clone(), None, None, String::new());
+
+    let mut later = ctx(buyer(), 0);
+    later.block_height(1000 + LOCK_MAX_BLOCKS + 1);
+    testing_env!(later.build());
+    assert!(!c.is_locked(a.clone()));
+    let _ = c.withdraw(a.clone());
+    assert_eq!(c.hajatan(a.clone()).unwrap().free.0, 0);
+
+    // The receiver now refuses, and the emptied amplop goes back to the seller.
+    let mut back = ctx(accounts(0), 0);
+    back.block_height(1000 + LOCK_MAX_BLOCKS + 2);
+    testing_env!(
+        back.build(),
+        near_sdk::test_vm_config(),
+        near_sdk::RuntimeFeesConfig::test(),
+        Default::default(),
+        vec![near_sdk::PromiseResult::Successful(b"true".to_vec())]
+    );
+    assert!(!c.nft_resolve_transfer(siti(), buyer(), a.clone(), None));
+    assert_eq!(c.hajatan(a).unwrap().owner_id, siti());
+}
