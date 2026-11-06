@@ -110,11 +110,11 @@ export const AMPLOP_ERRORS = {
   seedRange: 'seed_bps must be 0..=1000 (max 10%)',
   titleRequired: 'title required',
   notHolder: 'only the current holder',
-  midTransfer: 'amplop is mid-transfer',
+  midTransfer: 'mid-transfer',
   alreadyReplied: 'this gift was already replied to',
   sameAmplop: 'cannot reply into the same amplop',
   wrongTarget: 'reply must go to a hajatan held by the original giver',
   targetClosed: "the giver's hajatan is not accepting gifts",
-  replyStorage: 'seed plus deposit must cover storage of the reply',
+  replyStorage: 'deposit must cover storage of the reply',
   nothingFree: 'nothing to withdraw',
 } as const;

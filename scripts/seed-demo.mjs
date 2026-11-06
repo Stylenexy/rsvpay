@@ -7,7 +7,7 @@ import { Account, JsonRpcProvider, KeyPair, nearToYocto, teraToGas } from "near-
 
 const RPC = process.env.NEAR_RPC ?? "https://test.rpc.fastnear.com";
 const HELPER = "https://helper.nearprotocol.com/account";
-const CONTRACT = process.argv[2] ?? "rsvpay.testnet";
+const CONTRACT = process.argv[2] ?? "rsvpay-v2.testnet";
 const provider = new JsonRpcProvider({ url: RPC });
 const GAS = teraToGas("100");
 const run = Date.now().toString(36).slice(-6);

@@ -11,8 +11,8 @@ Written from the point of view of someone trying to keep or steal money.
 |---|---|---|---|
 | T1 | Seller keeps withdrawing after the sale | Holder read from NEP-171 at call time | Unit `old_owner_cannot_withdraw_after_transfer`; Live L9 |
 | T2 | Seller replies from the sold amplop | Same check on `reciprocate` | Unit `old_owner_cannot_reciprocate_after_transfer` |
-| T3 | Buyer drains inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer, active for 300 blocks | Unit `withdraw_blocked_while_sale_settles`, `reciprocate_blocked_while_sale_settles` |
-| T4 | Receiver never resolves, freezing the amplop | Lock goes stale after 300 blocks | Unit `stale_lock_releases_after_lock_max_blocks` |
+| T3 | Buyer drains inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer, held until the resolver runs | Unit `withdraw_blocked_while_sale_settles`, `reciprocate_blocked_while_sale_settles`, `lock_holds_past_any_delay_until_the_resolver_runs` |
+| T4 | A resolver fails and freezes the amplop for good | Lock lets go after 1,000,000 blocks, about twelve days, far past what yields chained within one transaction's gas could stretch. The resolver has a fixed 5 TGas; the refused transfer settles on it live (L14) | Unit `a_lock_whose_resolver_never_ran_lets_go_after_the_long_bound`, attack L14 |
 | T5 | Reverted sale leaves money or rights behind | Resolver returns the NFT and clears the lock | Unit `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | T6 | Host withdraws the guests' seeds | `withdraw` pays only `balance - seed_locked` | Unit `withdraw_pays_only_free_money_and_never_touches_seeds`; Live L10, L11 |
 | T7 | Host sends a seed to a friend instead of the guest | Target must be held by the original giver | Unit `reply_cannot_be_redirected_to_someone_else`; Live L6 |
@@ -27,6 +27,8 @@ Written from the point of view of someone trying to keep or steal money.
 | T16 | Gifts into a closed or missing amplop | Refused | Unit `closed_hajatan_refuses_gifts`, `gift_to_a_missing_amplop_rejected`; Live L12 |
 | T17 | The developer changes the rules later | Zero access keys on the contract account | Live L1 |
 | T18 | A host parks a guest's seed in a decoy amplop while `nft_transfer_call` shows the guest as owner, takes the decoy back, and withdraws. Found in team review | Refused: `reciprocate` also checks the lock on the target | Unit `audit_host_redirects_guest_seed_through_reverted_transfer_call` |
+| T19 | A long reply message eats the guest's seed as storage | The caller's deposit pays the storage, the seed reaches the guest whole | Unit `audit_long_reply_message_cannot_eat_the_seed`, `reply_delivers_the_whole_seed_when_the_caller_pays_the_storage` |
+| T20 | The owner on paper closes the celebration, then refuses the transfer | `set_open` respects the lock | Unit `audit_paper_owner_cannot_close_hajatan_mid_transfer` |
 
 `#[private]` runs in the wasm entry point, so T10 and T11 can only be proven on chain, not in a unit test.
 

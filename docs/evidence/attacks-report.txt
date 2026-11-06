@@ -1,5 +1,5 @@
-Live attacks, contract rsvpay.testnet
-2026-11-06T18:52:03.409Z
+Live attacks, contract rsvpay-v2.testnet
+2026-11-06T20:27:35.521Z
 PASS | L1 contract has zero access keys: no admin, cannot be changed | 0 keys
 PASS | L2 stranger withdraws from someone else's amplop | refused: Smart contract panicked: only the current holder of the amplop can do this
 PASS | L3 forged failed-payout callback to inflate the balance | refused: Smart contract panicked: Method on_withdraw_done is private
@@ -13,3 +13,4 @@ PASS | L10 new holder withdraws free money, guest seeds stay locked | seed 99295
 PASS | L11 withdraw seeds after free money is gone | refused: Smart contract panicked: nothing to withdraw
 PASS | L12 give into a closed hajatan | refused: Smart contract panicked: this hajatan is not accepting gifts
 PASS | L13 host replies a guest's seed into a decoy mid-transfer | refused: Smart contract panicked: the giver's hajatan is mid-transfer, try after it settles
+PASS | L14 the resolver settles a refused transfer on its fixed gas and releases the lock | contract receipts burnt  TGas

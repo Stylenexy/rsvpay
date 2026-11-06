@@ -1,0 +1,3 @@
+2026-11-07 Asia/Jakarta, https://rsvpay.vercel.app, rsvpay-v2.testnet
+Six accounts per address per hour: after earlier checks had used four slots, repeated requests answered 200 200 429.
+One top-up per account: first request {"filled":true}, second request after draining again 429 "already topped up once".

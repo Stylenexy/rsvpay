@@ -2,9 +2,9 @@
 
 **A wedding gift that remembers, and gives back.**
 
-RSVP is the reply to a wedding invitation; here the reply is a gift, years later. The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay.testnet`.
+RSVP is the reply to a wedding invitation; here the reply is a gift, years later. The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay.testnet)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet)
 
 At Indonesian weddings, guests give money in envelopes (*amplop*) and families keep a notebook of who gave what, so they can return the favour at the guest's own celebration years later. The notebook gets lost. RSVPay makes that notebook an NFT that holds its own money and remembers.
 
@@ -15,10 +15,10 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | | |
 |---|---|
 | Live demo | https://rsvpay.vercel.app |
-| Contract (testnet) | [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testnet), zero access keys |
+| Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
-| Code on chain | `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL`, equal to a release build of this source on the deploying machine |
-| Tests | 48 Rust, 68 web, 13 live attacks. What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`, equal to a release build of this source on the deploying machine |
+| Tests | 54 Rust, 68 web, 14 live attacks. What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 ## What it does
@@ -45,7 +45,7 @@ Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the l
 
 The browser requests one throwaway account for Maya from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Maya funds Sam's sub-account from her own test balance. It then opens Maya's wedding, sends Sam's gift, advances the story date by two years and opens Sam's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Sam**.
 
-Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; nine live checks took between 26.9 s and 60.9 s ([runs](docs/evidence/coba-e2e-runs.txt)) including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
+Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; ten live checks took between 26.9 s and 60.9 s ([runs](docs/evidence/coba-e2e-runs.txt)) including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Sam's opening receipt.
 
@@ -54,12 +54,12 @@ To watch instead of waiting on the network, open **How it works** on any inner p
 To inspect the fixed deployment's keys:
 
 ```bash
-curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"rsvpay.testnet"}}'
+curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"rsvpay-v2.testnet"}}'
 ```
 
 The read-only check on 5 November 2026 (Asia/Jakarta) returned `"keys":[]`.
 
-The app uses only the fixed testnet deployment `rsvpay.testnet` and offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Amounts show in rupiah in Indonesian and in dollars elsewhere, at a demo rate of 1 NEAR = Rp500.000 = $500.
+The app uses only the fixed testnet deployment `rsvpay-v2.testnet` and offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Amounts show in rupiah in Indonesian and in dollars elsewhere, at a demo rate of 1 NEAR = Rp500.000 = $500.
 
 | Do | See |
 |---|---|
@@ -113,7 +113,7 @@ Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_
 ```bash
 cd contracts && cargo test
 ```
-See `test result: ok. 48 passed`.
+See `test result: ok. 54 passed`.
 
 ```bash
 cd frontend && npm ci && npm test
@@ -135,7 +135,7 @@ See `1 passed`: the web client opens, gives, rings, replies and withdraws on tes
 ```bash
 cd scripts && npm ci && node attacks.mjs
 ```
-See 13 `PASS` lines, one per attack, against the deployed contract. Report: [`docs/evidence/attacks-report.txt`](docs/evidence/attacks-report.txt).
+See 14 `PASS` lines, one per attack, against the deployed contract. Report: [`docs/evidence/attacks-report.txt`](docs/evidence/attacks-report.txt).
 
 ```bash
 cd frontend && node e2e/alur.e2e.mjs
@@ -156,7 +156,7 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 
 - `withdraw` and `reciprocate` call `require_holder`, which reads the owner from NEP-171 state at call time. No owner is stored anywhere else.
 - On `nft_transfer` the balance, the locked seeds and every entry stay with the token id, so they move with it automatically. The new holder inherits both the money and the promises. The old holder is refused from that block on.
-- During `nft_transfer_call` a lock blocks `withdraw` and `reciprocate`, so a buyer cannot drain the amplop inside `nft_on_transfer` while the sale can still revert. After 300 blocks the lock goes stale, so a receiver cannot freeze the amplop forever.
+- During `nft_transfer_call` a lock blocks `withdraw` and `reciprocate`, so a buyer cannot drain the amplop inside `nft_on_transfer` while the sale can still revert. The lock holds until the resolver runs. Only if a resolver ever failed would it let go, after about twelve days, so no amplop can freeze for good. Plain `nft_transfer` follows NEP-171 and is not stopped by the lock, so a seller should send only to a buyer they trust to settle.
 - A failed payout goes back into the amplop, not to the void.
 - The contract account has no access keys. There is no admin, no upgrade and no pause, for us or anyone.
 
@@ -170,7 +170,8 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 |---|---|---|
 | Seller keeps withdrawing after the sale | Holder read from NEP-171 at call time | `old_owner_cannot_withdraw_after_transfer`, live L9 |
 | Buyer drains the amplop inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer | `withdraw_blocked_while_sale_settles` |
-| Receiver never resolves, freezing the amplop | Lock goes stale after 300 blocks | `stale_lock_releases_after_lock_max_blocks` |
+| Receiver delays the resolver to drain the amplop | Lock holds until the resolver runs | `lock_holds_past_any_delay_until_the_resolver_runs` |
+| A resolver fails and freezes the amplop | Lock lets go after 1,000,000 blocks | `a_lock_whose_resolver_never_ran_lets_go_after_the_long_bound` |
 | Host withdraws the guests' seeds | `withdraw` pays only `balance - seed_locked` | `withdraw_pays_only_free_money_and_never_touches_seeds`, live L10, L11 |
 | Host sends a seed to a friend | Target must be held by the original giver | `reply_cannot_be_redirected_to_someone_else`, live L6 |
 | Reply twice from one seed | Entry marked `replied` | `a_gift_can_be_replied_only_once`, live L8 |
@@ -196,9 +197,9 @@ Other measurements:
 | What | Result | When | Source |
 |---|---|---|---|
 | Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
-| New guest gives, local build against the deployed contract, 360 px emulated touch screen, account made on the way | 10.7 s | 4 Nov 2026 | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| New guest gives on the live site, 360 px emulated touch screen, account made on the way | 15.3 s | 7 Nov 2026 | [`guest-check-report.txt`](docs/evidence/guest-check-report.txt) |
 | Storage a gift pays for its own entry | 0.0015 NEAR | 2 Nov 2026 | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
-| Live attacks refused | 13 of 13 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
+| Live attacks refused | 14 of 14 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
 
 ## What is not solved
 

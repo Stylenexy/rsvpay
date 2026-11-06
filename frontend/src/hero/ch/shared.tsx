@@ -1,6 +1,6 @@
 
 export const asset = (name: string) => `${import.meta.env.BASE_URL}aset/v2/${name}.webp`;
-export const CONTRACT = 'https://testnet.nearblocks.io/address/rsvpay.testnet';
+export const CONTRACT = 'https://testnet.nearblocks.io/address/rsvpay-v2.testnet';
 // Bundle the real document so the evidence link also works on static hosting.
 export const THREAT = `${import.meta.env.BASE_URL}threat-model.md`;
 export const THREAT_DOWNLOAD = import.meta.env.VITE_THREAT_MODEL_URL ? undefined : 'THREAT-MODEL.md';

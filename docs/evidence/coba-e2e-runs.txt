@@ -10,5 +10,6 @@ Taken from the history of coba-e2e-report.txt. Asia/Jakarta time.
 2026-11-06 15.53  37.4 s
 2026-11-06 16.25  45.0 s
 2026-11-07 01.58  26.9 s  (rsvpay.testnet)
+2026-11-07 03.27  34.8 s  (rsvpay-v2.testnet)
 
-Fastest 26.9 s, slowest 60.9 s, target 60 s.
+Ten runs. Fastest 26.9 s, slowest 60.9 s, target 60 s.

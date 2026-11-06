@@ -9,7 +9,7 @@ import { Account, JsonRpcProvider, KeyPair, nearToYocto, teraToGas } from "near-
 
 const RPC = process.env.NEAR_RPC ?? "https://test.rpc.fastnear.com";
 const HELPER = "https://helper.nearprotocol.com/account";
-const CONTRACT = process.argv[2] ?? "rsvpay.testnet";
+const CONTRACT = process.argv[2] ?? "rsvpay-v2.testnet";
 const provider = new JsonRpcProvider({ url: RPC });
 const GAS = teraToGas("100");
 const run = Date.now().toString(36).slice(-6);
@@ -155,6 +155,16 @@ for (const wait of [700, 1100, 1500, 1900, 2300, 900, 1300, 1700]) {
 const moved = JSON.stringify(await stateE()) !== before13;
 if (inFlight) say(last.includes("mid-transfer") && !moved, "L13 host replies a guest's seed into a decoy mid-transfer", `refused: ${last.slice(0, 90)}`);
 else console.log(`SKIP | L13 the reply never landed inside the transfer window | last: ${last.slice(0, 90)} | state moved: ${moved}`);
+
+// L14: the resolver has a fixed 5 TGas whatever the caller attaches, and a keyless contract cannot be repaired if it runs out.
+// The refused transfer is its most expensive path, so that path must settle and release the lock.
+const G14 = await open(siti, `Gas ${run}`);
+const settle = await siti.callFunction({ contractId: CONTRACT, methodName: "nft_transfer_call", args: { receiver_id: budi.accountId, token_id: G14, msg: "" }, gas: teraToGas("40"), deposit: 1n, waitUntil: "FINAL" }).catch((e) => e);
+await sleep(2500);
+const owner14 = (await view("hajatan", { token_id: G14 })).owner_id;
+const locked14 = await view("is_locked", { token_id: G14 });
+const burnt = (settle?.receipts_outcome ?? []).filter((r) => r.outcome.executor_id === CONTRACT).map((r) => (Number(r.outcome.gas_burnt) / 1e12).toFixed(2));
+say(owner14 === siti.accountId && locked14 === false, "L14 the resolver settles a refused transfer on its fixed gas and releases the lock", `contract receipts burnt ${burnt.join(", ")} TGas`);
 
 const report = `Live attacks, contract ${CONTRACT}\n${new Date().toISOString()}\n${lines.join("\n")}\n`;
 fs.writeFileSync(new URL(`../docs/evidence/attacks-report.txt`, import.meta.url), report);

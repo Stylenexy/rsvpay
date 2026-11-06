@@ -1,18 +1,18 @@
-testnet 2026-11-06T18:48:44.777Z contract=rsvpay.testnet
-PASS | test accounts | contract=rsvpay.testnet siti=siti.amplop-ppl-5btc3t.rsvpay-dana-3ddy.testnet budi=budi.amplop-ppl-5btc3t.rsvpay-dana-3ddy.testnet buyer=buyer.amplop-ppl-5btc3t.rsvpay-dana-3ddy.testnet
-PASS | contract deployed and initialised | rsvpay.testnet
+testnet 2026-11-06T20:24:34.710Z contract=rsvpay-v2.testnet
+PASS | test accounts | contract=rsvpay-v2.testnet siti=siti.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet budi=budi.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet buyer=buyer.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet
+PASS | contract deployed and initialised | rsvpay-v2.testnet
 PASS | A00 contract errors reach the caller with their message | wasm execution failed with error: HostError(GuestPanic { panic_msg: "no such amplop" })
 PASS | A01 Siti opens a hajatan: amplop NFT #1 minted to her, seed 5% | free=0.0418 NEAR from leftover deposit
 PASS | A02 Budi gives 1 NEAR: entry recorded, 5% seed locked in Budi's name | amount=0.9983 seed=0.0499
 PASS | A03 invariant balance = free + seed_locked | balance=1.0402 seed_locked=0.0499
 PASS | A04 no reply pending while Budi has no hajatan
-PASS | A05 Budi opens his own hajatan (#2): Siti's amplop rings for entry 0 | {"entry":0,"giver":"budi.amplop-ppl-5btc3t.rsvpay-dana-3ddy.testnet","amount":"998390000000000000000000","seed":"49919500000000000000000","to_token_id":"2"}
+PASS | A05 Budi opens his own hajatan (#2): Siti's amplop rings for entry 0 | {"entry":0,"giver":"budi.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet","amount":"998390000000000000000000","seed":"49919500000000000000000","to_token_id":"2"}
 PASS | A06 a stranger cannot release Budi's seed | state unchanged; reason: only the current holder
 PASS | A07 Budi cannot pull his own seed back | state unchanged; reason: only the current holder
 PASS | A08 one tap: seed + 0.5 NEAR land in Budi's amplop as a reply linked both ways | reply=0.548 NEAR (seed 0.0499 + top-up 0.5 - storage 0.0018)
 PASS | A09 the same gift cannot be replied twice | state unchanged; reason: already replied
 PASS | A10 Siti withdraws: free money paid out, nothing else | received=0.9898 of free 0.9903
-PASS | A11 amplop #1 transferred to buyer: money and history travel with it | owner=buyer.amplop-ppl-5btc3t.rsvpay-dana-3ddy.testnet balance=0.2984
+PASS | A11 amplop #1 transferred to buyer: money and history travel with it | owner=buyer.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet balance=0.2984
 PASS | A12 old owner (Siti) cannot withdraw after the sale | state unchanged; reason: only the current holder
 PASS | A13 new holder (buyer) withdraws the free money
 PASS | A14 payout callback cannot be called from outside | state unchanged; reason: is private

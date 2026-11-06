@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 
 const RPC = process.env.RPC ?? 'https://test.rpc.fastnear.com';
-const CONTRACT = 'rsvpay.testnet';
+const CONTRACT = 'rsvpay-v2.testnet';
 const WASM = new URL('../contracts/target/wasm32-unknown-unknown/release/amplop_balas.wasm', import.meta.url);
 
 const TXS = [

@@ -136,7 +136,7 @@ export class MockAmplopClient implements AmplopClient {
     const dep = BigInt(a.depositYocto);
     const seed = BigInt(old.seed);
     const total = seed + dep;
-    if (total <= MOCK_ENTRY_COST) throw new Error(E.replyStorage);
+    if (dep < MOCK_ENTRY_COST || total <= MOCK_ENTRY_COST) throw new Error(E.replyStorage);
     this.pay(dep);
     r.balance -= seed;
     r.seedLocked -= seed;

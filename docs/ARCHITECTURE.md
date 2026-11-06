@@ -55,7 +55,7 @@ Invariants, enforced by the tests in `contracts/src/tests.rs`:
 3. Only the current holder can withdraw or reply.
 4. `withdraw` never touches seeds.
 5. One gift can be replied to once, and only into a hajatan held by its original giver.
-6. A sale in progress (`nft_transfer_call`) blocks `withdraw` and `reciprocate`.
+6. A sale in progress (`nft_transfer_call`) blocks `withdraw`, `reciprocate` and `set_open` until the resolver runs.
 
 ## Frontend
 

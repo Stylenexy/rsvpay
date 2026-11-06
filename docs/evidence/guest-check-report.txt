@@ -1,0 +1,2 @@
+2026-11-07 Asia/Jakarta, https://rsvpay.vercel.app, rsvpay-v2.testnet
+PASS | guest page, slide to give, sent | 15.3 s

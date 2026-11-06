@@ -13,8 +13,10 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - The toolchain is pinned and CI prints the wasm hash.
 
 ### Security
+- The transfer lock now holds until the resolver runs. The 300-block expiry is gone; a bound of 1,000,000 blocks remains only so a failed resolver cannot freeze an amplop for good (issue #7).
+- The caller pays a reply's storage, so a long message can no longer eat a guest's seed, and `set_open` respects the lock (issue #8).
 - `reciprocate` now also refuses a target amplop that is mid-transfer. Before this, a host could park a guest's seed in a decoy that only looked like the guest's during `nft_transfer_call`, take the decoy back, and withdraw the seed. Reported in issue #1 (T18).
-- The contract moved to `rsvpay.testnet`, because a keyless contract cannot be patched. The demo book is now #3.
+- The contract moved to `rsvpay-v2.testnet`, because a keyless contract cannot be patched. The demo book is now #3.
 
 ## 2026-11-06
 
