@@ -15,11 +15,12 @@ export const CH_DATA = {
   years: ['2026', '2028', '2031'],
   words: ['amplop', '礼金', '축의금', 'ご祝儀', 'tiền mừng'],
   languages: ['English', 'Bahasa Indonesia', '中文', '한국어', '日本語', 'Tiếng Việt'],
-  figures: ['0', '12/12', '45', '10%'],
+  figures: ['0', '13/13', '48', '10%'],
   account: 'rsvpay.testnet',
   hash: 'G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL',
   methods: ['view_access_key_list', 'view_account'],
   attacks: [
+    "Host parks a guest's seed in a decoy mid-transfer",
     'Seller keeps withdrawing after the sale',
     'Buyer drains during the transfer',
     'Receiver never resolves',

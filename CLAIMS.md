@@ -10,13 +10,13 @@ Contract: [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testne
 |---|---|---|
 | Nobody can change the rules. The contract account has zero access keys. | RPC answer on 5 November at block 276,347,018: 0 keys. Attack L1 in [`attacks-report.txt`](docs/evidence/attacks-report.txt). | The `curl` line in the [README](README.md), or **Ask the network now** on the site |
 | The code on chain is this source. | Hash `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL` read from RPC on 7 November, equal to the local release build in [`measured-testnet.txt`](docs/evidence/measured-testnet.txt) (4 November). | `cd scripts && node measure.mjs` |
-| 12 of 12 live attacks fail against the deployed contract. | [`attacks-report.txt`](docs/evidence/attacks-report.txt). Nine are refused calls; L1, L7 and L10 confirm the expected safe state. | `cd scripts && node attacks.mjs` |
+| 13 of 13 live attacks fail against the deployed contract. | [`attacks-report.txt`](docs/evidence/attacks-report.txt). Nine are refused calls; L1, L7 and L10 confirm the expected safe state. | `cd scripts && node attacks.mjs` |
 | The rights move with the NFT, and the old holder is locked out. | Steps A11 and A12 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt); test `old_owner_cannot_withdraw_after_transfer`; attack L9. | `cd contracts && cargo test` |
 | A kept share can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; attacks L6, L11. | same |
 | A gift can be replied to only once. | Test `a_gift_can_be_replied_only_once`; step A09; attack L8. | same |
 | A host keeps back at most 10%, set once. | Test `seed_above_ten_percent_rejected`; contract panic `seed_bps must be 0..=1000 (max 10%)`. | same |
 | No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. | same |
-| 45 contract tests pass. | Fresh `cargo test` on 5 November: 45 passed, 0 failed. CI runs the same command on Linux and has not run yet, because the repository is not public yet. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
+| 48 contract tests pass. | Fresh `cargo test` on 7 November: 48 passed, 0 failed. CI runs the same command on Linux and has not run yet, because the repository is not public yet. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
 
 ## On the site
 

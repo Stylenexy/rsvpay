@@ -107,7 +107,7 @@ Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_
 ```bash
 cd contracts && cargo test
 ```
-See `test result: ok. 45 passed`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first.
+See `test result: ok. 48 passed`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first.
 
 ```bash
 cd frontend && npm ci && npm test
@@ -200,7 +200,7 @@ Other measurements:
 | Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
 | New guest gives on the deployed site, 360 px emulated touch screen, account already seated | 5.3 s | 4 Nov 2026 | Step E4 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
 | Storage a gift pays for its own entry | 0.0015 NEAR | 2 Nov 2026 | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
-| Live attacks refused | 12 of 12 | 4 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
+| Live attacks refused | 13 of 13 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
 
 ## What is not solved
 
