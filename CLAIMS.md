@@ -9,7 +9,7 @@ Contract: [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testne
 | Claim | Proof | Check it yourself |
 |---|---|---|
 | Nobody can change the rules. The contract account has zero access keys. | RPC answer on 5 November at block 276,347,018: 0 keys. Attack L1 in [`attacks-report.txt`](docs/evidence/attacks-report.txt). | The `curl` line in the [README](README.md), or **Ask the network now** on the site |
-| The code on chain is this source. | Hash `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL` read from RPC on 7 November, equal to the local release build in [`measured-testnet.txt`](docs/evidence/measured-testnet.txt) (4 November). | `cd scripts && node measure.mjs` |
+| The code on chain is this source. | Hash `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL` read from RPC on 7 November, equal to the local release build of the same day, sha256 `df51c34b…` (see Not claimed for the limit). | Query `view_account` for `rsvpay.testnet` over RPC |
 | 13 of 13 live attacks fail against the deployed contract. | [`attacks-report.txt`](docs/evidence/attacks-report.txt). Nine are refused calls; L1, L7 and L10 confirm the expected safe state. | `cd scripts && node attacks.mjs` |
 | The rights move with the NFT, and the old holder is locked out. | Steps A11 and A12 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt); test `old_owner_cannot_withdraw_after_transfer`; attack L9. | `cd contracts && cargo test` |
 | A kept share can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; attacks L6, L11. | same |
@@ -40,5 +40,6 @@ Contract: [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testne
 - **Users.** No independent users yet.
 - **A clean last browser run.** The last full run passed 13 of 14 steps. Step E12 failed because a public RPC answered 429, which shows up as a browser console error.
 - **Complete history.** The public indexer can be empty for this contract; the page falls back to receipts and says which source it used.
+- **A reproducible build on any machine.** The hash on chain equals a release build on the Windows machine that deployed it, with Rust 1.99.1 pinned. CI builds the same source on Linux and prints a different hash, `be7042f1…`, so a stranger cannot yet reproduce the code hash byte for byte.
 - **Native-speaker translations.** They were written with AI help and checked by a second AI.
 - **Smoothness everywhere.** It was measured on a laptop with a GPU before the last rebuild of the five envelopes and the footer, and never on a cheap phone.

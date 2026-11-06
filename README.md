@@ -17,7 +17,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Live demo | https://rsvpay.vercel.app |
 | Contract (testnet) | [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
-| Code on chain | `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL`, equal to the hash of a release build of this source |
+| Code on chain | `G2kEEJb7GzFdHD3JeiV5hKQycrRXotxZQnYQpgsv95UL`, equal to a release build of this source on the deploying machine |
 | Tests | 48 Rust, 68 web, 13 live attacks. What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
