@@ -36,12 +36,12 @@ describe('the shared language of the envelope', () => {
     }
   });
 
-  it('keeps Rp while formatting numbers for the reader', () => {
+  it('shows rupiah in Indonesian and play dollars everywhere else', () => {
     for (const { id } of LANGS) {
-      expect(formatRp(250000, LOCALES[id])).toBe('Rp' + new Intl.NumberFormat(LOCALES[id]).format(250000));
+      expect(formatRp(250000, LOCALES[id])).toBe(id === 'id' ? 'Rp250.000' : '$250');
       expect(shortRp(1000000, LOCALES[id])).not.toBe('');
     }
-    expect(formatRp(250000, 'en-US')).toBe('Rp250,000');
+    expect(formatRp(250000, 'en-US')).toBe('$250');
     expect(formatRp(250000, 'id-ID')).toBe('Rp250.000');
     expect(plainError(new Error('unknown'))).toBe(COPY.en.errUnknown);
     expect(formatCelebrationDate('2026-11-21', 'en-US')).toBe('November 21, 2026');

@@ -16,7 +16,7 @@ Contract: [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testne
 | A gift can be replied to only once. | Test `a_gift_can_be_replied_only_once`; step A09; attack L8. | same |
 | A host keeps back at most 10%, set once. | Test `seed_above_ten_percent_rejected`; contract panic `seed_bps must be 0..=1000 (max 10%)`. | same |
 | No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. | same |
-| 48 contract tests pass. | Fresh `cargo test` on 7 November: 48 passed, 0 failed. CI runs the same command on Linux and has not run yet, because the repository is not public yet. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
+| 48 contract tests pass. | Fresh `cargo test` on 7 November: 48 passed, 0 failed. CI runs the same command on Linux on every push to `master`. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
 
 ## On the site
 
@@ -31,7 +31,7 @@ Contract: [`rsvpay.testnet`](https://testnet.nearblocks.io/address/rsvpay.testne
 | The landing stays whole after leaving it and coming back. | [`return-check-report.txt`](docs/evidence/return-check-report.txt): back by logo and by browser button, from the very bottom of the page, then 18 quick round trips. | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |
 | Each inner page says who you are and what happens next, floating over the page without moving it. | [`demo-check-report.txt`](docs/evidence/demo-check-report.txt): layout identical before and after opening the guide, in all six languages. | `cd frontend && node e2e/demo.e2e.mjs https://rsvpay.vercel.app` |
 | A demo runs itself from the first field to the last screen, on a laptop and on a phone. It uses the rehearsal client, not testnet, and says so on screen. | Same report. | same |
-| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 68 web tests passing (2 skipped) on 6 November. | `cd frontend && npx vitest run` |
+| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 68 web tests passing (2 skipped) on 7 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
 
