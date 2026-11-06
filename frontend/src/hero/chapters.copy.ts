@@ -1,6 +1,9 @@
 import type { Lang } from './copy';
 import { BRAND } from '../brand';
 
+/** Play money: rupiah for Indonesian readers, dollars for everyone else at Rp1.000 = $1. */
+export const money = (lang: Lang, rp: number) => (lang === 'id' ? `Rp${rp.toLocaleString('id-ID')}` : `$${(rp / 1000).toLocaleString('en-US')}`);
+
 export const CH_DATA = {
   brand: BRAND,
   author: 'Dex Bennett',
@@ -8,11 +11,8 @@ export const CH_DATA = {
   digits: ['0', '1', '2', '3', '4', '5', '6'],
   steps: ['01', '02', '03', '04'],
   cultureSteps: ['01', '02', '03', '04', '05'],
-  splitAmounts: ['Rp95,000', 'Rp5,000'],
   milliseconds: 'ms',
   years: ['2026', '2028', '2031'],
-  amounts: ['Rp100,000', 'Rp100,000', 'Rp100,000'],
-  names: ['Budi', 'Siti'],
   words: ['amplop', '礼金', '축의금', 'ご祝儀', 'tiền mừng'],
   languages: ['English', 'Bahasa Indonesia', '中文', '한국어', '日本語', 'Tiếng Việt'],
   figures: ['0', '12/12', '45', '10%'],
@@ -55,7 +55,7 @@ type ChapterUI = {
 export const CH_UI: Record<Lang, ChapterUI> = {
   en: {
     matches: 'Matches the published record', mismatch: 'Does not match the published record',
-    index: 'Chapter', continue: 'Scroll to follow the promise', forSiti: 'for Siti', kept: 'kept for the reply',
+    index: 'Chapter', continue: 'Scroll to follow the promise', forSiti: 'for Maya', kept: 'kept for the reply',
     ask: 'Ask the network now', asking: 'Asking the network…', idle: 'A direct answer, from your browser.',
     failed: 'The network did not answer. Try again or check the contract.', received: 'Answer received',
     unexpected: 'The answer differs from the published record. Check the contract.',
@@ -82,7 +82,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
   },
   zh: {
     matches: '与公布记录一致', mismatch: '与公布记录不一致',
-    index: '篇章', continue: '滚动，追随承诺', forSiti: '给 Siti', kept: '留作回礼',
+    index: '篇章', continue: '滚动，追随承诺', forSiti: '给 Maya', kept: '留作回礼',
     ask: '现在询问网络', asking: '正在询问网络…', idle: '从你的浏览器直接获取答案。',
     failed: '网络没有回应。请重试或查看合约。', received: '已收到答案', unexpected: '答案与公布的记录不同。请查看合约。',
     keys: '访问密钥', hash: '代码哈希', block: '区块', elapsed: '往返时间', receipt: '网络实时回执',
@@ -94,7 +94,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
   },
   ko: {
     matches: '공개 기록과 일치', mismatch: '공개 기록과 불일치',
-    index: '장', continue: '스크롤로 약속을 따라가세요', forSiti: 'Siti에게', kept: '답례를 위해 보관',
+    index: '장', continue: '스크롤로 약속을 따라가세요', forSiti: 'Maya에게', kept: '답례를 위해 보관',
     ask: '지금 네트워크에 물어보기', asking: '네트워크에 묻는 중…', idle: '브라우저에서 직접 받는 답입니다.',
     failed: '네트워크가 응답하지 않았습니다. 다시 시도하거나 컨트랙트를 확인하세요.', received: '응답을 받았습니다',
     unexpected: '공개된 기록과 다른 응답입니다. 컨트랙트를 확인하세요.',
@@ -107,7 +107,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
   },
   ja: {
     matches: '公開記録と一致', mismatch: '公開記録と不一致',
-    index: '章', continue: 'スクロールして約束をたどる', forSiti: 'Siti へ', kept: 'お返しのために残す',
+    index: '章', continue: 'スクロールして約束をたどる', forSiti: 'Maya へ', kept: 'お返しのために残す',
     ask: '今、ネットワークに聞く', asking: 'ネットワークに問い合わせ中…', idle: 'ブラウザから直接、答えを受け取ります。',
     failed: 'ネットワークから返答がありません。再試行するか、コントラクトをご確認ください。', received: '回答を受信しました',
     unexpected: '公開記録と異なる回答です。コントラクトをご確認ください。',
@@ -120,7 +120,7 @@ export const CH_UI: Record<Lang, ChapterUI> = {
   },
   vi: {
     matches: 'Khớp với bản ghi công bố', mismatch: 'Không khớp với bản ghi công bố',
-    index: 'Chương', continue: 'Cuộn theo lời hứa', forSiti: 'cho Siti', kept: 'giữ lại để mừng lại',
+    index: 'Chương', continue: 'Cuộn theo lời hứa', forSiti: 'cho Maya', kept: 'giữ lại để mừng lại',
     ask: 'Hỏi mạng ngay', asking: 'Đang hỏi mạng…', idle: 'Câu trả lời trực tiếp từ trình duyệt của bạn.',
     failed: 'Mạng chưa trả lời. Hãy thử lại hoặc xem hợp đồng.', received: 'Đã nhận câu trả lời',
     unexpected: 'Câu trả lời khác với bản ghi công bố. Hãy xem hợp đồng.',
@@ -158,7 +158,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       kicker: 'Years later',
       big: 'Every reply starts the next one.',
       line: 'Each gift back is a gift of its own, with its own share kept. Two families can keep this going for decades.',
-      cards: ['Budi gives to Siti', 'Siti gives back to Budi', 'Budi gives back to Siti'],
+      cards: ['Sam gives to Maya', 'Maya gives back to Sam', 'Sam gives back to Maya'],
     },
     proof: {
       kicker: 'For the careful',
@@ -240,7 +240,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       kicker: '多年以后',
       big: '每一次回礼，都是下一次的开始。',
       line: '每次回礼本身也是一份礼，也留下自己的一部分。两家人可以这样往来几十年。',
-      cards: ['Budi 送礼给 Siti', 'Siti 回礼给 Budi', 'Budi 回礼给 Siti'],
+      cards: ['Sam 送礼给 Maya', 'Maya 回礼给 Sam', 'Sam 回礼给 Maya'],
     },
     proof: {
       kicker: '写给谨慎的人',
@@ -281,7 +281,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       kicker: '몇 년 뒤',
       big: '모든 답례가 다음 답례의 시작입니다.',
       line: '답례도 하나의 선물이라 자기 몫을 남깁니다. 두 가족이 수십 년을 이어갈 수 있습니다.',
-      cards: ['Budi가 Siti에게', 'Siti가 Budi에게 답례', 'Budi가 Siti에게 답례'],
+      cards: ['Sam이 Maya에게', 'Maya가 Sam에게 답례', 'Sam이 Maya에게 답례'],
     },
     proof: {
       kicker: '꼼꼼한 분들께',
@@ -322,7 +322,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       kicker: '数年後',
       big: 'お返しは、次のお返しの始まり。',
       line: 'お返しも一つの贈り物で、一部を残します。両家で何十年も続けられます。',
-      cards: ['Budi から Siti へ', 'Siti から Budi へお返し', 'Budi から Siti へお返し'],
+      cards: ['Sam から Maya へ', 'Maya から Sam へお返し', 'Sam から Maya へお返し'],
     },
     proof: {
       kicker: '慎重な方へ',
@@ -363,7 +363,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       kicker: 'Nhiều năm sau',
       big: 'Mỗi lần mừng lại mở đầu lần tiếp theo.',
       line: 'Mỗi lần mừng lại cũng là một món quà, với phần giữ lại của riêng nó. Hai gia đình có thể tiếp nối hàng chục năm.',
-      cards: ['Budi mừng Siti', 'Siti mừng lại Budi', 'Budi mừng lại Siti'],
+      cards: ['Sam mừng Maya', 'Maya mừng lại Sam', 'Sam mừng lại Maya'],
     },
     proof: {
       kicker: 'Cho người cẩn thận',

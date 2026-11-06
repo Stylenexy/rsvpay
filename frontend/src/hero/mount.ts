@@ -218,7 +218,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     el.style.pointerEvents = v > 0.6 ? 'auto' : 'none';
   };
 
-  const rp = (n: number) => (Math.round(n / 100) * 100).toLocaleString(copy().locale);
+  const rp = (n: number) => (copy().locale.startsWith('id') ? Math.round(n / 100) * 100 : Math.round(n / 1000)).toLocaleString(copy().locale);
 
   function paint(p: number, envX: number, envY: number) {
     const c = copy();

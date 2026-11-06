@@ -1,4 +1,4 @@
-import { CHAPTERS, CH_DATA } from '../chapters.copy';
+import { CHAPTERS, CH_DATA, money } from '../chapters.copy';
 import type { Lang } from '../copy';
 import { asset, Title } from './shared';
 
@@ -11,7 +11,7 @@ export function Exchange({ lang }: { lang: Lang }) {
         <div className="round-scene">
           <div className="round-flight">
             {CH_DATA.years.map((year, i) => <article className="round-letter" key={year}>
-              <span className="round-letter-top ch-label"><em>{year}</em></span><p>{c.cards[i]}</p><b>{CH_DATA.amounts[i]}</b>
+              <span className="round-letter-top ch-label"><em>{year}</em></span><p>{c.cards[i]}</p><b>{money(lang, 100000)}</b>
             </article>)}
             <img className="round-envelope" src={asset('kaca')} alt="" loading="lazy" decoding="async" />
           </div>

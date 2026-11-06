@@ -25,11 +25,11 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 
 Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
 
-The browser requests one throwaway account for Siti from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Siti funds Budi's sub-account from her own test balance. It then opens Siti's wedding, sends Budi's gift, advances the story date by two years and opens Budi's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Budi**.
+The browser requests one throwaway account for Maya from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Maya funds Sam's sub-account from her own test balance. It then opens Maya's wedding, sends Sam's gift, advances the story date by two years and opens Sam's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Sam**.
 
 Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; live checks took between 28.6 s and 60.9 s including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
 
-If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Budi's opening receipt.
+If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Sam's opening receipt.
 
 To watch instead of waiting on the network, open **How it works** on any inner page and press **Show me, step by step**. The site types the names, opens the book, gives, rings and gives back on its own, then says the demo is finished. That demo runs on a rehearsal client in your browser with play money, and it is labelled as a rehearsal on screen. The button above is the one that uses real testnet.
 
@@ -58,7 +58,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 
 1. **A host opens a hajatan** (celebration). The contract mints one NFT, the *amplop*, to the host. The host fixes a *reply seed* of 0–10%, which can never change.
 2. **A guest scans a QR and gives.** No wallet to install. The gift becomes an entry in the NFT: who, how much, the wish, when. The seed part (say 5%) stays locked in that guest's name. The rest is free for the host to withdraw.
-3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Budi gave Rp500.000. Seed Rp25.000 is ready. Add Rp475.000?"* One tap releases the seed plus the top-up into Budi's amplop as a new entry linked to the old one. Saying "later" changes nothing.
+3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Sam gave $500. Seed $25 is ready. Add $475?"* One tap releases the seed plus the top-up into Sam's amplop as a new entry linked to the old one. Saying "later" changes nothing.
 
 Each reply is itself an entry with its own seed, so the chain of giving back can continue between two families for decades.
 
@@ -82,14 +82,14 @@ Each reply is itself an entry with its own seed, so the chain of giving back can
 
 ## Try it
 
-Run the frontend locally as described below. The app uses only the fixed testnet deployment `amplop-c-mvznhnlx.testnet`. It offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Rupiah amounts use a labelled display rate of 1 NEAR = Rp500,000; testnet NEAR has no market price.
+Run the frontend locally as described below. The app uses only the fixed testnet deployment `amplop-c-mvznhnlx.testnet`. It offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Rupiah amounts use a labelled display rate of 1 NEAR = $500; testnet NEAR has no market price.
 
 | Do | See |
 |---|---|
 | Click **Try the whole story** on the landing page | A live timeline on `#/coba`, with both families on the same device |
-| Wait for Siti's envelope to ring | Budi's original gift, the part kept for him and the amount Siti will add |
-| Click **Give back to Budi** | A real reply into Budi's envelope, its transaction link and the measured elapsed time |
-| Click **Open Budi's book** | The browser switches to Budi, the current holder, and opens his book |
+| Wait for Maya's envelope to ring | Sam's original gift, the part kept for him and the amount Maya will add |
+| Click **Give back to Sam** | A real reply into Sam's envelope, its transaction link and the measured elapsed time |
+| Click **Open Sam's book** | The browser switches to Sam, the current holder, and opens his book |
 | Read **The envelope's history** | Incoming gifts, linked replies, current holder and any verified payouts or holder changes. Missing history is labelled explicitly |
 | Click **Pass the envelope on**, enter an existing testnet account and read the confirmation | The book, remaining balance and promises will all move. The old holder loses the book's controls |
 | Confirm the named recipient | A real `nft_transfer` with one yoctoNEAR, a transaction link and the new holder. Switching to that holder on this device opens the inherited book |

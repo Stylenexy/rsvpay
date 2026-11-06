@@ -4,7 +4,7 @@ import { OPEN_DEPOSIT_YOCTO, STORAGE_MARGIN_YOCTO, rupiahToYocto } from '../lib/
 export type StoryStep = 'account' | 'family' | 'wedding' | 'gift' | 'years' | 'celebration' | 'ring' | 'reply';
 export interface StoryMark { step: StoryStep; ms: number; hash: string | null }
 export interface StorySession { siti: string; budi: string; wedding: string; celebration: string; pending: PendingReply }
-export interface StoryWishes { gift: string; reply: string }
+export interface StoryWishes { gift: string; reply: string; people?: { host: string; guest: string; couple: string; second: string } }
 export const RECORDED = [
   { step: 'wedding', hash: '9cDvqFm9hBvdZgxFrHdL5PViAvGEtev5F1ZYYnhrwdxk' },
   { step: 'gift', hash: '23fkWd22hwQKgFJc8aFxJrLpQJg42PbDaX3PwL5Ci71u' },
@@ -29,15 +29,16 @@ export async function startStory(client: AmplopClient, wishes: StoryWishes,
     mark({ step, ms: now() - start, hash: r.txHash });
     return r.value;
   }
-  const siti = await timed('account', async () => ({ value: await client.createAccount('Siti'), txHash: null }));
+  const who = wishes.people ?? { host: 'Maya', guest: 'Sam', couple: 'Maya & Leo', second: 'Sam & Nina' };
+  const siti = await timed('account', async () => ({ value: await client.createAccount(who.host), txHash: null }));
   client.useAccount(siti);
-  const budi = await timed('family', () => client.createSubAccount('Budi', rupiahToYocto(200_000).toString()));
+  const budi = await timed('family', () => client.createSubAccount(who.guest, rupiahToYocto(200_000).toString()));
   client.useAccount(siti);
-  const wedding = await timed('wedding', () => client.openHajatan({ title: 'Siti & Andi', date: '2026-11-21', seedBps: 500, depositYocto: OPEN_DEPOSIT_YOCTO.toString() }));
+  const wedding = await timed('wedding', () => client.openHajatan({ title: who.couple, date: '2026-11-21', seedBps: 500, depositYocto: OPEN_DEPOSIT_YOCTO.toString() }));
   client.useAccount(budi);
   await timed('gift', () => client.give({ tokenId: wedding, message: wishes.gift, depositYocto: (rupiahToYocto(100_000) + STORAGE_MARGIN_YOCTO).toString() }));
   mark({ step: 'years', ms: 0, hash: null });
-  const celebration = await timed('celebration', () => client.openHajatan({ title: 'Budi & Rina', date: '2028-11-20', seedBps: 500, depositYocto: OPEN_DEPOSIT_YOCTO.toString() }));
+  const celebration = await timed('celebration', () => client.openHajatan({ title: who.second, date: '2028-11-20', seedBps: 500, depositYocto: OPEN_DEPOSIT_YOCTO.toString() }));
   client.useAccount(siti);
   active('ring');
   const [pending] = await client.pendingReplies(wedding);

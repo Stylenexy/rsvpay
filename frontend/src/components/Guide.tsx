@@ -1,21 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type PointerEvent } from 'react';
+import { DEMO } from '../lib/demo';
 import { useAmplop } from '../context';
 import { say, useCopy } from '../copy';
 import { link } from '../lib/app';
+import { useLang } from '../lib/lang';
+import { people } from '../lib/people';
 import { runTour, tourActive, startTour, type TourEvent } from '../lib/tour';
-
-const DEMO: string = import.meta.env.VITE_DEMO_TOKEN ?? '14';
 
 export type GuideRole = 'couple' | 'guest' | 'visitor' | 'demo';
 
-/** Floats over the page and never moves it: who you are here, the four steps, and a demo that runs by itself. */
+/** Sits past the page margin on a laptop and by the thumb on a phone. Hover opens it, leaving closes it. */
 export function Guide({ role, line, step, done, next }: { role: GuideRole; line: string; step: number; done?: number; next?: string }) {
   const t = useCopy();
   const [open, setOpen] = useState(false);
-  const [bubble, setBubble] = useState(true);
+  const [bubble, setBubble] = useState(false);
+  const leaving = useRef(0);
   useEffect(() => {
-    setBubble(true);
-    const timer = window.setTimeout(() => setBubble(false), done ? 16000 : 7000);
+    // who you are is said once per visit; a finished step is always said
+    const seen = `guide-${role}`;
+    let first = true;
+    try { first = !sessionStorage.getItem(seen); sessionStorage.setItem(seen, '1'); } catch { /* private window */ }
+    setBubble(!!done || first);
+    const timer = window.setTimeout(() => setBubble(false), done ? 16000 : 6000);
     // the first touch on the page means they are busy; a finished step stays until it has been read
     const away = () => { if (!done) setBubble(false); };
     window.addEventListener('pointerdown', away);
@@ -26,18 +32,23 @@ export function Guide({ role, line, step, done, next }: { role: GuideRole; line:
   const who = { couple: t.guideYouCouple, guest: t.guideYouGuest, visitor: t.guideYouVisitor, demo: t.guideYouWatch }[role];
   const at = done ?? step;
   const steps: [string, string][] = [[t.guideStep1, link.buka()], [t.guideStep2, link.beri(DEMO)], [t.guideStep3, link.buku(DEMO)], [t.guideStep4, link.coba()]];
+  const enter = (e: PointerEvent) => { if (e.pointerType === 'mouse') { window.clearTimeout(leaving.current); setOpen(true); } };
+  const leave = (e: PointerEvent) => { if (e.pointerType === 'mouse') leaving.current = window.setTimeout(() => setOpen(false), 160); };
   return (
-    <aside className="guide" aria-label={t.guideHow}>
-      {open && <div className="guide-panel">
+    <aside className="guide" data-open={open || undefined} aria-label={t.guideHow}>
+      <div className="guide-panel" inert={!open} onPointerEnter={enter} onPointerLeave={leave}>
         <p className="guide-who"><b>{who}</b><span>{line}</span></p>
         <ol>{steps.map(([label, href], i) => <li key={label} className={i === at ? 'on' : i < at ? 'past' : ''}><a href={href} aria-current={i === at ? 'step' : undefined}><span>{i < at ? '✓' : i + 1}</span>{label}</a></li>)}</ol>
         <button type="button" className="btn" onClick={startTour}>{t.tourShow}</button>
         <small>{t.tourNote}</small>
-      </div>}
+      </div>
       {!open && bubble && <div className="guide-bubble" role="status">
         {done ? <><b>{say(t.stepDone, done)}</b>{next && steps[done] && <a href={next}>{say(t.stepNext, done + 1)}: {steps[done][0]} ↗</a>}</> : <><b>{who}</b><span>{line}</span></>}
       </div>}
-      <button type="button" className="guide-pill" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? '×' : '?'}<span>{t.guideHow}</span><b>{say(t.guideStepOf, Math.min(at + 1, 4))}</b></button>
+      <button type="button" className="guide-pill" aria-expanded={open} aria-label={t.guideHow} onPointerEnter={enter} onPointerLeave={leave} onClick={(e) => { if (e.detail === 0 || !matchMedia('(hover: hover)').matches) setOpen(!open); }}>
+        <i aria-hidden="true">?</i>
+        <span className="guide-label">{t.guideHow}<em aria-hidden="true">|</em><b>{say(t.guideStepOf, Math.min(at + 1, 4))}</b></span>
+      </button>
     </aside>
   );
 }
@@ -46,13 +57,14 @@ export function Guide({ role, line, step, done, next }: { role: GuideRole; line:
 export function TourCard() {
   const t = useCopy();
   const { client, refresh, switchTo } = useAmplop();
+  const { lang } = useLang();
   const [state, setState] = useState<TourEvent>({ step: 0, line: 0, done: false });
   const started = useRef(false);
   useEffect(() => {
     if (started.current || !tourActive()) return;
     started.current = true;
-    void runTour(client, refresh, switchTo, setState);
-  }, [client, refresh, switchTo]);
+    void runTour(client, refresh, switchTo, setState, people(lang));
+  }, [client, refresh, switchTo, lang]);
   if (!tourActive()) return null;
   const steps = [t.guideStep1, t.guideStep2, t.guideStep3, t.guideStep4];
   const lines = [t.tourLine0, t.tourLine1, t.tourLine2, t.tourLine3, t.tourLine4, t.tourLine5, t.tourLine6];

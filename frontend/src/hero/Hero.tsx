@@ -3,6 +3,7 @@ import { link } from '../lib/app';
 import { useLangPill } from '../lib/pill';
 import { HERO, LANGS, WORDS, type Lang } from './copy';
 import { BRAND } from '../brand';
+import { DEMO } from '../lib/demo';
 import { Chapters } from './Chapters';
 import { CH_UI } from './chapters.copy';
 import { asset } from './ch/shared';
@@ -11,7 +12,6 @@ import { mountHero } from './mount';
 import './hero.theme.css';
 import './hero.css';
 
-const DEMO: string = import.meta.env.VITE_DEMO_TOKEN ?? '14';
 
 /** Wraps the highlighted words so they can carry their own light. */
 function Big({ text, mark }: { text: string; mark: string }) {
@@ -153,21 +153,21 @@ export function Hero() {
           <div className="hz-card" data-card="gift">
             <span>{c.gift}</span>
             <b>
-              <i>Rp</i>
+              <i>{lang === 'id' ? 'Rp' : '$'}</i>
               <span data-num="gift" />
             </b>
           </div>
           <div className="hz-card" data-card="siti">
             <span>{c.forSiti}</span>
             <b>
-              <i>Rp</i>
+              <i>{lang === 'id' ? 'Rp' : '$'}</i>
               <span data-num="siti" />
             </b>
           </div>
           <div className="hz-card seed" data-card="kept">
             <span>{c.kept}</span>
             <b>
-              <i>Rp</i>
+              <i>{lang === 'id' ? 'Rp' : '$'}</i>
               <span data-num="kept" />
             </b>
           </div>

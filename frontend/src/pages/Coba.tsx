@@ -2,6 +2,8 @@ import { Guide } from '../components/Guide';
 import { useEffect, useRef, useState } from 'react';
 import { RECORDED, replyStory, startStory, type StoryMark, type StorySession, type StoryStep } from '../chain/story';
 import type { Entry } from '../chain/types';
+import { people } from '../lib/people';
+import { useLang } from '../lib/lang';
 import { EnvelopeObject, EnvelopeStory, TxLink } from '../components/parts';
 import { say, useCopy } from '../copy';
 import { useAmplop } from '../context';
@@ -30,7 +32,9 @@ export function Coba() {
   const [recorded, setRecorded] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [total, setTotal] = useState<number | null>(null);
-  const wishes = useRef({ gift: t.beriWishDefault, reply: say(t.bukuReplyWish, 'Budi') });
+  const { lang } = useLang();
+  const who = people(lang);
+  const wishes = useRef({ gift: t.beriWishDefault, reply: say(t.bukuReplyWish, who.guest), people: who });
   const labels = { account: t.cobaAccount, family: t.cobaFamily, wedding: t.cobaWedding,
     gift: t.cobaGift, years: t.cobaYears, celebration: t.cobaCelebration, ring: t.cobaRing, reply: t.cobaReply, paid: t.bukuWithdraw };
   const seconds = (ms: number) => say(t.cobaSeconds, number(Math.round(ms / 100) / 10));
@@ -65,7 +69,7 @@ export function Coba() {
     setActive('reply');
     const start = performance.now();
     try {
-      const result = await replyStory(client, session, say(t.bukuReplyWish, 'Budi'));
+      const result = await replyStory(client, session, say(t.bukuReplyWish, who.guest));
       if (!live.current) return;
       setMarks((all) => [...all, { step: 'reply', ms: performance.now() - start, hash: result.txHash }]);
       setLanded(result.value);

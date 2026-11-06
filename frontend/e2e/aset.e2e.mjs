@@ -3,7 +3,7 @@ import { chromium } from 'playwright-core';
 
 const BASE = process.argv[2] ?? 'http://localhost:5173';
 const origin = new URL(BASE).origin;
-const ROUTES = ['/', '/#/beri/14', '/#/buka', '/#/buku/14', '/#/coba'];
+const ROUTES = ['/', '/#/beri/60', '/#/buka', '/#/buku/60', '/#/coba'];
 const SIZES = [[1366, 768], [360, 740]];
 
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9333');

@@ -111,7 +111,7 @@ export function Missing() {
 // ---- money: each changed digit travels through its own window ----
 
 export function Rp({ value, className = '', animate = true }: { value: number; className?: string; animate?: boolean }) {
-  const { formatRpDigits, formatRp } = useFormat();
+  const { currency, formatRpDigits, formatRp } = useFormat();
   const text = formatRpDigits(value);
   const previous = useRef(text);
   const root = useRef<HTMLElement>(null);
@@ -129,7 +129,7 @@ export function Rp({ value, className = '', animate = true }: { value: number; c
   }, [text, animate]);
   return (
     <b ref={root} className={`rp ${className}`} aria-label={formatRp(value)}>
-      <i className="cur" aria-hidden="true">Rp</i>
+      <i className="cur" aria-hidden="true">{currency}</i>
       <span className="digits" aria-hidden="true">{[...text].map((char, i) => (
         <span className="digit" key={`${text}-${i}`}>{animate && /\d/.test(char) && before[i] !== char
           ? <span className="roll-track"><span>{before[i]}</span><span>{char}</span></span> : char}</span>

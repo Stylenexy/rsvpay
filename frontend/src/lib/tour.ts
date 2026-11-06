@@ -1,4 +1,5 @@
 import type { AmplopClient } from '../chain/types';
+import { people } from './people';
 import { OPEN_DEPOSIT_YOCTO } from './rupiah';
 
 export type TourEvent = { step: number; line: number; done: boolean; failed?: boolean };
@@ -47,7 +48,7 @@ async function type(input: HTMLInputElement, text: string) {
   }
 }
 
-export async function runTour(client: AmplopClient, refresh: () => void, switchTo: (id: string) => void, report: (event: TourEvent) => void) {
+export async function runTour(client: AmplopClient, refresh: () => void, switchTo: (id: string) => void, report: (event: TourEvent) => void, who: ReturnType<typeof people>) {
   let reached = 0;
   const say = (step: number, line: number) => { reached = step; report({ step, line, done: false }); };
   try {
@@ -55,7 +56,7 @@ export async function runTour(client: AmplopClient, refresh: () => void, switchT
 
     // 1: the couple makes an envelope
     say(0, 0);
-    await type(await until(() => element<HTMLInputElement>('.open-page input:not([type=date])')), 'Siti dan Andi');
+    await type(await until(() => element<HTMLInputElement>('.open-page input:not([type=date])')), who.couple);
     await wait(500);
     const date = await until(() => element<HTMLInputElement>('.open-page input[type=date]'));
     spot(date);
@@ -68,7 +69,7 @@ export async function runTour(client: AmplopClient, refresh: () => void, switchT
     share.click();
     await wait(900);
     const host = document.querySelectorAll<HTMLInputElement>('.open-page input:not([type=date])')[1];
-    if (host) await type(host, 'Siti');
+    if (host) await type(host, who.host);
     await wait(600);
     const open = await until(() => element('.open-page button[type=submit]'));
     spot(open);
@@ -82,12 +83,12 @@ export async function runTour(client: AmplopClient, refresh: () => void, switchT
 
     // 2: a guest scans and gives
     say(1, 2);
-    const budi = await client.createAccount('Budi');
+    const budi = await client.createAccount(who.guest);
     refresh();
     window.location.hash = `#/beri/${book}`;
     await until(() => element('.give-card'));
     await wait(1000);
-    await type(await until(() => element<HTMLInputElement>('.give-card .wish')), 'Selamat berbahagia');
+    await type(await until(() => element<HTMLInputElement>('.give-card .wish')), who.wish);
     await wait(700);
     spot(await until(() => element('.give-card .slide')));
     await wait(900);
@@ -105,7 +106,7 @@ export async function runTour(client: AmplopClient, refresh: () => void, switchT
     // 4: years later the guest celebrates, the envelope rings, the couple gives back
     say(3, 4);
     client.useAccount(budi);
-    const next = await client.openHajatan({ title: 'Budi dan Rina', date: '2028-11-18', seedBps: 500, depositYocto: OPEN_DEPOSIT_YOCTO.toString() });
+    const next = await client.openHajatan({ title: who.second, date: '2028-11-18', seedBps: 500, depositYocto: OPEN_DEPOSIT_YOCTO.toString() });
     client.useAccount(siti);
     refresh();
     const reply = await until(() => element('.ring-card:not(.reply-card) .btn'), 12000);

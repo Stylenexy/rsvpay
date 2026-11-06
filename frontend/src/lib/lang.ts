@@ -1,6 +1,6 @@
 import { useEffect, useSyncExternalStore } from 'react';
 import { LANGS, type Lang } from '../hero/copy';
-import { formatRp as rupiah, formatRpDigits as digits, shortRp as compact } from './rupiah';
+import { currency, formatRp as rupiah, formatRpDigits as digits, shortRp as compact } from './rupiah';
 
 export const LOCALES: Record<Lang, string> = {
   en: 'en-US', id: 'id-ID', zh: 'zh-CN', ko: 'ko-KR', ja: 'ja-JP', vi: 'vi-VN',
@@ -67,6 +67,7 @@ export function formatCelebrationDate(value: string, locale: string): string {
 export function useFormat() {
   const { locale } = useLang();
   return {
+    currency: currency(locale),
     formatRp: (n: number) => rupiah(n, locale),
     formatRpDigits: (n: number) => digits(n, locale),
     shortRp: (n: number) => compact(n, locale),

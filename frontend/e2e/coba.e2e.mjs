@@ -44,14 +44,14 @@ try {
   await page.waitForTimeout(1200);
   check(await page.locator('[data-step="reply"][data-state="done"]').count() === 0, 'the reply waits for a tap');
   await page.screenshot({ path: `${OUT}coba-ring.png`, fullPage: true });
-  await page.getByRole('button', { name: 'Give back to Budi' }).click();
+  await page.getByRole('button', { name: 'Give back to Sam' }).click();
   await page.locator('[data-story-complete]').waitFor({ timeout: 60_000 });
   const seconds = (Date.now() - start) / 1000;
   check(seconds <= 60, 'whole story including the pause in 60 seconds', `${seconds.toFixed(1)} s`);
   check(await page.locator('[data-step="reply"] .txlink').count() === 1, 'reply has a real receipt');
   check(helpers === 1, 'no second account request while replying');
   await page.screenshot({ path: `${OUT}coba-reply.png`, fullPage: true });
-  await page.getByRole('link', { name: 'Open Budi’s book' }).click();
+  await page.getByRole('link', { name: 'Open Sam’s book' }).click();
   await page.getByRole('button', { name: 'Pass the envelope on' }).waitFor({ timeout: 20_000 });
   for (const [width, height] of [[1366, 768], [1440, 860], [1920, 1080]]) {
     await page.setViewportSize({ width, height });

@@ -1,4 +1,4 @@
-import { CHAPTERS, CH_DATA, CH_UI } from '../chapters.copy';
+import { CHAPTERS, CH_UI, money } from '../chapters.copy';
 import type { Lang } from '../copy';
 import { asset, Title } from './shared';
 
@@ -17,8 +17,8 @@ export function Wedding({ lang }: { lang: Lang }) {
               <span className="cp-picture"><img data-late={asset(PHOTOS[i])} alt="" decoding="async" /></span>
               <span className="cp-shade" />
               {i === 2 && <span className="cp-split">
-                <span><b data-split="95000">{CH_DATA.splitAmounts[0]}</b><span>{u.forSiti}</span></span>
-                <span><b data-split="5000">{CH_DATA.splitAmounts[1]}</b><span>{u.kept}</span></span>
+                <span><b data-split="95000">{money(lang, 95000)}</b><span>{u.forSiti}</span></span>
+                <span><b data-split="5000">{money(lang, 5000)}</b><span>{u.kept}</span></span>
               </span>}
               <span className="cp-text"><strong>{panel.t}</strong><span className="cp-description">{panel.d}</span></span>
               <span className="cp-fold-title" aria-hidden="true">{panel.t}</span>

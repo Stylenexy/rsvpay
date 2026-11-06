@@ -36,18 +36,22 @@ export function chainRp(yocto: bigint | string): number {
 
 const formatter = (locale: string) => new Intl.NumberFormat(locale, { maximumFractionDigits: 0 });
 
-/** "Rp500.000" (no space, Indonesian thousands dots) */
+/** Play money reads as dollars outside Indonesian, at Rp1.000 = $1, so a gift looks like a gift to any reader. */
+export const currency = (locale = 'id-ID') => (locale === 'id-ID' ? 'Rp' : '$');
+const shown = (rp: number, locale: string) => (locale === 'id-ID' ? rp : rp / 1000);
+
+/** "Rp500.000" or "$500" (no space) */
 export function formatRp(rp: number, locale = 'id-ID'): string {
-  return 'Rp' + formatter(locale).format(Math.round(rp));
+  return currency(locale) + formatter(locale).format(Math.round(shown(rp, locale)));
 }
 
-/** digits only, for the two-tone display where "Rp" is drawn separately */
+/** digits only, for the two-tone display where the currency is drawn separately */
 export function formatRpDigits(rp: number, locale = 'id-ID'): string {
-  return formatter(locale).format(Math.round(rp));
+  return formatter(locale).format(Math.round(shown(rp, locale)));
 }
 
 /** chip label: 100rb, 250rb, 1jt */
 export function shortRp(rp: number, locale = 'id-ID'): string {
-  if (locale !== 'id-ID') return new Intl.NumberFormat(locale, { notation: 'compact', maximumFractionDigits: 1 }).format(rp);
+  if (locale !== 'id-ID') return formatRp(rp, locale);
   return rp >= 1_000_000 ? `${rp / 1_000_000}jt` : `${rp / 1000}rb`;
 }

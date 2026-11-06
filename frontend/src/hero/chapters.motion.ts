@@ -121,7 +121,7 @@ export function mountChapters(root: HTMLElement) {
           parts[i].progress.style.transform = `scaleX(${clamp(position - i + .5)})`;
         });
         const split = ease(clamp(1 - Math.abs(position - 2)));
-        splitNumbers.forEach(el => { el.textContent = `Rp${(Math.round(Number(el.dataset.split) * split / 100) * 100).toLocaleString(locale)}`; });
+        splitNumbers.forEach(el => { const rp = Math.round(Number(el.dataset.split) * split / 100) * 100; el.textContent = locale === 'id' ? `Rp${rp.toLocaleString('id-ID')}` : `$${Math.round(rp / 1000).toLocaleString('en-US')}`; });
       };
       gsap.to(weddingState, { p: 1, ease: 'none', scrollTrigger: { trigger: wedding, start: 'top top', end: 'bottom bottom', scrub: SCRUB }, onUpdate: drawPanels });
       let resume: gsap.core.Tween | undefined;

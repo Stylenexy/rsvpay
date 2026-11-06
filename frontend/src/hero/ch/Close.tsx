@@ -2,10 +2,9 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useCopy } from '../../copy';
 import { CHAPTERS, CH_DATA, CH_UI } from '../chapters.copy';
 import { LANGS, type Lang } from '../copy';
+import { DEMO } from '../../lib/demo';
 import { link } from '../../lib/app';
 import { asset, CONTRACT, THREAT, THREAT_DOWNLOAD, Title } from './shared';
-
-const DEMO: string = import.meta.env.VITE_DEMO_TOKEN ?? '14';
 
 export function Close({ lang }: { lang: Lang }) {
   const c = CHAPTERS[lang].close;
