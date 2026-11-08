@@ -24,8 +24,26 @@ jobs:
           workspaces: contracts
       - run: cargo test
       - run: cargo build --target wasm32-unknown-unknown --release
-      - name: Print the wasm hash to compare with the code hash on chain
-        run: sha256sum target/wasm32-unknown-unknown/release/amplop_balas.wasm
+
+  code-on-chain:
+    name: Rebuild the wasm and compare it with the chain
+    runs-on: windows-latest
+    env:
+      # The deployed wasm was built on Windows with this cargo home. Panic messages of the
+      # dependencies carry their source path, so that path is part of the bytes on chain.
+      CARGO_HOME: C:\Users\MSI\.cargo
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust 1.99.1, as pinned in contracts/rust-toolchain.toml
+        run: rustup toolchain install 1.99.1 --profile minimal --target wasm32-unknown-unknown
+      - name: Release build
+        working-directory: contracts
+        run: cargo build --target wasm32-unknown-unknown --release --locked
+      - name: Same hash as rsvpay-v2.testnet
+        run: node scripts/code-hash.mjs contracts/target/wasm32-unknown-unknown/release/amplop_balas.wasm rsvpay-v2.testnet
 
   frontend:
     runs-on: ubuntu-latest
