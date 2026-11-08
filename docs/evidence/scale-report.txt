@@ -1,0 +1,35 @@
+Scale check on rsvpay-v2.testnet, 2026-11-08T17:42:20.563Z. Host host-84dsn7.skala-848u59.testnet, giver giver-84dsn7.skala-848u59.testnet.
+Book #217 holds 300 gifts, all from the same giver, none replied to.
+
+giver holds | limit | view over RPC | answer | gas burnt as a transaction
+          1 |    25 | ok, 25 rows | 254 ms | 12.0 TGas
+          1 |    50 | ok, 50 rows | 442 ms | 22.1 TGas
+          1 |   100 | ok, 100 rows | 242 ms | 42.4 TGas
+          1 |   200 | ok, 200 rows | 610 ms | 83.0 TGas
+          1 |   300 | ok, 300 rows | 771 ms | 123.7 TGas
+         10 |    25 | ok, 25 rows | 248 ms | 64.1 TGas
+         10 |    50 | ok, 50 rows | 261 ms | 126.4 TGas
+         10 |   100 | ok, 100 rows | 649 ms | 251.0 TGas
+         10 |   200 | ok, 200 rows | 667 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+         10 |   300 | ok, 300 rows | 925 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+         50 |    25 | ok, 25 rows | 299 ms | 295.9 TGas
+         50 |    50 | ok, 50 rows | 539 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+         50 |   100 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 437 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+         50 |   200 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 405 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+         50 |   300 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 398 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+        100 |    25 | ok, 25 rows | 326 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+        100 |    50 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 381 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+        100 |   100 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 416 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+        100 |   200 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 397 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+        100 |   300 | error "wasm execution failed with error: HostError(GasLimitExceeded)" | 391 ms | fails: {"ActionError":{"index":0,"kind":{"FunctionCallError":{"ExecutionError":"Exceeded the prep
+
+What this means. Every unreplied gift makes the view read up to 100 of its giver's tokens. One gift from
+a giver who holds one envelope costs about 0.4 TGas; each extra envelope that giver holds adds about 0.24 TGas.
+The public RPC refuses a view somewhere between 750 and 1,200 TGas. With 100 rows per call, as the web
+client asked until 9 November, a book stops ringing once a giver in it holds about 40 envelopes.
+Nobody hosts 40 celebrations, but a stranger could make the envelopes on purpose (threat T21).
+
+After the fix (frontend/src/chain/paging.ts): a page the RPC refuses is split in half until it fits,
+and only a single gift that can never be read is skipped. Live check, read-only, same book:
+  LIVE=1 npx vitest run src/chain/scale.live.test.ts
+  2026-11-09 00.49 WIB: book #217, 300 gifts, 300 rings read in 9.0 s.

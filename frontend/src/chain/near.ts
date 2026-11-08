@@ -1,6 +1,7 @@
 import { Account, JsonRpcProvider, KeyPair, actions, getTransactionLastResult, teraToGas } from 'near-api-js';
 import type { AccountId, AmplopClient, Entry, Hajatan, PendingReply, Sent, TokenId, Yocto } from './types';
 import { rememberHistoryTransaction } from './history';
+import { walkPages } from './paging';
 
 /**
  * Live client on NEAR TESTNET. No secrets ship with the site:
@@ -260,12 +261,11 @@ export class NearAmplopClient implements AmplopClient {
 
   async pendingReplies(tokenId: TokenId): Promise<PendingReply[]> {
     const h = await this.hajatan(tokenId);
-    const out: PendingReply[] = [];
-    // the contract reads 50 entries unless told otherwise, so walk the whole book in pages
-    for (let from = 0; h && from < h.entries; from += 100) {
-      out.push(...((await this.view<PendingReply[]>('pending_replies', { token_id: tokenId, from, limit: 100 })) ?? []));
-    }
-    return out;
+    // the contract reads 50 entries unless told otherwise, so walk the whole book in pages;
+    // a giver holding many envelopes makes a page heavy, and walkPages splits it
+    const { rows } = await walkPages(h?.entries ?? 0, async (from, limit) =>
+      (await this.view<PendingReply[]>('pending_replies', { token_id: tokenId, from, limit })) ?? []);
+    return rows;
   }
 
   explorerTx(hash: string): string {
