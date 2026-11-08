@@ -13,7 +13,8 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 | `web-client-live.txt` | The web client on testnet, with transaction hashes | `cd frontend && LIVE=1 npx vitest run src/chain/near.live.test.ts --reporter=verbose` |
 | `full-cycle-report.txt` | 19 checks: first full cycle from a fresh deployment, then all keys deleted | `cd scripts && node spk-a1.mjs <wasm>` |
 | `measured-testnet.txt` | Gas, fees, keys and code hash read from testnet | `cd scripts && node measure.mjs` |
-| `0-home.png` … `6-budi-book.png` | Screenshots from those runs | same |
+| `0-home.png`, `0-home-360.png` | The landing on 9 November, 1440 and 360 px | production site |
+| `1-guest-before.png` … `6-budi-book.png` | Screenshots from the e2e run | same |
 | `qr-try-as-guest.png` | QR to the demo amplop | |
 
 The touch screen in these runs is an emulated phone in Chrome, not a physical device.
