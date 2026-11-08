@@ -73,7 +73,7 @@ if (PARENT) {
 try {
   // 1. host opens a hajatan
   await host.goto(`${URL_BASE}/#/buka`);
-  await host.getByPlaceholder('Siti & Andi').fill(`Siti & Andi ${stamp}`);
+  await host.getByPlaceholder('Siti & Andi').fill('Siti & Andi');
   if (!PARENT) await host.getByPlaceholder('Siti', { exact: true }).fill('Siti');
   await host.getByRole('button', { name: 'Buka amplop' }).click();
   await host.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
@@ -126,7 +126,7 @@ try {
 
   // 5. two years later: Budi opens his own hajatan, Siti's amplop rings
   await guest.goto(`${URL_BASE}/#/buka`);
-  await guest.getByPlaceholder('Siti & Andi').fill(`Budi & Rina ${stamp}`);
+  await guest.getByPlaceholder('Siti & Andi').fill('Budi & Rina');
   await guest.getByRole('button', { name: 'Buka amplop' }).tap();
   await guest.waitForURL(/#\/buku\/\d+/, { timeout: 60_000 });
   await host.getByText('Tamu lamamu punya hari bahagia').waitFor({ timeout: 20_000 });

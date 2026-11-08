@@ -4,7 +4,7 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 
 | File | What | Reproduce |
 |---|---|---|
-| `attacks-report.txt` | 12 live attacks against the deployed contract | `cd scripts && node attacks.mjs` |
+| `attacks-report.txt` | 14 live attacks against the deployed contract | `cd scripts && node attacks.mjs` |
 | `e2e-report.txt` | Whole story from a local build against the deployed contract, guest on a 360 px touch screen | `cd frontend && node e2e/alur.e2e.mjs` |
 | `coba-e2e-report.txt` | The one-button story on the live site | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
 | `return-check-report.txt` | Leaving the landing from the very bottom and coming back | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |

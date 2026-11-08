@@ -18,7 +18,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
-| Tests | 54 Rust, 80 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book. What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Tests | 54 Rust, 83 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book. What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 ## What it does
@@ -120,7 +120,7 @@ See `test result: ok. 54 passed`.
 ```bash
 cd frontend && npm ci && npm test
 ```
-The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 80 passed, 4 skipped.
+The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 83 passed, 4 skipped.
 
 ```bash
 cd frontend && npm run dev
@@ -167,7 +167,7 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 
 ## What we attacked
 
-[17 attacks](docs/THREAT-MODEL.md), each with its defence and the test that proves it. 12 checks ran for real against the deployed contract on testnet, and each counted only if the call failed **and** the state did not change. The ones that matter most to a buyer or a guest:
+[21 attacks](docs/THREAT-MODEL.md), each with its defence and the test that proves it. 14 checks ran for real against the deployed contract on testnet: ten are calls that must fail with the state unchanged, and four confirm the expected safe state, such as zero keys. The ones that matter most to a buyer or a guest:
 
 | Attack | Defence | Proof |
 |---|---|---|
@@ -186,7 +186,7 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 
 Reproduce the first table with `cd scripts && node measure.mjs` (see [`measured-testnet.txt`](docs/evidence/measured-testnet.txt)).
 
-One full cycle through the web client, 3 November 2026 UTC:
+One full cycle through the web client, 3 November 2026 UTC, on the first deployment `amplop-c-mvznhnlx.testnet` (same methods; the contract moved to `rsvpay-v2.testnet` on 7 November):
 
 | Call | Gas burnt | Fee | Transaction |
 |---|---|---|---|
@@ -201,9 +201,9 @@ Other measurements:
 |---|---|---|---|
 | Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
 | New guest gives on the live site, 360 px emulated touch screen, account made on the way | 15.3 s | 7 Nov 2026 | [`guest-check-report.txt`](docs/evidence/guest-check-report.txt) |
-| Storage a gift pays for its own entry | 0.0015 NEAR | 2 Nov 2026 | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
-| Live attacks refused | 14 of 14 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
-| Whole story on the live site, two browsers, the guest on a 360 px touch screen | 13 of 13 steps | 9 Nov 2026 | [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| Storage a gift pays for its own entry | about 0.0016 NEAR, depending on the message and the giver's name | 6 Nov 2026 UTC | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
+| Live attack checks passed | 14 of 14 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
+| Whole story on the live site, two browsers, the guest on a 360 px touch screen | 14 of 14 checks | 9 Nov 2026 | [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
 | A receiver holds a sale open: the amplop stays locked and refuses withdraw, reply and close, then settles | Held 404 and 409 blocks, every check passed | 9 Nov 2026 | [`long-settle-report.txt`](docs/evidence/long-settle-report.txt) |
 | The ring list of a 300-gift book whose giver holds 100 envelopes | 300 of 300 read in 9.0 s | 9 Nov 2026 | [`scale-report.txt`](docs/evidence/scale-report.txt) |
 | Guest pages on 360, 375 and 390 px phones: controls at least 44 px, fields 16 px, the slide on the first screen with nothing over it | 96 of 96 checks | 9 Nov 2026 | [`phone-check-report.txt`](docs/evidence/phone-check-report.txt) |
@@ -235,7 +235,7 @@ There is no `backend/` on purpose; see [Architecture](docs/ARCHITECTURE.md). See
 ## Tools and libraries
 
 - Contract: Rust, `near-sdk` 5.30.0, `near-contract-standards`.
-- Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`, GSAP. App display and body fonts: Zodiak and Satoshi.
+- Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`, GSAP. App display and body fonts: Zodiak and Satoshi; the landing also loads Figtree and DM Mono from Google Fonts.
 - Tests: `cargo test`, Vitest, `playwright-core` driving an installed Chrome.
 - Testnet RPC: FastNEAR. Accounts: NEAR testnet helper. Hosting: Vercel.
 - AI: code and documentation were written with AI coding assistants (Claude Code, OpenAI Codex), and several AI chat assistants were consulted when choosing the idea. The landing page sky video comes from Google Flow (Veo). Photographs, envelopes, clouds and glass objects were generated with OpenAI image generation. Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
