@@ -132,6 +132,7 @@ Live checks. These use the network and make throwaway testnet accounts through N
 ```bash
 cd frontend && LIVE=1 npx vitest run src/chain/near.live.test.ts
 ```
+In Windows PowerShell set the variable first: `$env:LIVE=1; npx vitest run src/chain/near.live.test.ts`.
 See `1 passed`: the web client opens, gives, rings, replies and withdraws on testnet.
 
 ```bash

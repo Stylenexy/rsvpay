@@ -1,0 +1,64 @@
+Why the code hash on chain cannot be rebuilt on Linux, 8 November 2026 (Asia/Jakarta).
+Source 931bf63; contracts/ is unchanged since the deployment commit b894253.
+Read-only: one view_code query for rsvpay-v2.testnet. No keys, no transactions.
+
+Deployed wasm (view_code)        8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw  497654 bytes
+Linux build, rustc 1.99.1         418hsVxRtdD9qC6AdXXpk6jiGUv8Vpycub3UxLKX8A4D  499452 bytes
+Linux build, paths remapped       7Hzumj5y2phnx6RVifctTLuk1UuZEfw4wvH9ZRaKPLwp  499532 bytes
+(Linux = WSL2 Ubuntu 24.04, x86_64-unknown-linux-gnu, rustc 1.99.1 (58cf8f9c3 2026-10-13), same Cargo.lock.)
+
+1. The deployed wasm carries 23 dependency paths from the deploying machine's Cargo registry,
+   C:\Users\MSI\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\..., in panic locations:
+     base64-0.22.1\src\encode.rs
+     base64-0.22.1\src\engine\general_purpose\mod.rs
+     base64-0.22.1\src\engine\mod.rs
+     borsh-1.8.1\src\de\mod.rs
+     itoa-1.0.18\src\lib.rs
+     memchr-2.8.3\src\arch\all\memchr.rs
+     memory_units-0.4.0\src\lib.rs
+     near-contract-standards-5.30.0\src\non_fungible_token\core\core_impl.rs
+     near-sdk-5.30.0\src\collections\lookup_map.rs
+     near-sdk-5.30.0\src\collections\tree_map.rs
+     near-sdk-5.30.0\src\collections\unordered_set.rs
+     near-sdk-5.30.0\src\collections\vector.rs
+     near-sdk-5.30.0\src\environment\env.rs
+     near-sdk-5.30.0\src\private\mod.rs
+     near-sdk-5.30.0\src\promise.rs
+     serde-1.0.229\src\private\ser.rs
+     serde_json-1.0.154\src\de.rs
+     serde_json-1.0.154\src\error.rs
+     serde_json-1.0.154\src\read.rs
+     serde_json-1.0.154\src\ser.rs
+     wee_alloc-0.4.5\src\imp_wasm32.rs
+     wee_alloc-0.4.5\src\lib.rs
+     zmij-1.0.23\src\lib.rs
+   Rust's own library paths are /rustc/58cf8f9c35b355199727627d07ae34a4e2846d67/... on every host.
+
+2. Remapping those 23 paths to the deploying machine's spelling is not enough on Linux. Symbol names
+   carry crate hashes that differ between the two hosts (most likely because proc-macro crates are
+   built for the host and feed into their dependents' hashes), e.g.
+   near_sdk is Cs64eCvTN3dS3 on chain and Csft7LV3rreZ on Linux. With other names, optimisation keeps
+   other functions: 1358 functions on chain, 1369 on Linux; code section 256869 vs 257806 bytes.
+
+3. --remap-path-prefix changes nothing but the path strings: the plain and remapped Linux builds have
+   identical function names in identical order and the same code section size.
+
+Conclusion
+- No Linux machine, CI runner or Docker image can rebuild 8cKS... byte for byte.
+- A Windows build with the MSVC toolchain, rustc 1.99.1 and the same Cargo.lock should match once the
+  registry path is respelled: cd scripts && node verify-wasm.mjs. Not yet run on a second Windows machine.
+- A deployment anyone can rebuild needs a host-pinned build (cargo near build reproducible-wasm, in
+  Docker) and a new keyless account, because rsvpay-v2.testnet has no keys and cannot be redeployed.
+
+verify-wasm.mjs on Linux (same host as above) prints, as designed:
+  code hash on chain: 8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw
+  this build:         EpNNueE8bYUr1wjvg74LEnELAYKpCtDnUnUPHb1ApdvR
+  NO MATCH, as expected on x86_64-unknown-linux-gnu: the deployed build was made on x86_64-pc-windows-msvc ...
+  (It respells only the registry prefix, as a Windows build needs. On Linux the rest of each
+  path keeps '/', so its hash differs from the per-file remapped build above as well.)
+
+Update, 9 November 2026. The Windows rebuild this review predicted now runs in CI: GitHub's
+windows-latest runner, cargo home C:\Users\MSI\.cargo, rustc 1.99.1, the same Cargo.lock, prints
+"MATCH: the code on chain is this build" (job "Rebuild the wasm and compare it with the chain",
+first run 42507314397). verify-wasm.mjs from this review was not merged; scripts/code-hash.mjs
+does the comparison instead.

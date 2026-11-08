@@ -159,7 +159,7 @@ else console.log(`SKIP | L13 the reply never landed inside the transfer window |
 // L14: the resolver has a fixed 5 TGas whatever the caller attaches, and a keyless contract cannot be repaired if it runs out.
 // The refused transfer is its most expensive path, so that path must settle and release the lock.
 const G14 = await open(siti, `Gas ${run}`);
-const settle = await siti.callFunction({ contractId: CONTRACT, methodName: "nft_transfer_call", args: { receiver_id: budi.accountId, token_id: G14, msg: "" }, gas: teraToGas("40"), deposit: 1n, waitUntil: "FINAL" }).catch((e) => e);
+const settle = await siti.callFunctionRaw({ contractId: CONTRACT, methodName: "nft_transfer_call", args: { receiver_id: budi.accountId, token_id: G14, msg: "" }, gas: teraToGas("40"), deposit: 1n, waitUntil: "FINAL" }).catch((e) => e);
 await sleep(2500);
 const owner14 = (await view("hajatan", { token_id: G14 })).owner_id;
 const locked14 = await view("is_locked", { token_id: G14 });
