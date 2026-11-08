@@ -66,7 +66,7 @@ export function Buku({ id }: { id: string }) {
   useEffect(() => {
     load().catch(() => setH(null));
   }, [load]);
-  usePoll(() => void load().catch(() => {}), 4000);
+  usePoll(() => load(), 4000);
 
   const total = useCountUp(h ? chainRp(h.balance) : 0);
   const stars = useMemo(() => {
@@ -264,9 +264,9 @@ export function Buku({ id }: { id: string }) {
                   <div className="glass card ring-card" key={p.entry} role="status">
                     <i className="ring-orbit" aria-hidden="true" />
                     <EnvelopeObject />
-                    <span className="label">{t.bukuRing}</span>
+                    <p className="big">{t.bukuRing}</p>
                     <p className="muted">{say(t.bukuRingBody, who, formatRp(amountRp))}</p>
-                    <p className="big">{say(t.bukuRingSeed, formatRp(seedRpP), formatRp(amountRp - seedRpP))}</p>
+                    <p>{say(t.bukuRingSeed, formatRp(seedRpP), formatRp(amountRp - seedRpP))}</p>
                     {st?.hash ? (
                       <>
                         <p className="seedline">{t.bukuReplied}</p>
@@ -300,7 +300,6 @@ export function Buku({ id }: { id: string }) {
             {cameBack && (
               <div className="glass card ring-card reply-card" role="status">
                 <EnvelopeObject />
-                <span className="label">{t.replyCardLabel}</span>
                 <p className="big">{say(t.replyCardTitle, shortName(cameBack.giver), formatRp(chainRp(cameBack.amount)))}</p>
                 {cameBack.message && <p className="muted">“{cameBack.message}”</p>}
                 {cameBack.reply_to && <a className="text-link" href={link.buku(cameBack.reply_to.token_id)}>{t.historyRelated} ↗</a>}

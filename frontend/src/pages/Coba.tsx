@@ -11,6 +11,7 @@ import { link } from '../lib/app';
 import { useFormat } from '../lib/lang';
 import { useBookMotion, usePageMotion } from '../lib/motion';
 import { chainRp } from '../lib/rupiah';
+import { startTour } from '../lib/tour';
 
 const ORDER: StoryStep[] = ['account', 'family', 'wedding', 'gift', 'years', 'celebration', 'ring', 'reply'];
 
@@ -105,8 +106,8 @@ export function Coba() {
       {p && !landed && <div className="glass card ring-card" ref={bring}>
         <i className="ring-orbit" aria-hidden="true" />
         <EnvelopeObject />
-        <span className="label">{t.cobaRing}</span>
         <h2>{t.bukuRing}</h2>
+        <p>{t.cobaRing}</p>
         <p>{say(t.cobaRingBody, formatRp(chainRp(p.amount)), formatRp(chainRp(p.seed)), formatRp(chainRp(p.amount) - chainRp(p.seed)))}</p>
         <button className="btn" disabled={busy} onClick={() => void reply()}>{busy ? t.cobaSending : t.cobaTap}</button>
       </div>}
@@ -120,6 +121,8 @@ export function Coba() {
         <a className="btn" href={link.buku(session!.celebration)} onClick={() => switchTo(session!.budi)}>{t.cobaBook}</a>
       </div>}
       {failure && <p role="alert" className="err">{failure === 'limited' ? t.cobaLimited : failure === 'helper' ? t.cobaHelper : t.cobaFailed}</p>}
+      {/* the ring can still be felt when testnet refuses: the same story on the rehearsal client */}
+      {failure && <button type="button" className="btn" onClick={startTour}>{t.tourShow}</button>}
       <button className="text-link recording-toggle" onClick={() => setRecorded((v) => !v)} aria-expanded={recorded}>{t.cobaRecording}</button>
       {recorded && <div className="glass card recording" data-recording>
         <h2>{t.cobaRecording}</h2><p>{t.cobaRecorded}</p><p className="note">{t.cobaRecordingNote}</p>
