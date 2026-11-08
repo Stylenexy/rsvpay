@@ -1,7 +1,8 @@
 import type { AmplopClient, Entry, Hajatan } from './types';
 
 const INDEXER = 'https://api-testnet.nearblocks.io';
-const RPC = 'https://test.rpc.fastnear.com';
+// Regular testnet RPC forgets transactions after about two days; history reads the archive.
+const RPC = 'https://archival-rpc.testnet.fastnear.com';
 export type HistoryKind = 'gift' | 'replyIn' | 'replyOut' | 'holder' | 'opened' | 'paid' | 'refund';
 export interface HistoryEvent {
   id: string; kind: HistoryKind; at: string | null; hash: string | null;
@@ -104,16 +105,20 @@ export function mergeHistory(chain: HistoryEvent[], indexed: HistoryEvent[]): Hi
 }
 
 async function json(url: string, init?: RequestInit): Promise<unknown> {
-  const response = await fetch(url, { ...init, signal: init?.signal ?? AbortSignal.timeout(12_000) });
-  if (!response.ok) throw new Error(`history ${response.status}`);
-  return response.json();
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(url, { ...init, signal: init?.signal ?? AbortSignal.timeout(12_000) });
+    // The free indexer allows a few calls at a time; wait briefly once or twice rather than give up.
+    if (response.status === 429 && attempt < 2) { await new Promise((r) => setTimeout(r, 1500 * (attempt + 1))); continue; }
+    if (!response.ok) throw new Error(`history ${response.status}`);
+    return response.json();
+  }
 }
 
 async function receiptEvidence(hash: string, signer: string, contract: string, signal?: AbortSignal): Promise<TransactionEvidence> {
   const cached = recent.get(hash);
   if (cached) return cached;
   const response = await json(RPC, { method: 'POST', signal, headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ jsonrpc: '2.0', id: 'history', method: 'EXPERIMENTAL_tx_status', params: [hash, signer] }) }) as { result?: TransactionEvidence };
+    body: JSON.stringify({ jsonrpc: '2.0', id: 'history', method: 'EXPERIMENTAL_tx_status', params: { tx_hash: hash, sender_account_id: signer, wait_until: 'NONE' } }) }) as { result?: TransactionEvidence };
   const tx = response.result;
   if (!tx?.transaction || !Array.isArray(tx.receipts_outcome) || tx.transaction.hash !== hash || tx.transaction.receiver_id !== contract) throw new Error('history evidence missing');
   recent.set(hash, tx);
@@ -138,37 +143,46 @@ async function receiptEvents(token: string, contract: string, tx: TransactionEvi
   return events;
 }
 
+interface TokenEvent { affected_account_id?: string; delta_amount?: string; transaction_hash?: string }
+interface AccountTx extends IndexedTx { actions?: { method?: string }[] }
+interface Page<T> { data?: T[]; meta?: { next_page?: string } }
+// Calls that can change who holds an envelope or pay it out; gifts are read from the contract itself.
+const HOLDER_METHODS = new Set(['open_hajatan', 'withdraw', 'nft_transfer', 'nft_transfer_call']);
+
+/**
+ * Nearblocks retired v1 on 5 November 2026. v3 lists one envelope's NFT events, which name every holder; each
+ * holder's own calls to the contract then hold the openings, sales and payouts. Every row is checked on RPC.
+ */
 async function indexedHistory(h: Hajatan, contract: string, signal: AbortSignal) {
-  const rows: IndexedTx[] = [];
-  let exhaustive = false;
-  // Bound work on a public service. A truncated scan is always labelled incomplete.
-  for (let page = 1; page <= 4; page++) {
-    const data = await json(`${INDEXER}/v1/account/${encodeURIComponent(contract)}/txns?per_page=25&page=${page}&order=desc`, { signal }) as { txns?: IndexedTx[] };
-    if (!Array.isArray(data.txns)) throw new Error('history response missing');
-    rows.push(...data.txns);
-    if (data.txns.length < 25) { exhaustive = true; break; }
-  }
-  if (!rows.length) throw new Error('history index is empty');
+  const base = `${INDEXER}/v3`;
+  const tokenPage = await json(`${base}/nfts/${encodeURIComponent(contract)}/tokens/${encodeURIComponent(h.token_id)}/txns?limit=25`, { signal }) as Page<TokenEvent>;
+  if (!Array.isArray(tokenPage.data)) throw new Error('history response missing');
+  let exhaustive = !tokenPage.meta?.next_page && tokenPage.data.length < 25;
+  const holders = new Set<string>([h.owner_id]);
+  for (const e of tokenPage.data) if (e.affected_account_id && e.delta_amount === '1') holders.add(e.affected_account_id);
+  const rows: { hash: string; signer: string; at: string | null }[] = [];
+  const lists: PromiseSettledResult<void>[] = [];
+  // One holder at a time: the indexer refuses bursts.
+  for (const holder of [...holders].slice(0, 6)) lists.push(...await Promise.allSettled([(async () => {
+    const page = await json(`${base}/accounts/${encodeURIComponent(holder)}/txns?receiver=${encodeURIComponent(contract)}&limit=25`, { signal }) as Page<AccountTx>;
+    if (!Array.isArray(page.data)) throw new Error('history response missing');
+    if (page.meta?.next_page || page.data.length >= 25) exhaustive = false;
+    for (const t of page.data) {
+      if (!t.actions?.some((x) => x.method && HOLDER_METHODS.has(x.method))) continue;
+      rows.push({ hash: t.transaction_hash, signer: t.signer_account_id ?? holder, at: /^\d+$/.test(String(t.block_timestamp)) ? String(t.block_timestamp) : null });
+    }
+  })()]));
+  let failed = holders.size > 6 || lists.some((r) => r.status === 'rejected');
   const events: HistoryEvent[] = [];
-  let failed = false;
   const seen = new Set<string>();
-  for (let from = 0; from < rows.length; from += 4) {
-    const results = await Promise.allSettled(rows.slice(from, from + 4).map(async (row) => {
-      const signer = row.signer_account_id ?? row.predecessor_account_id;
-      if (!row.transaction_hash || !signer) throw new Error('incomplete history row');
-      if (seen.has(row.transaction_hash)) return [];
-      seen.add(row.transaction_hash);
-      const tx = await receiptEvidence(row.transaction_hash, signer, contract, signal);
-      return parseHistoryEvents(h.token_id, contract, tx, /^\d+$/.test(String(row.block_timestamp)) ? String(row.block_timestamp) : null);
-    }));
+  const unique = rows.filter((r) => !seen.has(r.hash) && seen.add(r.hash));
+  for (let from = 0; from < unique.length; from += 4) {
+    const results = await Promise.allSettled(unique.slice(from, from + 4).map(async (row) =>
+      parseHistoryEvents(h.token_id, contract, await receiptEvidence(row.hash, row.signer, contract, signal), row.at)));
     for (const r of results) { if (r.status === 'fulfilled') events.push(...r.value); else failed = true; }
   }
-  const incoming = events.filter((e) => e.kind === 'gift' || e.kind === 'replyIn');
-  const holders = events.filter((e) => e.kind === 'opened' || e.kind === 'holder');
-  const orderedHolders = mergeHistory([], holders);
-  const latest = orderedHolders.at(-1);
-  const complete = exhaustive && !failed && events.some((e) => e.kind === 'opened') &&
-    new Set(incoming.map((e) => e.id)).size === h.entries && latest?.to === h.owner_id;
+  const latest = mergeHistory([], events.filter((e) => e.kind === 'opened' || e.kind === 'holder')).at(-1);
+  const complete = exhaustive && !failed && events.some((e) => e.kind === 'opened') && latest?.to === h.owner_id;
   return { events, complete };
 }
 

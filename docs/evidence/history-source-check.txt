@@ -1,48 +1,7 @@
-Read-only source checks, 5 November 2026, Asia/Jakarta.
-No browser launched. The source queries below are read-only.
-
-curl.exe -i -H "Origin: https://amplop-balas.vercel.app" "https://api-testnet.nearblocks.io/v1/account/amplop-c-mvznhnlx.testnet/txns?per_page=2&page=1&order=desc"
-HTTP/1.1 200 OK
-access-control-allow-origin: *
-{"txns":[]}
-
-curl.exe -i -H "Origin: https://amplop-balas.vercel.app" "https://api-testnet.nearblocks.io/v1/txns/CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45"
-HTTP/1.1 200 OK
-access-control-allow-origin: *
-{"txns":[]}
-
-The account transaction query also returned {"txns":[]} with Origin: http://localhost:5173.
-This establishes the API response and CORS header, not completeness of its index.
-
-Read-only POST https://test.rpc.fastnear.com
-{"jsonrpc":"2.0","id":"history-check","method":"EXPERIMENTAL_tx_status","params":["CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45","siti-oighzb5.testnet"]}
-Returned final_execution_status: FINAL, transaction receiver amplop-c-mvznhnlx.testnet.
-Successful contract receipt log:
-amplop:withdraw token=5 holder=siti-oighzb5.testnet yocto=993607000000000000000000
-Successful contract callback log:
-amplop:paid token=5 yocto=993607000000000000000000
-Reduced public receipt fixture: frontend/src/chain/fixtures/withdraw.json.
-The history parser counts the paid callback, not the withdrawal request.
-
-RPC query: view_access_key_list, finality final, account amplop-c-mvznhnlx.testnet
-Returned keys: [], block height 276244877.
-
-RPC query: hajatan({"token_id":"14"}), finality final, same deployment.
-Returned date: Sabtu, 21 November 2026.
-The new formatter normalizes this existing date before applying the chosen locale.
-
-Limitations:
-No full indexed history was available to verify. The page reports unavailable or partial
-coverage and uses contract entries, current owner and verified locally referenced receipts.
-Browser rendering, the full story and the 60-second target were not exercised.
-
-Separate single-call check at 03:42:44 Asia/Jakarta:
-npx vitest run src/chain/subaccount-check.test.ts
-1 test passed, 8.65 s for the test run including helper creation and balance checks.
-This used one public helper request for a throwaway Siti account, then exactly one native
-transaction signed by that account: create Budi as its sub-account, transfer 0.4 test NEAR,
-and add Budi's fresh public key. The client waited for FINAL, and the child's balance read
-back as 400000000000000000000000 yoctoNEAR. No Amplop contract method was called.
-All keys remained in memory. The transaction hash was not captured because the test runner
-suppressed console output; this record does not supply an explorer link for that check.
-The test is now opt-in with LIVE_SUBACCOUNT=1 and is skipped by the normal suite.
+Envelope history for rsvpay-v2.testnet #1, 2026-11-08T11:00:00.109Z
+source: Nearblocks v3 /nfts/rsvpay-v2.testnet/tokens/1/txns, then each holder's /accounts/{holder}/txns; every row checked on archival testnet RPC
+coverage: indexed
+holder now: buyer.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet
+events: opened, gift, replyOut, paid, gift, holder, paid
+holders: siti.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet -> buyer.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet
+paid out (yocto): 1273849000000000000000000

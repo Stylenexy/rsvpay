@@ -56,14 +56,14 @@ describe('history from successful execution events', () => {
     c.useAccount(siti);
     await c.reciprocate({ tokenId: a.value, entry: 0, toTokenId: b.value, message: '', depositYocto: (10n ** 23n).toString() });
     Object.defineProperty(c, 'mode', { value: 'testnet' });
-    const request = vi.fn(async () => new Response(JSON.stringify({ txns: [] })));
+    const request = vi.fn(async () => new Response(JSON.stringify({ data: [], meta: {} })));
     vi.stubGlobal('fetch', request);
     const history = await loadEnvelopeHistory(c, (await c.hajatan(a.value))!);
     expect(history.coverage).toBe('unavailable');
     expect(history.paid).toBeNull();
     expect(history.events.map((e) => e.kind)).toEqual(['gift', 'replyOut']);
     expect(history.earned).toBe((await c.entries(a.value))[0].amount);
-    expect(request).toHaveBeenCalledTimes(1);
+    expect(request).toHaveBeenCalledTimes(2);
   });
 
   it('stores public references only and confirms locally signed payouts even if the indexer fails', async () => {
