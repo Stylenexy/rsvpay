@@ -2,6 +2,11 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-08
+
+### Security
+- `/api/dana` tops up only visitor accounts that hold a key, limits top-ups per address per hour, caps each day, and tries the next slot when two guests ask in the same second (issues #9, #10).
+
 ## 2026-11-07
 
 ### Changed

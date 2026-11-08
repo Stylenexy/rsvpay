@@ -20,7 +20,7 @@ We aim to answer within 72 hours during NEAR HACKATHON (until 15 November 2026) 
 
 ## Testnet purse
 
-`frontend/api/dana.ts` holds one testnet key in a Vercel secret. It guards play money only. It can create sub-accounts of itself and top them up. Anyone can call it, so it limits itself: six new accounts per address per hour and one top-up per account, remembered as small marker sub-accounts that hold a salted hash. The worst case is an empty test purse, after which the site falls back to the public helper. `GET /api/dana` shows what is left.
+`frontend/api/dana.ts` holds one testnet key in a Vercel secret. It guards play money only. It can create sub-accounts of itself and top them up. Anyone can call it, so every spend passes three gates kept on chain as small marker sub-accounts holding a salted hash: six per address per hour, one top-up per account, and sixty of each per day. Top-ups go only to accounts the purse made for a visitor that still hold a key, so markers can never be topped up. The worst case is an empty test purse, after which the site falls back to the public helper. `GET /api/dana` says only whether the purse is healthy. Attacks: [`purse-check-report.txt`](docs/evidence/purse-check-report.txt).
 
 ## Not tested live
 

@@ -1,3 +1,6 @@
-2026-11-07 Asia/Jakarta, https://rsvpay.vercel.app, rsvpay-v2.testnet
-Six accounts per address per hour: after earlier checks had used four slots, repeated requests answered 200 200 429.
-One top-up per account: first request {"filled":true}, second request after draining again 429 "already topped up once".
+Purse attacks on https://rsvpay.vercel.app/api/dana, 2026-11-08T10:47:45.804Z
+PASS | two accounts asked for in the same second from one address both succeed | 200 200
+PASS | a marker name is refused before anything is sent | 400
+PASS | a visitor-shaped account without a key is refused | 400
+PASS | the seventh top-up from one address in an hour is refused | 200 200 200 200 200 200 429
+PASS | a topped-up account is not topped up again | 200 (200 means it was already above the line and nothing was sent)
