@@ -4,6 +4,13 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 
 ## 2026-11-08
 
+### Added
+- **Save my key** and **Restore a key** next to the account name. A guest who changes phones brings the same account back from a small file; a file that does not match the account is refused (issue #18).
+- Rehearsal mode (`?mock`) opens with a sample book, so no page starts empty, and an unknown envelope still says it was not found (issue #17).
+
+### Fixed
+- History reads Nearblocks v3 after the v1 API was retired, one holder at a time, and checks receipts on archival RPC because regular RPC forgets transactions after about two days (issue #11).
+
 ### Security
 - `/api/dana` tops up only visitor accounts that hold a key, limits top-ups per address per hour, caps each day, and tries the next slot when two guests ask in the same second (issues #9, #10).
 
