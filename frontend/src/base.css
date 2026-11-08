@@ -210,6 +210,8 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
 .ring-card > .label { color: var(--amber-ink); padding-right: 50px; font-weight: 700; }
 .ring-card .muted { color: var(--mut); font-size: 13px; padding-right: 24px; }
 .ring-card .big { font: 400 23px/1.4 var(--f-disp); }
+/* the card's title now sits where the small label was, so it keeps clear of the tilted envelope */
+.ring-card > p.big:first-of-type, .ring-card > h2 { padding-right: 64px; }
 .ring-card .obj { top: 7px; right: -5px; width: 90px; transform: rotate(-12deg); }
 .ring-orbit { position: absolute; right: 13px; top: 16px; width: 45px; height: 45px; border: 1px solid var(--amber); border-radius: 50%; pointer-events: none; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
