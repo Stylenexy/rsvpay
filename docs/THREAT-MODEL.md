@@ -11,7 +11,7 @@ Written from the point of view of someone trying to keep or steal money.
 |---|---|---|---|
 | T1 | Seller keeps withdrawing after the sale | Holder read from NEP-171 at call time | Unit `old_owner_cannot_withdraw_after_transfer`; Live L9 |
 | T2 | Seller replies from the sold amplop | Same check on `reciprocate` | Unit `old_owner_cannot_reciprocate_after_transfer` |
-| T3 | Buyer drains inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer, held until the resolver runs | Unit `withdraw_blocked_while_sale_settles`, `reciprocate_blocked_while_sale_settles`, `lock_holds_past_any_delay_until_the_resolver_runs` |
+| T3 | Buyer drains inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer, held until the resolver runs | Unit `withdraw_blocked_while_sale_settles`, `reciprocate_blocked_while_sale_settles`, `lock_holds_past_any_delay_until_the_resolver_runs`; live: a receiver held the sale 404 and 409 blocks and every withdraw, reply and close was refused ([long-settle-report](evidence/long-settle-report.txt)) |
 | T4 | A resolver fails and freezes the amplop for good | Lock lets go after 1,000,000 blocks, about twelve days, far past what yields chained within one transaction's gas could stretch. The resolver has a fixed 5 TGas; the refused transfer settles on it live (L14) | Unit `a_lock_whose_resolver_never_ran_lets_go_after_the_long_bound`, attack L14 |
 | T5 | Reverted sale leaves money or rights behind | Resolver returns the NFT and clears the lock | Unit `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | T6 | Host withdraws the guests' seeds | `withdraw` pays only `balance - seed_locked` | Unit `withdraw_pays_only_free_money_and_never_touches_seeds`; Live L10, L11 |
@@ -28,7 +28,8 @@ Written from the point of view of someone trying to keep or steal money.
 | T17 | The developer changes the rules later | Zero access keys on the contract account | Live L1 |
 | T18 | A host parks a guest's seed in a decoy amplop while `nft_transfer_call` shows the guest as owner, takes the decoy back, and withdraws. Found in team review | Refused: `reciprocate` also checks the lock on the target | Unit `audit_host_redirects_guest_seed_through_reverted_transfer_call` |
 | T19 | A long reply message eats the guest's seed as storage | The caller's deposit pays the storage, the seed reaches the guest whole | Unit `audit_long_reply_message_cannot_eat_the_seed`, `reply_delivers_the_whole_seed_when_the_caller_pays_the_storage` |
-| T20 | The owner on paper closes the celebration, then refuses the transfer | `set_open` respects the lock | Unit `audit_paper_owner_cannot_close_hajatan_mid_transfer` |
+| T20 | The owner on paper closes the celebration, then refuses the transfer | `set_open` respects the lock | Unit `audit_paper_owner_cannot_close_hajatan_mid_transfer`; live, same report as T3 |
+| T21 | A stranger makes many envelopes and gives tiny gifts into a book, so its ring list is too heavy to read | The page splits any page the RPC refuses, down to one gift, and skips only a gift that can never be read | `frontend/src/chain/paging.test.ts`; live: 300 of 300 rings read on a book whose giver holds 100 envelopes ([scale-report](evidence/scale-report.txt)) |
 
 `#[private]` runs in the wasm entry point, so T10 and T11 can only be proven on chain, not in a unit test.
 
@@ -39,5 +40,6 @@ Written from the point of view of someone trying to keep or steal money.
 - **Guest keys live in the browser.** Clear the browser or change phones and the account is gone, unless the guest pressed **Save my key** and kept the file. **Restore a key** brings it back on any browser. The file is the whole key, so whoever holds it holds the account; a real product needs NEAR Auth instead.
 - **Script on the page could read test keys.** The Content Security Policy narrows this. It does not remove it.
 - **The testnet helper is a dependency.** If it is down or rate-limits, new guests cannot get an account. The limit is per IP (we hit "retry in 11 hours" after about a dozen accounts), so many guests on one Wi-Fi would run into it.
+- **An owner's envelopes past the first 100 are not seen.** `hajatan_of` and the ring read an owner's first 100 envelopes. Nobody hosts that many; a fix needs a new deployment.
 - **Unused seeds stay locked.** If a guest never hosts, the seed never leaves. There is no expiry.
 - **A host can ignore the ring.** "Later" changes nothing, and nothing forces a reply. The seed is a promise of the first step, not of the whole amount.

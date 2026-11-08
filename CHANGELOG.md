@@ -2,6 +2,21 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-09
+
+### Fixed
+- Phones: every control is at least 44 px, no field is under 16 px, the slide to give sits on the first screen of a 360 px phone, and How it works no longer covers it on a guest's phone (issue #4).
+- A reply lands as the amount the ring named, not one dollar more from storage leftovers (issue #4). The book keeps a sent reply's receipt on screen after it reloads.
+- The Content Security Policy blocked the archival RPC that history uses since 8 November, so the browser could not check receipts. It is allowed now, and a test holds every host the site fetches against the policy.
+- New guests from the testnet purse get 2.1 NEAR, so the Rp500.000 and Rp1.000.000 buttons work.
+- The ring list reads a big book in smaller pages when the RPC refuses a heavy one (issue #16).
+- The browser scripts run without a Chrome already open and default to the live site (issue #14).
+
+### Added
+- CI rebuilds the wasm on Windows and compares it with the code on chain: same hash (issue #15).
+- A *From zero* workflow runs the README on a fresh GitHub machine (issue #14).
+- Live checks: a receiver that holds a sale open for 400 blocks (issue #12), and `pending_replies` on a 300-gift book (issue #16).
+
 ## 2026-11-08
 
 ### Added

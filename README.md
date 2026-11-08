@@ -17,8 +17,8 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Live demo | https://rsvpay.vercel.app |
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
-| Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`, equal to a release build of this source on the deploying machine |
-| Tests | 54 Rust, 68 web, 14 live attacks. What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
+| Tests | 54 Rust, 80 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book. What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 ## What it does
@@ -86,7 +86,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 | NEP-171 contract plus logic that ties each token to its money | Done, with one difference: the money is booked per token id inside one keyless contract, not in a sub-account per token | [`contracts/src/lib.rs`](contracts/src/lib.rs), [how control moves](#how-control-moves-when-the-nft-is-transferred) |
 | README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
 | Gated page only current holders can open | Done at screen level: the book is hidden from anyone but the holder, while amounts stay public on chain | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
-| History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from successful transaction receipts. The public indexer currently returns no rows for this contract | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
+| History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from Nearblocks v3, and every row is checked against its receipt on archival RPC | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
 | Tests for the transfer path, including a sale in the middle of a payout | Done | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
 
@@ -110,6 +110,8 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 
 Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_NASM=1` before cargo.
 
+The same commands also run on a fresh GitHub machine in the [From zero](.github/workflows/from-zero.yml) workflow, started by hand because it uses testnet.
+
 ```bash
 cd contracts && cargo test
 ```
@@ -118,7 +120,7 @@ See `test result: ok. 54 passed`.
 ```bash
 cd frontend && npm ci && npm test
 ```
-The regular suite includes pure-logic and in-memory tests. The live-network test is skipped unless `LIVE=1`. See 68 passed, 2 skipped.
+The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 80 passed, 4 skipped.
 
 ```bash
 cd frontend && npm run dev
@@ -140,15 +142,16 @@ See 14 `PASS` lines, one per attack, against the deployed contract. Report: [`do
 ```bash
 cd frontend && node e2e/alur.e2e.mjs
 ```
-See `PASS` on every line: the whole story on a local build against the deployed contract, in a real browser engine, the guest on a 360 px touch screen. Set `CHROME` to your browser's path if it is not the Windows default. Report and screenshots: [`docs/evidence/`](docs/evidence/).
+See `PASS` on every line: the whole story on the live site against the deployed contract, in a real browser engine, the guest on a 360 px touch screen. Add `http://localhost:5173` to check your local build instead. The script uses a Chrome already listening on port 9333 if there is one, otherwise it starts your installed Chrome headless; on Windows set `CHROME` to the path of `chrome.exe` first. Report and screenshots: [`docs/evidence/`](docs/evidence/).
 
-Rebuild the wasm (optional, the deployed contract already matches this source):
+Rebuild the wasm and compare it with the code on chain (optional):
 
 ```bash
 rustup target add wasm32-unknown-unknown
 cd contracts && cargo build --target wasm32-unknown-unknown --release
+node ../scripts/code-hash.mjs target/wasm32-unknown-unknown/release/amplop_balas.wasm
 ```
-`.cargo/config.toml` adds `--cfg near`. Without it every on-chain panic loses its message.
+`.cargo/config.toml` adds `--cfg near`. Without it every on-chain panic loses its message. The script prints `MATCH` on Windows when cargo's home is `C:\Users\MSI\.cargo`, as on the machine that deployed: the panic messages of the dependencies carry that path, so it is part of the bytes. CI rebuilds it that way on every push. On Linux or macOS the hash differs for the same reason.
 
 ## How control moves when the NFT is transferred
 
@@ -200,6 +203,10 @@ Other measurements:
 | New guest gives on the live site, 360 px emulated touch screen, account made on the way | 15.3 s | 7 Nov 2026 | [`guest-check-report.txt`](docs/evidence/guest-check-report.txt) |
 | Storage a gift pays for its own entry | 0.0015 NEAR | 2 Nov 2026 | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
 | Live attacks refused | 14 of 14 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
+| Whole story on the live site, two browsers, the guest on a 360 px touch screen | 13 of 13 steps | 9 Nov 2026 | [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
+| A receiver holds a sale open: the amplop stays locked and refuses withdraw, reply and close, then settles | Held 404 and 409 blocks, every check passed | 9 Nov 2026 | [`long-settle-report.txt`](docs/evidence/long-settle-report.txt) |
+| The ring list of a 300-gift book whose giver holds 100 envelopes | 300 of 300 read in 9.0 s | 9 Nov 2026 | [`scale-report.txt`](docs/evidence/scale-report.txt) |
+| Guest pages on 360, 375 and 390 px phones: controls at least 44 px, fields 16 px, the slide on the first screen with nothing over it | 96 of 96 checks | 9 Nov 2026 | [`phone-check-report.txt`](docs/evidence/phone-check-report.txt) |
 
 ## What is not solved
 
@@ -211,7 +218,8 @@ Written down so nobody has to discover it. Full list: [threat model](docs/THREAT
 - **Rupiah is a demo rate,** not a market price.
 - **History depends on a free public indexer.** Nearblocks retired its v1 API on 5 November 2026 and the keyless v3 API answers only a few calls a minute, so a busy moment can show a partial history. Chain entries and the current holder are read from the contract and never depend on it.
 - **The holder gate is a screen.** Reading the contract directly shows the same data.
-- **Not audited, and no independent users yet.** Every test above was run by the builder.
+- **An owner's envelopes past the first 100 are not seen.** `hajatan_of` and the ring read an owner's first 100 envelopes. Nobody hosts that many; a fix needs a new deployment.
+- **Not audited, and no independent users yet.** The tests above were run by the builder, and the README list also by a fresh GitHub machine.
 
 ## Repository
 
