@@ -1,0 +1,77 @@
+name: From zero
+
+# Runs "Run it from zero" in the README on a fresh GitHub machine, command for command,
+# so the builder's laptop is not part of the result. Started by hand because it uses testnet.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  readme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - id: contract
+        name: cd contracts && cargo test
+        continue-on-error: true
+        run: cd contracts && cargo test
+
+      - id: web
+        name: cd frontend && npm ci && npm test
+        continue-on-error: true
+        run: cd frontend && npm ci && npm test
+
+      - id: dev
+        name: cd frontend && npm run dev
+        continue-on-error: true
+        run: |
+          cd frontend
+          (npm run dev > dev.log 2>&1 &)
+          for i in $(seq 1 60); do curl -sf http://localhost:5173 > /dev/null && break; sleep 1; done
+          curl -sf http://localhost:5173 | grep -q 'id="root"'
+          echo "http://localhost:5173 answers with the app"
+
+      - id: live
+        name: cd frontend && LIVE=1 npx vitest run src/chain/near.live.test.ts
+        continue-on-error: true
+        run: cd frontend && LIVE=1 npx vitest run src/chain/near.live.test.ts
+
+      - id: attacks
+        name: cd scripts && npm ci && node attacks.mjs
+        continue-on-error: true
+        run: cd scripts && npm ci && node attacks.mjs
+
+      - id: e2e
+        name: cd frontend && node e2e/alur.e2e.mjs
+        continue-on-error: true
+        run: cd frontend && node e2e/alur.e2e.mjs
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence
+          path: docs/evidence/
+
+      - name: Result per README command
+        if: always()
+        run: |
+          {
+            echo "| README command | Result |"
+            echo "|---|---|"
+            echo "| \`cd contracts && cargo test\` | ${{ steps.contract.outcome }} |"
+            echo "| \`cd frontend && npm ci && npm test\` | ${{ steps.web.outcome }} |"
+            echo "| \`cd frontend && npm run dev\` | ${{ steps.dev.outcome }} |"
+            echo "| \`LIVE=1 npx vitest run src/chain/near.live.test.ts\` | ${{ steps.live.outcome }} |"
+            echo "| \`cd scripts && npm ci && node attacks.mjs\` | ${{ steps.attacks.outcome }} |"
+            echo "| \`cd frontend && node e2e/alur.e2e.mjs\` | ${{ steps.e2e.outcome }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          for r in "${{ steps.contract.outcome }}" "${{ steps.web.outcome }}" "${{ steps.dev.outcome }}" "${{ steps.live.outcome }}" "${{ steps.attacks.outcome }}" "${{ steps.e2e.outcome }}"; do
+            [ "$r" = success ] || exit 1
+          done

@@ -4,10 +4,10 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
 const BASE = (process.argv[2] ?? 'https://rsvpay.vercel.app').replace(/\/$/, '');
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9333');
+const browser = await openBrowser();
 const results = [];
 const lines = [];
 const say = (ok, name, detail = '') => { results.push(ok); const l = `${ok ? 'PASS' : 'FAIL'} | ${name}${detail ? ` | ${detail}` : ''}`; lines.push(l); console.log(l); };

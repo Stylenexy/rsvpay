@@ -3,7 +3,7 @@
 // One helper request, a child funded by the first account, and a human-shaped pause at the ring.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
 const URL_BASE = process.argv[2] ?? 'http://localhost:5173';
 
@@ -15,7 +15,7 @@ const check = (ok, name, detail = '') => {
   const line = `${ok ? 'PASS' : 'FAIL'} | ${name}${detail ? ' | ' + detail : ''}`;
   console.log(line); lines.push(line); if (!ok) failed++;
 };
-const browser = await chromium.connectOverCDP(process.env.CDP ?? 'http://127.0.0.1:9333');
+const browser = await openBrowser();
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 860 } });
 await ctx.addInitScript(() => localStorage.setItem('amplop-lang', 'en'));
 const page = await ctx.newPage();

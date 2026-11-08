@@ -1,8 +1,8 @@
 // Leave the landing from the very bottom, come back three ways, and the landing must be whole each time.
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
 const BASE = (process.argv[2] ?? 'http://localhost:5173').replace(/\/$/, '');
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9333');
+const browser = await openBrowser();
 const context = await browser.newContext({ viewport: { width: 1366, height: 768 } });
 const page = await context.newPage();
 const errors = [];

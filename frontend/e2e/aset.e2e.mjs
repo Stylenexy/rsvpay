@@ -1,12 +1,12 @@
 // Every page, scrolled end to end: no file of ours may answer 4xx or 5xx, and every image must decode.
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
 const BASE = process.argv[2] ?? 'http://localhost:5173';
 const origin = new URL(BASE).origin;
 const ROUTES = ['/', '/#/beri/3', '/#/buka', '/#/buku/3', '/#/coba'];
 const SIZES = [[1366, 768], [360, 740]];
 
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9333');
+const browser = await openBrowser();
 const seen = new Set();
 const broken = [];
 const failed = [];

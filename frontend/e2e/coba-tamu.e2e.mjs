@@ -3,14 +3,14 @@
 // E2E_PARENT works as in alur.e2e.mjs when the testnet helper rate-limits.
 import { mkdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
-const URL_BASE = process.argv[2] ?? 'https://amplop-balas.vercel.app';
+const URL_BASE = process.argv[2] ?? 'https://rsvpay.vercel.app';
 
 const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
 mkdirSync(OUT, { recursive: true });
 
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9333').catch(() => chromium.launch({ executablePath: CHROME, headless: true }));
+const browser = await openBrowser();
 const ctx = await browser.newContext({ viewport: { width: 360, height: 740 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
 const PARENT = process.env.E2E_PARENT;
 if (PARENT) {

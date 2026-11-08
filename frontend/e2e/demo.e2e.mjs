@@ -1,10 +1,10 @@
 // The floating guide, the finished-step notes, the language pill, the steady heading, and the demo that runs itself to the end.
 //   node e2e/demo.e2e.mjs [url]
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
 const BASE = (process.argv[2] ?? 'http://localhost:5173').replace(/\/$/, '');
 const SHOTS = process.env.SHOTS;
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9333');
+const browser = await openBrowser();
 const results = [];
 const errors = [];
 const say = (ok, name, detail = '') => { results.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'} | ${name}${detail ? ` | ${detail}` : ''}`); };

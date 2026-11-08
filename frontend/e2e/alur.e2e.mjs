@@ -8,9 +8,9 @@
 // Prints PASS/FAIL per step, writes screenshots + report to docs/evidence/ (no keys are logged).
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright-core';
+import { openBrowser } from './browser.mjs';
 
-const URL_BASE = process.argv[2] ?? 'https://amplop-balas.vercel.app';
+const URL_BASE = process.argv[2] ?? 'https://rsvpay.vercel.app';
 
 const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
 mkdirSync(OUT, { recursive: true });
@@ -24,7 +24,7 @@ const say = (ok, name, detail = '') => {
   if (!ok) failed++;
 };
 
-const browser = await chromium.connectOverCDP('http://127.0.0.1:9333').catch(() => chromium.launch({ executablePath: CHROME, headless: true }));
+const browser = await openBrowser();
 const errors = [];
 const watch = (page, who) => {
   page.on('pageerror', (e) => errors.push(`${who}: ${e.message}`));
