@@ -92,9 +92,12 @@ export async function POST(request: Request) {
       }
     };
     const gate = (label: string, max: number) => takeSlot((i) => exists(marker(`${label}|${i}`)), (i) => claim(marker(`${label}|${i}`)), max);
+    // reading costs nothing: when today's slots are all taken, refuse before buying any marker
+    const full = async (label: string, max: number) => (await firstFree((i) => exists(marker(`${label}|${i}`)), max)) >= max;
 
     if (body?.ask === 'akun') {
       if (!/^ed25519:[1-9A-HJ-NP-Za-km-z]{43,44}$/.test(body.publicKey ?? '')) return answer(400, { error: 'bad key' });
+      if (await full(`akun|day|${day}`, PER_DAY)) return answer(429, { error: 'the purse has made enough accounts today' });
       if (!(await gate(`akun|${address}|${hour}`, PER_ADDRESS_HOUR))) return answer(429, { error: 'too many accounts from here this hour' });
       if (!(await gate(`akun|day|${day}`, PER_DAY))) return answer(429, { error: 'the purse has made enough accounts today' });
       const accountId = `${name(body.name)}-${Date.now().toString(36).slice(-5)}${Math.random().toString(36).slice(2, 4)}.${purse}`;
@@ -110,9 +113,11 @@ export async function POST(request: Request) {
       if (keys === 0) return answer(400, { error: 'not one of ours' });
       const balance = BigInt((await provider.viewAccount({ accountId })).amount);
       if (balance >= LOW) return answer(200, { filled: false });
+      if (await full(`isi|day|${day}`, PER_DAY)) return answer(429, { error: 'the purse has topped up enough today' });
       if (!(await gate(`isi|${address}|${hour}`, PER_ADDRESS_HOUR))) return answer(429, { error: 'too many top-ups from here this hour' });
-      if (!(await claim(marker(`isi|${accountId}`)))) return answer(429, { error: 'already topped up once' });
+      // the daily gate comes first, so a full day never marks an account as topped up without paying it
       if (!(await gate(`isi|day|${day}`, PER_DAY))) return answer(429, { error: 'the purse has topped up enough today' });
+      if (!(await claim(marker(`isi|${accountId}`)))) return answer(429, { error: 'already topped up once' });
       await once(() => account.transfer({ receiverId: accountId, amount: TOP_UP }), async () => BigInt((await provider.viewAccount({ accountId })).amount) > balance);
       return answer(200, { filled: true });
     }

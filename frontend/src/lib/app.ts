@@ -78,14 +78,23 @@ export function useAsync<T>(load: () => Promise<T>, deps: unknown[]) {
   return { ...state, reload: () => setTick((n) => n + 1) };
 }
 
-/** Run `fn` every `ms` while the page is visible. */
-export function usePoll(fn: () => void, ms: number, enabled = true) {
+/** Run `fn` every `ms` while the page is visible. A tick is skipped while the previous run is still working,
+ * so a slow load (a big book can take seconds) never piles up behind itself. */
+export function usePoll(fn: () => void | Promise<unknown>, ms: number, enabled = true) {
   const saved = useRef(fn);
   saved.current = fn;
   useEffect(() => {
     if (!enabled) return;
+    let busy = false;
     const id = window.setInterval(() => {
-      if (document.visibilityState === 'visible') saved.current();
+      if (busy || document.visibilityState !== 'visible') return;
+      busy = true;
+      void Promise.resolve()
+        .then(() => saved.current())
+        .catch(() => {})
+        .finally(() => {
+          busy = false;
+        });
     }, ms);
     return () => window.clearInterval(id);
   }, [ms, enabled]);
