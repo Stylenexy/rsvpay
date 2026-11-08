@@ -7,6 +7,7 @@ import { useCopy } from '../copy';
 import { useAmplop } from '../context';
 import { useFormat, useLang } from '../lib/lang';
 import { useLangPill } from '../lib/pill';
+import { makeKeyFile, readKeyFile } from '../lib/keyfile';
 import { LANGS } from '../hero/copy';
 
 // ---- sky: photography + ambient stars + film grain ----
@@ -219,10 +220,34 @@ export function Glass({ className = '', children }: { className?: string; childr
   return <div className={`glass ${className}`}>{children}</div>;
 }
 
+/** Who signs on this device, and the way to carry that account to another phone. */
 export function AccountChip() {
   const t = useCopy();
-  const { client, account, switchTo } = useAmplop();
+  const { client, account, switchTo, refresh } = useAmplop();
   const all = client.accounts();
+  const [note, setNote] = useState<string | null>(null);
+  const secret = client.exportKey();
+  const save = () => {
+    if (!account || !secret) return;
+    const url = URL.createObjectURL(new Blob([makeKeyFile(account, secret, client.contractId)], { type: 'application/json' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rsvpay-key-${account.split('.')[0]}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setNote(t.keyHint);
+  };
+  const restore = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const { accountId, secret: key } = readKeyFile(await file.text());
+      await client.importKey(accountId, key);
+      refresh();
+      setNote(t.keyRestored);
+    } catch {
+      setNote(t.keyBad);
+    }
+  };
   return (
     <div className="acct">
       <span className="tok">{account ? `${t.akunLabel} ${account}` : t.akunNone}</span>
@@ -235,6 +260,11 @@ export function AccountChip() {
           ))}
         </select>
       )}
+      {client.mode === 'testnet' && <span className="acct-keys">
+        {secret && <button type="button" className="text-link" onClick={save} data-tip={t.keyHint}>{t.keySave}</button>}
+        <label className="text-link">{t.keyRestore}<input type="file" accept="application/json,.json" hidden onChange={(e) => void restore(e.target.files?.[0])} /></label>
+      </span>}
+      {note && <span className="acct-note" role="status">{note}</span>}
     </div>
   );
 }

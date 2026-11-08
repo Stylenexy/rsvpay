@@ -1,0 +1,7 @@
+Key save and restore on https://rsvpay.vercel.app, 2026-11-08T11:02:23.863Z
+PASS | a new guest account opens an envelope | #14 by maya-q3ccgbd.rsvpay-dana-3ddy.testnet
+PASS | Save my key downloads a key file for that account | rsvpay-key-maya-q3ccgbd.json
+PASS | a fresh phone starts with no account
+PASS | a key that does not match the account is refused
+PASS | Restore a key brings the same account back | maya-q3ccgbd.rsvpay-dana-3ddy.testnet
+PASS | the restored account is the one that signs

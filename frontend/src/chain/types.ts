@@ -70,6 +70,10 @@ export interface AmplopClient {
   /** all accounts whose keys live on this device */
   accounts(): AccountId[];
   useAccount(id: AccountId): void;
+  /** the active account's key, for the guest to keep; null when there is none to give */
+  exportKey(): string | null;
+  /** bring back a saved key, after checking the network still knows it */
+  importKey(accountId: AccountId, secret: string): Promise<void>;
   /** make a fresh funded test account (testnet helper) and switch to it */
   createAccount(name: string): Promise<AccountId>;
   /** Create and fund a child using the active account, without the public helper. */

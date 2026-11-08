@@ -102,6 +102,19 @@ export class NearAmplopClient implements AmplopClient {
     this.store.setActive(id);
   }
 
+  exportKey(): string | null {
+    const id = this.account();
+    return id ? this.store.keys()[id] ?? null : null;
+  }
+
+  async importKey(accountId: AccountId, secret: string): Promise<void> {
+    const publicKey = KeyPair.fromString(secret as `ed25519:${string}`).getPublicKey().toString();
+    const { keys } = await this.provider.viewAccessKeyList({ accountId });
+    if (!keys.some((k) => k.public_key === publicKey)) throw new Error('key does not open this account');
+    this.store.saveKey(accountId, secret);
+    this.store.setActive(accountId);
+  }
+
   async createAccount(name: string): Promise<AccountId> {
     const kp = KeyPair.fromRandom('ed25519');
     const id = (await this.fromPurse(name, kp.getPublicKey().toString())) ?? (await this.fromHelper(name, kp.getPublicKey().toString()));

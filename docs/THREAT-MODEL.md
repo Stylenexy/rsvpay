@@ -36,7 +36,7 @@ Written from the point of view of someone trying to keep or steal money.
 
 - **Amounts are public on chain.** An attached deposit is visible in any explorer. The app hides names and amounts from non-holders, but that is a screen, not secrecy.
 - **A seller can empty free money before selling.** A buyer must read `hajatan(token_id)` first. Seeds are safe; free money is the seller's until the sale.
-- **Guest keys live in the browser.** Clear the browser or change phones and that account is gone, so the old amplop can no longer find the guest. See [Roadmap](ROADMAP.md).
+- **Guest keys live in the browser.** Clear the browser or change phones and the account is gone, unless the guest pressed **Save my key** and kept the file. **Restore a key** brings it back on any browser. The file is the whole key, so whoever holds it holds the account; a real product needs NEAR Auth instead.
 - **Script on the page could read test keys.** The Content Security Policy narrows this. It does not remove it.
 - **The testnet helper is a dependency.** If it is down or rate-limits, new guests cannot get an account. The limit is per IP (we hit "retry in 11 hours" after about a dozen accounts), so many guests on one Wi-Fi would run into it.
 - **Unused seeds stay locked.** If a guest never hosts, the seed never leaves. There is no expiry.

@@ -75,7 +75,7 @@ The ordinary `#/buka`, `#/beri/<id>` and `#/buku/<id>` pages remain available fo
 
 Accounts are throwaway testnet accounts. The browser makes the key, which stays on that device, and a small testnet purse (`frontend/api/dana.ts`) funds them. That purse's one key is a Vercel secret and guards play money only. Clearing browser storage removes access to those accounts.
 
-History checks the public Nearblocks testnet API without a key and verifies indexed transaction logs against testnet RPC receipts. The scan is limited to the latest 100 indexed contract transactions and labels truncated or missing coverage. Public receipt references for transactions made on this device are also saved locally and verified through RPC when read again. Failed payouts are shown as refunds, never as money paid out. This is not a complete archive when the public index is missing data.
+History asks the public Nearblocks v3 API, without a key, for one envelope's NFT events. Those name every holder, and each holder's own calls to the contract hold the opening, sales and payouts. Every row is then checked against receipts on archival testnet RPC, because regular RPC forgets transactions after about two days. The scan reads up to six holders and 25 calls each, and labels the history partial when it hits a limit. Receipts for transactions made on this device are also saved locally and verified again when read. Failed payouts are shown as refunds, never as money paid out. Live check: [history-source-check.txt](docs/evidence/history-source-check.txt) (envelope #1, two holders, 1.27 NEAR paid out, coverage complete).
 
 ## Track requirements and where to check them
 
@@ -123,7 +123,7 @@ The regular suite includes pure-logic and in-memory tests. The live-network test
 ```bash
 cd frontend && npm run dev
 ```
-See a local site on http://localhost:5173, talking to the same testnet contract. Add `?mock` before the `#` to work without the network.
+See a local site on http://localhost:5173, talking to the same testnet contract. Add `?mock` before the `#` to work without the network: it opens with a sample book, Maya & Leo (#1), holding three gifts and one reply waiting, so no rehearsal page starts empty.
 
 Live checks. These use the network and make throwaway testnet accounts through NEAR's public helper. The helper rate-limits by IP: after about a dozen accounts in a morning it answered `retry in 11 hours`. If that happens, set `E2E_PARENT` or `ATTACK_ROOT` to a JSON file with `{ accountId, secret }` of a funded testnet account; the scripts explain how.
 
@@ -206,10 +206,10 @@ Other measurements:
 Written down so nobody has to discover it. Full list: [threat model](docs/THREAT-MODEL.md#not-defended), [roadmap](docs/ROADMAP.md).
 
 - **Amounts are public on chain.** The app hides names and amounts from non-holders, but that is a screen, not secrecy.
-- **The guest's key lives in the browser.** Clear the browser or change phones and that account is gone, so the old amplop can no longer find you. This is the biggest gap in the product: the promise runs for years, and a browser key does not. Google or email login through NEAR Auth is the fix, but its shared testnet client only accepts `http://localhost:3000` as a callback (checked 4 November 2026), so a public site needs approved credentials we do not have.
+- **The guest's key lives in the browser.** Change phones or clear the browser and that account is gone, so the old amplop can no longer find you. **Save my key** next to the account name downloads a small file, and **Restore a key** on the new phone brings the account back. That file is full access to the test account, which is why a real product needs NEAR Auth.
 - **"No wallet" still means someone funds the guest.** Here the testnet helper does. A real product needs rupiah in through QRIS, a stablecoin, and gas sponsored by a relayer. None of that is built.
 - **Rupiah is a demo rate,** not a market price.
-- **Public history coverage is incomplete.** Nearblocks returned HTTP 200 with empty transaction lists for this contract and a known past transaction when checked. Chain entries and current holder remain readable. Verified receipt references from this device supplement them, but earlier payouts and holders can remain unavailable.
+- **History depends on a free public indexer.** Nearblocks retired its v1 API on 5 November 2026 and the keyless v3 API answers only a few calls a minute, so a busy moment can show a partial history. Chain entries and the current holder are read from the contract and never depend on it.
 - **The holder gate is a screen.** Reading the contract directly shows the same data.
 - **Not audited, and no independent users yet.** Every test above was run by the builder.
 
