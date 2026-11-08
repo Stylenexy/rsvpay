@@ -5,7 +5,7 @@
 //   node e2e/hp.e2e.mjs [https://rsvpay.vercel.app]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { openBrowser } from './browser.mjs';
+import { openBrowser, share } from './browser.mjs';
 
 const BASE = (process.argv[2] ?? 'https://rsvpay.vercel.app').replace(/\/$/, '');
 const OUT = fileURLToPath(new URL('../../docs/evidence/', import.meta.url));
@@ -35,6 +35,7 @@ for (const lang of ['en', 'id']) {
   for (const [w, h] of SIZES) {
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
     await ctx.addInitScript((l) => localStorage.setItem('amplop-lang', l), lang);
+    await share(ctx);
     const page = await ctx.newPage();
     for (const [name, path] of PAGES) {
       await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded', timeout: 60_000 });

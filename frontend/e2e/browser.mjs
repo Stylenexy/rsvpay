@@ -17,3 +17,11 @@ export async function openBrowser() {
     return chromium.launch({ headless: true, ...(chrome ? { executablePath: chrome } : { channel: 'chrome' }) });
   }
 }
+
+/** A protected Vercel preview opens only after its share link has set a cookie in this browser context. */
+export async function share(context) {
+  if (!process.env.E2E_SHARE) return;
+  const page = await context.newPage();
+  await page.goto(process.env.E2E_SHARE, { waitUntil: 'domcontentloaded' });
+  await page.close();
+}
