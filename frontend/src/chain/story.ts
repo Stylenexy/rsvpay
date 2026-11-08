@@ -1,5 +1,5 @@
 import type { AmplopClient, Entry, PendingReply, Sent } from './types';
-import { OPEN_DEPOSIT_YOCTO, REPLY_MARGIN_YOCTO, STORAGE_MARGIN_YOCTO, rupiahToYocto } from '../lib/rupiah';
+import { OPEN_DEPOSIT_YOCTO, REPLY_MARGIN_YOCTO, STORAGE_MARGIN_YOCTO, chainRp, rupiahToYocto } from '../lib/rupiah';
 
 export type StoryStep = 'account' | 'family' | 'wedding' | 'gift' | 'years' | 'celebration' | 'ring' | 'reply';
 export interface StoryMark { step: StoryStep; ms: number; hash: string | null }
@@ -12,8 +12,16 @@ export const RECORDED = [
   { step: 'paid', hash: 'CVz6QvXk8Z62thL6Ed82aABjraBiCaCr3kmHxNuhSA45' },
 ] as const;
 
+/**
+ * What the holder attaches to give back: the gift as the book shows it (whole Rp1.000), minus the part
+ * kept, plus the reply's own storage. The guest then receives the amount the ring named, without the
+ * gift's storage leftovers rounding it up by one.
+ */
 export function replyDeposit(p: Pick<PendingReply, 'amount' | 'seed'>): string {
-  return (BigInt(p.amount) - BigInt(p.seed) + REPLY_MARGIN_YOCTO).toString();
+  const shown = rupiahToYocto(chainRp(p.amount));
+  const seed = BigInt(p.seed);
+  const rest = shown > seed ? shown - seed : BigInt(p.amount) - seed;
+  return (rest + REPLY_MARGIN_YOCTO).toString();
 }
 
 /** The same calls as the ordinary pages. Time travel changes the story date, never the chain clock. */

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockAmplopClient } from './mock';
 import { RECORDED, replyDeposit, replyStory, startStory, type StoryMark } from './story';
-import { REPLY_MARGIN_YOCTO } from '../lib/rupiah';
+import { REPLY_MARGIN_YOCTO, chainRp, rupiahToYocto } from '../lib/rupiah';
 import { readFileSync } from 'node:fs';
 
 describe('the story stops for the person, with one public account request', () => {
@@ -47,6 +47,12 @@ describe('the story stops for the person, with one public account request', () =
 
   it('attaches the top-up and storage margin, and uses only recorded hashes from the evidence file', () => {
     expect(BigInt(replyDeposit({ amount: '100', seed: '5' }))).toBe(95n + REPLY_MARGIN_YOCTO);
+    // a $100 gift carries ~$0.75 of storage leftover; the reply must still land as $100, not $101
+    const amount = rupiahToYocto(100_750);
+    const seed = (amount * 500n) / 10_000n;
+    const landed = seed + BigInt(replyDeposit({ amount: amount.toString(), seed: seed.toString() })) - REPLY_MARGIN_YOCTO / 2n;
+    expect(chainRp(landed)).toBe(chainRp(amount));
+    expect(chainRp(amount) - chainRp(seed)).toBe(95_000);
     const source = readFileSync(new URL('../../../docs/evidence/measured-testnet.txt', import.meta.url), 'utf8');
     for (const r of RECORDED) expect(source).toContain(r.hash);
   });

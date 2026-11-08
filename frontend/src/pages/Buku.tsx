@@ -6,7 +6,8 @@ import { useAmplop } from '../context';
 import { absoluteLink, copyText, link, shortName, useCountUp, usePoll } from '../lib/app';
 import { useFormat, useLang } from '../lib/lang';
 import { useBookMotion, usePageMotion } from '../lib/motion';
-import { REPLY_MARGIN_YOCTO, chainRp } from '../lib/rupiah';
+import { chainRp } from '../lib/rupiah';
+import { replyDeposit } from '../chain/story';
 import { validReceiver } from '../lib/accounts';
 import { Guide } from '../components/Guide';
 import { History } from '../components/History';
@@ -114,13 +115,12 @@ export function Buku({ id }: { id: string }) {
     mutation.current = true;
     setReplies((s) => ({ ...s, [p.entry]: { busy: true, hash: null, err: '' } }));
     try {
-      const rest = BigInt(p.amount) - BigInt(p.seed);
       const r = await client.reciprocate({
         tokenId: id,
         entry: p.entry,
         toTokenId: p.to_token_id,
         message: say(t.bukuReplyWish, shortName(p.giver)),
-        depositYocto: (rest + REPLY_MARGIN_YOCTO).toString(),
+        depositYocto: replyDeposit(p),
       });
       setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: r.txHash, err: '' } }));
       await load();

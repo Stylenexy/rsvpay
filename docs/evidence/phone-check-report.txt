@@ -1,0 +1,85 @@
+Phone check on http://localhost:5174, 2026-11-08T17:47:41.237Z
+PASS | en 360x640 give: no sideways scroll | 0px
+PASS | en 360x640 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | en 360x640 give: every control is at least 44x44 px | 14 controls
+PASS | en 360x640 give: the give control is on screen without scrolling | bottom 545 of 640
+PASS | en 360x640 open: no sideways scroll | 0px
+PASS | en 360x640 open: every text field is 16 px or more, so iPhone does not zoom | 3 fields
+PASS | en 360x640 open: every control is at least 44x44 px | 14 controls
+PASS | en 360x640 book: no sideways scroll | 0px
+PASS | en 360x640 book: every text field is 16 px or more, so iPhone does not zoom | 1 fields
+PASS | en 360x640 book: every control is at least 44x44 px | 17 controls
+PASS | en 360x640 give-new: no sideways scroll | 0px
+PASS | en 360x640 give-new: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | en 360x640 give-new: every control is at least 44x44 px | 14 controls
+PASS | en 360x640 give-new: the give control is on screen without scrolling | bottom 637 of 640
+PASS | en 375x667 give: no sideways scroll | 0px
+PASS | en 375x667 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | en 375x667 give: every control is at least 44x44 px | 14 controls
+PASS | en 375x667 give: the give control is on screen without scrolling | bottom 546 of 667
+PASS | en 375x667 open: no sideways scroll | 0px
+PASS | en 375x667 open: every text field is 16 px or more, so iPhone does not zoom | 3 fields
+PASS | en 375x667 open: every control is at least 44x44 px | 14 controls
+PASS | en 375x667 book: no sideways scroll | 0px
+PASS | en 375x667 book: every text field is 16 px or more, so iPhone does not zoom | 1 fields
+PASS | en 375x667 book: every control is at least 44x44 px | 17 controls
+PASS | en 375x667 give-new: no sideways scroll | 0px
+PASS | en 375x667 give-new: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | en 375x667 give-new: every control is at least 44x44 px | 14 controls
+PASS | en 375x667 give-new: the give control is on screen without scrolling | bottom 638 of 667
+PASS | en 390x844 give: no sideways scroll | 0px
+PASS | en 390x844 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | en 390x844 give: every control is at least 44x44 px | 14 controls
+PASS | en 390x844 give: the give control is on screen without scrolling | bottom 574 of 844
+PASS | en 390x844 open: no sideways scroll | 0px
+PASS | en 390x844 open: every text field is 16 px or more, so iPhone does not zoom | 3 fields
+PASS | en 390x844 open: every control is at least 44x44 px | 14 controls
+PASS | en 390x844 book: no sideways scroll | 0px
+PASS | en 390x844 book: every text field is 16 px or more, so iPhone does not zoom | 1 fields
+PASS | en 390x844 book: every control is at least 44x44 px | 17 controls
+PASS | en 390x844 give-new: no sideways scroll | 0px
+PASS | en 390x844 give-new: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | en 390x844 give-new: every control is at least 44x44 px | 14 controls
+PASS | en 390x844 give-new: the give control is on screen without scrolling | bottom 669 of 844
+PASS | id 360x640 give: no sideways scroll | 0px
+PASS | id 360x640 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | id 360x640 give: every control is at least 44x44 px | 14 controls
+PASS | id 360x640 give: the give control is on screen without scrolling | bottom 545 of 640
+PASS | id 360x640 open: no sideways scroll | 0px
+PASS | id 360x640 open: every text field is 16 px or more, so iPhone does not zoom | 3 fields
+PASS | id 360x640 open: every control is at least 44x44 px | 14 controls
+PASS | id 360x640 book: no sideways scroll | 0px
+PASS | id 360x640 book: every text field is 16 px or more, so iPhone does not zoom | 1 fields
+PASS | id 360x640 book: every control is at least 44x44 px | 17 controls
+PASS | id 360x640 give-new: no sideways scroll | 0px
+PASS | id 360x640 give-new: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | id 360x640 give-new: every control is at least 44x44 px | 14 controls
+PASS | id 360x640 give-new: the give control is on screen without scrolling | bottom 637 of 640
+PASS | id 375x667 give: no sideways scroll | 0px
+PASS | id 375x667 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | id 375x667 give: every control is at least 44x44 px | 14 controls
+PASS | id 375x667 give: the give control is on screen without scrolling | bottom 546 of 667
+PASS | id 375x667 open: no sideways scroll | 0px
+PASS | id 375x667 open: every text field is 16 px or more, so iPhone does not zoom | 3 fields
+PASS | id 375x667 open: every control is at least 44x44 px | 14 controls
+PASS | id 375x667 book: no sideways scroll | 0px
+PASS | id 375x667 book: every text field is 16 px or more, so iPhone does not zoom | 1 fields
+PASS | id 375x667 book: every control is at least 44x44 px | 17 controls
+PASS | id 375x667 give-new: no sideways scroll | 0px
+PASS | id 375x667 give-new: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | id 375x667 give-new: every control is at least 44x44 px | 14 controls
+PASS | id 375x667 give-new: the give control is on screen without scrolling | bottom 638 of 667
+PASS | id 390x844 give: no sideways scroll | 0px
+PASS | id 390x844 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | id 390x844 give: every control is at least 44x44 px | 14 controls
+PASS | id 390x844 give: the give control is on screen without scrolling | bottom 574 of 844
+PASS | id 390x844 open: no sideways scroll | 0px
+PASS | id 390x844 open: every text field is 16 px or more, so iPhone does not zoom | 3 fields
+PASS | id 390x844 open: every control is at least 44x44 px | 14 controls
+PASS | id 390x844 book: no sideways scroll | 0px
+PASS | id 390x844 book: every text field is 16 px or more, so iPhone does not zoom | 1 fields
+PASS | id 390x844 book: every control is at least 44x44 px | 17 controls
+PASS | id 390x844 give-new: no sideways scroll | 0px
+PASS | id 390x844 give-new: every text field is 16 px or more, so iPhone does not zoom | 2 fields
+PASS | id 390x844 give-new: every control is at least 44x44 px | 14 controls
+PASS | id 390x844 give-new: the give control is on screen without scrolling | bottom 669 of 844

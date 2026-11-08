@@ -107,7 +107,7 @@ export function Coba() {
         <EnvelopeObject />
         <span className="label">{t.cobaRing}</span>
         <h2>{t.bukuRing}</h2>
-        <p>{say(t.cobaRingBody, formatRp(chainRp(p.amount)), formatRp(chainRp(p.seed)), formatRp(chainRp(BigInt(p.amount) - BigInt(p.seed))))}</p>
+        <p>{say(t.cobaRingBody, formatRp(chainRp(p.amount)), formatRp(chainRp(p.seed)), formatRp(chainRp(p.amount) - chainRp(p.seed)))}</p>
         <button className="btn" disabled={busy} onClick={() => void reply()}>{busy ? t.cobaSending : t.cobaTap}</button>
       </div>}
       {landed && <div className="glass card done" data-story-complete>
