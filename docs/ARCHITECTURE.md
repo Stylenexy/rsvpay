@@ -13,6 +13,9 @@ flowchart LR
   D[/api/dana<br/>testnet purse/] -->|funds throwaway accounts| R
   G -->|asks for a test account| D
   V --> H
+  N[Nearblocks v3<br/>public indexer] -. which txns touched this envelope .-> G
+  A[Archival testnet RPC] -. receipts that prove each history row .-> G
+  G <-. Save my key / Restore a key<br/>a file the guest keeps .-> F[(key file)]
 ```
 
 | Folder | What | Notes |
