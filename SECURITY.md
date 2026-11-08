@@ -25,3 +25,5 @@ We aim to answer within 72 hours during NEAR HACKATHON (until 15 November 2026) 
 ## Tested live
 
 A receiver contract that holds `nft_on_transfer` open with chained yields ran on testnet: held for 404 and for 409 blocks, the amplop stayed locked, refused withdraw, reply and close, moved no coin, and settled normally once the receiver answered. Report: [`long-settle-report.txt`](docs/evidence/long-settle-report.txt), script `scripts/long-settle.mjs`.
+
+The longest hold one transaction can buy: with 300 TGas the receiver held 34,986 blocks (5 h 50 min, 175 yield links of about 1.66 TGas each) until its gas ran out. The amplop then went back to the sender, as NEP-171 says for a receiver that fails, and no coin moved. Testnet allows 1,000 TGas per transaction, which at the same cost is about 119,000 blocks, about 20 hours: 12% of the 1,000,000-block bound, which is about seven days. Report: [`long-settle-max-report.txt`](docs/evidence/long-settle-max-report.txt), `node long-settle.mjs max`.

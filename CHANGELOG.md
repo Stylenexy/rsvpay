@@ -10,12 +10,13 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - The Content Security Policy blocked the archival RPC that history uses since 8 November, so the browser could not check receipts. It is allowed now, and a test holds every host the site fetches against the policy.
 - New guests from the testnet purse get 2.1 NEAR, so the Rp500.000 and Rp1.000.000 buttons work.
 - The ring list reads a big book in smaller pages when the RPC refuses a heavy one (issue #16).
+- README and THREAT-MODEL T4 said the 1,000,000-block lock bound is about twelve days. At testnet's 0.6-second blocks it is about seven (issue #12).
 - The browser scripts run without a Chrome already open and default to the live site (issue #14).
 
 ### Added
 - CI rebuilds the wasm on Windows and compares it with the code on chain: same hash (issue #15).
 - A *From zero* workflow runs the README on a fresh GitHub machine (issue #14).
-- Live checks: a receiver that holds a sale open for 400 blocks (issue #12), and `pending_replies` on a 300-gift book (issue #16).
+- Live checks: a receiver that holds a sale open for 400 blocks, and for 34,986 blocks until one 300 TGas transfer runs out of gas (issue #12), and `pending_replies` on a 300-gift book (issue #16).
 
 ## 2026-11-08
 

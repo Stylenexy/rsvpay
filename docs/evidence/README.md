@@ -4,8 +4,12 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 
 | File | What | Reproduce |
 |---|---|---|
-| `attacks-report.txt` | 14 live attacks against the deployed contract |
-| `wasm-build-check.txt` | An outside rebuild on Linux, and why only a Windows build with the same cargo home matches the code on chain | `cd scripts && node attacks.mjs` |
+| `attacks-report.txt` | 14 live attacks against the deployed contract | `cd scripts && node attacks.mjs` |
+| `wasm-build-check.txt` | An outside rebuild on Linux, and why only a Windows build with the same cargo home matches the code on chain | CI job *Rebuild the wasm and compare it with the chain* |
+| `long-settle-report.txt` | A receiver holds a sale open 404 and 409 blocks: the lock holds, nothing moves | `cd scripts && node long-settle.mjs` |
+| `long-settle-max-report.txt` | The longest hold one 300 TGas transaction can buy: 34,986 blocks | `cd scripts && node long-settle.mjs max` |
+| `scale-report.txt` | `pending_replies` on books of up to 300 gifts, and where the RPC view limit sits | `cd scripts && node scale.mjs` |
+| `phone-check-report.txt` | 96 checks on three phone sizes, two languages | `cd frontend && node e2e/hp.e2e.mjs https://rsvpay.vercel.app` |
 | `e2e-report.txt` | Whole story from a local build against the deployed contract, guest on a 360 px touch screen | `cd frontend && node e2e/alur.e2e.mjs` |
 | `coba-e2e-report.txt` | The one-button story on the live site | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
 | `return-check-report.txt` | Leaving the landing from the very bottom and coming back | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |

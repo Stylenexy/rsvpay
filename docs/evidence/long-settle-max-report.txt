@@ -1,0 +1,17 @@
+Long settle on rsvpay-v2.testnet, 2026-11-08T17:48:07.510Z
+Receiver recv-84l4x7.uji-844l7v.testnet runs long-receiver (93676 bytes). Sender siti-84l4x7.uji-844l7v.testnet. Contract rsvpay-v2.testnet. Prepaid gas per transfer 300 TGas.
+N=10000000 back: amplop #319, transfer C4E1XN6gcZTEy79sFjb3JcGUtr8MCdQzsGkaQW8caA7J, sent near block 276808295
+PASS | N=10000000 back: is_locked is true while the receiver holds
+PASS | N=10000000 back: the receiver owns the amplop on paper during the hold | recv-84l4x7.uji-844l7v.testnet
+PASS | N=10000000 back: receiver's withdraw during the hold is refused "amplop is mid-transfer"
+PASS | N=10000000 back: receiver's reciprocate during the hold is refused "amplop is mid-transfer"
+PASS | N=10000000 back: receiver's set_open during the hold is refused "amplop is mid-transfer"
+PASS | N=10000000 back: sender's withdraw during the hold is refused, it is not the holder now
+PASS | N=10000000 back: still locked 34951 blocks after sending | last locked sample at block 276843246
+PASS | N=10000000 back: the resolver ran and is_locked is false again | at block 276843281 (+34986)
+N=10000000 back: receiver answered none, the receiver failed after 175 (gas ran out before an answer) yield link(s); gas left 289.9 TGas at the start, 0.6 TGas at the last link; total gas burnt 338.1 TGas
+PASS | N=10000000 back: the amplop ends with the sender, as NEP-171 says when the receiver answers true or fails | siti-84l4x7.uji-844l7v.testnet
+PASS | N=10000000 back: no coin moved while it was held | balance 60360000000000000000000, kept 918500000000000000000
+Largest hold in one transaction: 34986 blocks (175 (gas ran out before an answer) yield links), with 300 TGas prepaid. LOCK_MAX_BLOCKS is 1,000,000.
+
+PASS | every check
