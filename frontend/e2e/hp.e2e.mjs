@@ -61,7 +61,10 @@ for (const lang of ['en', 'id']) {
           });
         const give = document.querySelector('[aria-label="Slide to give"], [aria-label="Geser untuk memberi"], .slide-give, .swipe');
         const gr = give?.getBoundingClientRect();
-        return { overflow, fields, targets, give: gr ? { top: Math.round(gr.top), bottom: Math.round(gr.bottom) } : null, vh: innerHeight };
+        const track = give?.closest('.slide')?.getBoundingClientRect();
+        // what a thumb would touch along the slide: start, middle and the far end where the knob lands
+        const covered = track ? [0.08, 0.5, 0.92].map((f) => document.elementFromPoint(track.left + track.width * f, track.top + track.height / 2)).filter((el) => !el?.closest('.slide')).map((el) => el?.className || el?.tagName) : [];
+        return { overflow, fields, targets, covered, give: gr ? { top: Math.round(gr.top), bottom: Math.round(gr.bottom) } : null, vh: innerHeight };
       });
       const tag = `${lang} ${w}x${h} ${name}`;
       say(m.overflow <= 0, `${tag}: no sideways scroll`, `${m.overflow}px`);
@@ -71,6 +74,7 @@ for (const lang of ['en', 'id']) {
       say(tiny.length === 0, `${tag}: every control is at least 44x44 px`, tiny.length ? tiny.map((t) => `${t.name} ${t.w}x${t.h}`).join(', ') : `${m.targets.length} controls`);
       if (name.startsWith('give')) {
         say(!!m.give && m.give.bottom <= m.vh, `${tag}: the give control is on screen without scrolling`, m.give ? `bottom ${m.give.bottom} of ${m.vh}` : 'not found');
+        say(m.covered.length === 0, `${tag}: nothing floats over the slide`, m.covered.join(', '));
         if (lang === 'en' && w === 360) await page.screenshot({ path: `${OUT}hp-${name}-360.png` });
       }
     }
