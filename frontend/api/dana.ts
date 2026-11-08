@@ -11,7 +11,8 @@ import { Account, JsonRpcProvider, actions, nearToYocto } from 'near-api-js';
  */
 
 const RPC = 'https://test.rpc.fastnear.com';
-const NEW_ACCOUNT = nearToYocto('1');
+// The largest gift button is Rp1.000.000 = 2 NEAR at the demo rate; with its storage and gas a new guest needs about 2.01.
+const NEW_ACCOUNT = nearToYocto('2.1');
 const TOP_UP = nearToYocto('0.5');
 const LOW = BigInt(nearToYocto('0.5'));
 const MARKER = nearToYocto('0.002');
