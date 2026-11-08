@@ -1,0 +1,23 @@
+[package]
+name = "long_receiver"
+version = "0.1.0"
+edition = "2021"
+description = "Test-only NFT receiver that holds nft_on_transfer open for N blocks with chained yields (issue #12)"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+near-sdk = "5.30.0"
+
+[profile.release]
+codegen-units = 1
+opt-level = "z"
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+
+[workspace]

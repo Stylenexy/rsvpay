@@ -1,0 +1,29 @@
+Long settle on rsvpay-v2.testnet, 2026-11-08T17:38:28.983Z
+Receiver recv-848qgt.uji-844l7v.testnet runs long-receiver (93676 bytes). Sender siti-848qgt.uji-844l7v.testnet. Contract rsvpay-v2.testnet. Prepaid gas per transfer 300 TGas.
+N=250 back: amplop #145, transfer FmNf4AFvNbvovMoFb34Zh4TrBfJkyUWGfkmZYYpwKvJX, sent near block 276807322
+PASS | N=250 back: is_locked is true while the receiver holds
+PASS | N=250 back: the receiver owns the amplop on paper during the hold | recv-848qgt.uji-844l7v.testnet
+PASS | N=250 back: receiver's withdraw during the hold is refused "amplop is mid-transfer"
+PASS | N=250 back: receiver's reciprocate during the hold is refused "amplop is mid-transfer"
+PASS | N=250 back: receiver's set_open during the hold is refused "amplop is mid-transfer"
+PASS | N=250 back: sender's withdraw during the hold is refused, it is not the holder now
+PASS | N=250 back: still locked 396 blocks after sending | last locked sample at block 276807718
+PASS | N=250 back: the resolver ran and is_locked is false again | at block 276807726 (+404)
+N=250 back: receiver answered true after 2 yield link(s); gas left 289.9 TGas at the start, 286.6 TGas at the last link; total gas burnt 12.9 TGas
+PASS | N=250 back: the amplop ends with the sender, as NEP-171 says when the receiver answers true or fails | siti-848qgt.uji-844l7v.testnet
+PASS | N=250 back: no coin moved while it was held | balance 60460000000000000000000, kept 918500000000000000000
+N=400 keep: amplop #219, transfer 4yFkCfXY2VAc9b3BB3HFWNfZr5Xp6uLe2pTs4tDdp2Zc, sent near block 276807745
+PASS | N=400 keep: is_locked is true while the receiver holds
+PASS | N=400 keep: the receiver owns the amplop on paper during the hold | recv-848qgt.uji-844l7v.testnet
+PASS | N=400 keep: receiver's withdraw during the hold is refused "amplop is mid-transfer"
+PASS | N=400 keep: receiver's reciprocate during the hold is refused "amplop is mid-transfer"
+PASS | N=400 keep: receiver's set_open during the hold is refused "amplop is mid-transfer"
+PASS | N=400 keep: sender's withdraw during the hold is refused, it is not the holder now
+PASS | N=400 keep: still locked 401 blocks after sending | last locked sample at block 276808146
+PASS | N=400 keep: the resolver ran and is_locked is false again | at block 276808154 (+409)
+N=400 keep: receiver answered false after 2 yield link(s); gas left 289.8 TGas at the start, 286.5 TGas at the last link; total gas burnt 11.9 TGas
+PASS | N=400 keep: the amplop ends with the receiver, which kept it | recv-848qgt.uji-844l7v.testnet
+PASS | N=400 keep: no coin moved while it was held | balance 62130000000000000000000, kept 918500000000000000000
+PASS | N=400 keep: after it settles the new holder can withdraw, so the lock let go
+
+PASS | every check
