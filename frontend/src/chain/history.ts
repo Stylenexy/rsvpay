@@ -104,7 +104,20 @@ export function mergeHistory(chain: HistoryEvent[], indexed: HistoryEvent[]): Hi
   });
 }
 
-async function json(url: string, init?: RequestInit): Promise<unknown> {
+// The keyless indexer answers only a few calls a minute, and a book reloads its history after every action.
+// The same indexer page asked again within 30 s is served from here instead of asking again.
+const indexed = new Map<string, { at: number; body: Promise<unknown> }>();
+function json(url: string, init?: RequestInit): Promise<unknown> {
+  if (init?.method && init.method !== 'GET') return fetchJson(url, init);
+  const hit = indexed.get(url);
+  if (hit && Date.now() - hit.at < 30_000) return hit.body;
+  const body = fetchJson(url, init);
+  indexed.set(url, { at: Date.now(), body });
+  body.catch(() => indexed.delete(url));
+  return body;
+}
+
+async function fetchJson(url: string, init?: RequestInit): Promise<unknown> {
   for (let attempt = 0; ; attempt++) {
     const response = await fetch(url, { ...init, signal: init?.signal ?? AbortSignal.timeout(12_000) });
     // The free indexer allows a few calls at a time; wait briefly once or twice rather than give up.

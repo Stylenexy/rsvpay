@@ -36,6 +36,8 @@ export function Buku({ id }: { id: string }) {
   const [peek, setPeek] = useState<'me' | 'other'>('me');
   const [wd, setWd] = useState<{ busy: boolean; amount?: number; error?: unknown; hash: string | null } | null>(null);
   const [replies, setReplies] = useState<Record<number, { busy: boolean; hash: string | null; err: unknown }>>({});
+  // a sent reply leaves the ring list on the next load; its receipt stays on screen until the page is left
+  const [sent, setSent] = useState<Array<{ entry: number; who: string; hash: string | null }>>([]);
   const [copied, setCopied] = useState(false);
   const [later, setLater] = useState<number[]>([]);
   const [passing, setPassing] = useState(false);
@@ -123,6 +125,7 @@ export function Buku({ id }: { id: string }) {
         depositYocto: replyDeposit(p),
       });
       setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: r.txHash, err: '' } }));
+      setSent((s) => [...s.filter((x) => x.entry !== p.entry), { entry: p.entry, who: shortName(p.giver), hash: r.txHash }]);
       await load();
       setHistoryRevision((n) => n + 1);
     } catch (e) {
@@ -283,6 +286,16 @@ export function Buku({ id }: { id: string }) {
                   </div>
                 );
               })}
+            {holder &&
+              sent
+                .filter((s) => !due.some((p) => p.entry === s.entry))
+                .map((s) => (
+                  <div className="glass card ring-card" key={`sent-${s.entry}`} role="status">
+                    <p className="big">{s.who}</p>
+                    <p className="seedline">{t.bukuReplied}</p>
+                    <TxLink hash={s.hash} />
+                  </div>
+                ))}
 
             {cameBack && (
               <div className="glass card ring-card reply-card" role="status">
