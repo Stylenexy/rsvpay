@@ -30,6 +30,29 @@ export class MockAmplopClient implements AmplopClient {
   private wallets = new Map<AccountId, bigint>();
   private clock = 1_793_000_000_000_000_000n;
 
+  /**
+   * The rehearsal opens on a book worth looking at: Maya & Leo (#1) with three gifts, and Sam & Nina (#2),
+   * Sam's own celebration, so Maya's book rings. Every step goes through the same rules as a visitor's.
+   * The methods hold no await, so the book exists before the first screen asks for it.
+   */
+  withSample() {
+    const gift = (who: string, nearMilli: bigint, message: string) => {
+      void this.createAccount(who);
+      void this.give({ tokenId: '1', message, depositYocto: ((NEAR * nearMilli) / 1000n + MOCK_ENTRY_COST * 2n).toString() });
+    };
+    void this.createAccount('maya');
+    const maya = this.active!;
+    void this.openHajatan({ title: 'Maya & Leo', date: '2026-12-12', seedBps: 500, depositYocto: (NEAR / 20n).toString() });
+    gift('sam', 200n, 'To a lifetime of happy days');
+    const sam = this.active!;
+    gift('priya', 500n, 'So happy for you both');
+    gift('daniel', 100n, 'Congratulations, you two');
+    this.active = sam;
+    void this.openHajatan({ title: 'Sam & Nina', date: '2028-11-18', seedBps: 500, depositYocto: (NEAR / 20n).toString() });
+    this.active = maya;
+    return this;
+  }
+
   account() {
     return this.active;
   }
@@ -39,6 +62,13 @@ export class MockAmplopClient implements AmplopClient {
   useAccount(id: AccountId) {
     if (!this.wallets.has(id)) throw new Error(`no key for ${id} on this device`);
     this.active = id;
+  }
+  // rehearsal accounts have no keys to keep
+  exportKey() {
+    return null;
+  }
+  async importKey(): Promise<void> {
+    throw new Error('key does not open this account');
   }
   async createAccount(name: string) {
     const id = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '') || 'tamu'}-${this.wallets.size + 1}.mock`;

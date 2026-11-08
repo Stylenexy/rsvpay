@@ -92,7 +92,7 @@ await page.goto(`${BASE}/?mock#/buka`, { waitUntil: 'load' });
 await page.waitForTimeout(900);
 await page.locator('.open-page input').first().fill('Siti dan Andi');
 await page.locator('.open-page input[type=date]').fill('2026-12-12');
-await page.locator('.open-page input').nth(2).fill('Siti');
+if (await page.locator('.open-page input').count() > 2) await page.locator('.open-page input').nth(2).fill('Siti');
 await page.locator('.open-page button[type=submit]').click();
 await page.waitForTimeout(1600);
 await page.locator('a.brand').click();

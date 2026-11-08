@@ -61,7 +61,7 @@ await page.waitForTimeout(500);
 say((await pill()).x === atRest.x, 'the pill returns when the pointer leaves');
 
 await page.locator('.open-page input[type=date]').fill('2026-12-12');
-await page.locator('.open-page input').nth(2).fill('Siti');
+if (await page.locator('.open-page input').count() > 2) await page.locator('.open-page input').nth(2).fill('Siti');
 await page.locator('.open-page button[type=submit]').click();
 await page.locator('.guide-bubble').waitFor({ timeout: 9000 });
 await page.waitForTimeout(600);

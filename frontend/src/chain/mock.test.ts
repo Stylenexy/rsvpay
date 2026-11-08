@@ -73,3 +73,15 @@ describe('mock follows the contract rules', () => {
     await expect(c.reciprocate({ tokenId: A, entry: 0, toTokenId: B, message: 'lagi', depositYocto: '0' })).rejects.toThrow('already replied');
   });
 });
+
+describe('the rehearsal sample', () => {
+  it('opens on Maya and Leo with three gifts, and the book rings for Sam', async () => {
+    const c = new MockAmplopClient().withSample();
+    const h = (await c.hajatan('1'))!;
+    expect(h.title).toBe('Maya & Leo');
+    expect(h.entries).toBe(3);
+    expect(c.account()).toBe(h.owner_id);
+    expect((await c.pendingReplies('1')).map((p) => p.to_token_id)).toEqual(['2']);
+    expect(await c.hajatan('999')).toBeNull();
+  });
+});
