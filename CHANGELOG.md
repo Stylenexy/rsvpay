@@ -2,6 +2,11 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-10
+
+### Added
+- Live check with the most gas testnet allows: one 1,000 TGas transfer held amplop #36 for 109,561 blocks (18 h 14 min), 11% of the 1,000,000-block lock bound, then it went back to the sender. THREAT-MODEL T4 and SECURITY quote the measured number instead of the estimate (issue #12).
+
 ## 2026-11-09
 
 ### Fixed

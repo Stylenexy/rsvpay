@@ -1,0 +1,14 @@
+Long settle with the most gas testnet allows, on rsvpay-v2.testnet. Read from the chain 2026-11-10.
+Transfer AThDhRPteukzsPt9bAy5tP295KPX9AMCtQzesKpoZkj: nft_transfer_call, 1000 TGas prepaid.
+Sender siti-7to5ms.settle-root-7to5ms.testnet, receiver recv-7to5ms.settle-root-7to5ms.testnet (long-receiver, msg "hold"), amplop #36.
+Sent at block 276777241 (2026-11-08T12:42:53Z).
+The receiver parked 545 times (hop 0 to 544, about 201 blocks each); the last park logged prepaid_tgas=5 used_tgas=4.
+Its last receipt failed "Exceeded the prepaid gas." at block 276886802 (2026-11-09T06:56:29Z).
+The resolver then moved the amplop back: nft_transfer recv-7to5ms... -> siti-7to5ms..., token 36. Transaction result: false.
+Held: 109561 blocks, 18 h 14 min. LOCK_MAX_BLOCKS is 1,000,000, so one transaction can hold 11.0% of the bound.
+Receipts: 1096 in all, 546 on the receiver. Gas burnt in the whole transaction: 1117.5 TGas.
+After: is_locked("36") is false (read at block 276967665), nft_token("36").owner_id is siti-7to5ms.settle-root-7to5ms.testnet.
+The 300 TGas run (long-settle-max-report.txt) held 34986 blocks; the estimate for 1000 TGas was about 119000. Measured is 109561.
+Read with the archival RPC: EXPERIMENTAL_tx_status for the transfer, block headers for the heights and times.
+
+PASS | the amplop went back to the sender and the lock let go after 11% of the bound
