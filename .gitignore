@@ -4,3 +4,5 @@ dist/
 *.log
 .env
 docs/evidence/failed-*.png
+# The pitch video is served from the site (rsvpay.vercel.app/media/), never committed: big files stay out of git.
+frontend/public/media/

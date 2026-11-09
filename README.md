@@ -1,16 +1,65 @@
+<div align="center">
+
+<a href="https://rsvpay.vercel.app"><img src="docs/img/hero.webp" width="100%" alt="A glass envelope rings above the clouds: A gift finds its way back."></a>
+
 # RSVPay
 
 **A wedding gift that remembers, and gives back.**
 
-RSVP is the reply to a wedding invitation; here the reply is a gift, years later. The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attacks](https://img.shields.io/badge/live%20attacks-14%2F14%20refused-2ea44f)
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet)
+**[Try the whole story, about 40 s on testnet](https://rsvpay.vercel.app/#/coba)** · **[Open the site](https://rsvpay.vercel.app)** · **[Watch the 83-second pitch](https://rsvpay.vercel.app/media/rsvpay-pitch.mp4)**
 
-At Indonesian weddings, guests give money in envelopes (*amplop*) and families keep a notebook of who gave what, so they can return the favour at the guest's own celebration years later. The notebook gets lost. RSVPay makes that notebook an NFT that holds its own money and remembers.
+</div>
+
+At Indonesian weddings, guests give cash in envelopes (*amplop*), and families keep a notebook of who gave what, so they can give back at the guest's own celebration years later. **The notebook gets lost. The promise goes with it.** RSVPay turns that notebook into an NFT that holds its own money and remembers. RSVP is the reply to an invitation; here the reply is a gift, years later.
 
 Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHON, November 2026. Testnet only, play money, not audited.
 
-Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games With Real Economies), a separate project with separate code. It is named here because the rules ask each README to name the other.
+## One family's story, in about 40 seconds
+
+One button on the site runs the whole story on the real network: two families, one device, real transactions.
+
+<img src="docs/img/story.webp" width="100%" alt="Six frames: Sam comes to Maya's wedding, Sam gives $100 and $5 stays in his name, two years pass, Maya's envelope rings, the reply lands in Sam's envelope, 39.2 seconds">
+
+1. **Sam comes to Maya's wedding** and gives $100 by scanning a QR. No wallet to install.
+2. **$5 of it stays locked in Sam's name.** Maya chose that share (0 to 10%) when she opened the envelope, and it can never change.
+3. **Two years pass.**
+4. **Sam opens his own celebration, and Maya's envelope rings:** *"Sam once gave $100. $5 was kept for this day. Add $95 and send your reply."*
+5. **One tap** sends the $5 plus Maya's $95 into Sam's envelope, as a new gift linked to the old one.
+6. **39.2 seconds** for the recorded run in the video; four live runs on today's contract took 34.8 s to 41.3 s ([runs](docs/evidence/coba-e2e-runs.txt)).
+
+<table>
+<tr>
+<td width="50%"><img src="docs/img/ring.webp" width="100%" alt="The ring card: An old guest has a happy day, Give back to Sam, then the reply lands"></td>
+<td width="50%"><b>The envelope rings.</b><br><br>Every reply is a gift of its own, with its own share kept, so two families can keep giving back for decades. Saying "later" changes nothing: the share waits.</td>
+</tr>
+<tr>
+<td width="50%"><b>Guests need no wallet.</b><br><br>Scan the QR on the guest table, slide to give, done. The browser makes a testnet account on the way, on a 360 px phone too.</td>
+<td width="50%"><img src="docs/img/guest-phone.webp" width="100%" alt="A phone: Scan. Slide. Done."></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/img/pass-on.webp" width="100%" alt="The envelope moves from Sam to Nina with the money, the book and the promises"></td>
+<td width="50%"><b>The envelope is an NFT.</b><br><br>Pass it on, and the money, the book and the promises move with it. The old holder is locked out from that block on.</td>
+</tr>
+</table>
+
+<div align="center">
+
+<a href="https://rsvpay.vercel.app/media/rsvpay-pitch.mp4"><img src="docs/img/video-poster.webp" width="80%" alt="Watch the 83-second pitch, sound on"></a>
+
+</div>
+
+## Don't take our word for it. Check.
+
+<img src="docs/img/proof.webp" width="100%" alt="Zero access keys, GitHub rebuilds the same hash, 14 live attacks refused, a transfer held open for 34,986 blocks with no coin moved">
+
+| | |
+|---|---|
+| **0 access keys** | Nobody can change the rules, including us. [Check it yourself](#try-it) with one `curl` |
+| **Same hash** | GitHub's Windows machine rebuilds the contract on every push and gets the code hash on chain ([CI](.github/workflows/ci.yml)) |
+| **14 of 14** | Live attacks on the deployed contract, every one refused ([report](docs/evidence/attacks-report.txt), [threat model](docs/THREAT-MODEL.md)) |
+| **Almost six hours** | One transfer held a sale open for 34,986 blocks until its gas ran out. No coin moved ([report](docs/evidence/long-settle-max-report.txt)) |
 
 | | |
 |---|---|
@@ -21,6 +70,10 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 | Tests | 54 Rust, 83 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book. What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
+The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
+
+Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games With Real Economies), a separate project with separate code. It is named here because the rules ask each README to name the other.
+
 ## What it does
 
 1. **A host opens a hajatan** (celebration). The contract mints one NFT, the *amplop*, to the host. The host fixes a *reply seed* of 0–10%, which can never change.
@@ -28,8 +81,6 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Sam gave $500. Seed $25 is ready. Add $475?"* One tap releases the seed plus the top-up into Sam's amplop as a new entry linked to the old one. Saying "later" changes nothing.
 
 Each reply is itself an entry with its own seed, so the chain of giving back can continue between two families for decades.
-
-![The host's book when an old guest hosts: the amplop rings](docs/evidence/5-amplop-rings.png)
 
 Words used below:
 
@@ -239,7 +290,7 @@ There is no `backend/` on purpose; see [Architecture](docs/ARCHITECTURE.md). See
 - Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`, GSAP. App display and body fonts: Zodiak and Satoshi; the landing also loads Figtree and DM Mono from Google Fonts.
 - Tests: `cargo test`, Vitest, `playwright-core` driving an installed Chrome.
 - Testnet RPC: FastNEAR. Accounts: NEAR testnet helper. Hosting: Vercel.
-- AI: code and documentation were written with AI coding assistants (Claude Code, OpenAI Codex), and several AI chat assistants were consulted when choosing the idea. The landing page sky video comes from Google Flow (Veo). Photographs, envelopes, clouds and glass objects were generated with OpenAI image generation. Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
+- AI: code and documentation were written with AI coding assistants (Claude Code, OpenAI Codex), and several AI chat assistants were consulted when choosing the idea. The landing page sky video comes from Google Flow (Veo). Photographs, envelopes, clouds and glass objects were generated with OpenAI image generation. The pitch video's narration is a synthetic voice (a Microsoft neural voice through `edge-tts`), its music is synthesised in code; the screen recordings in it are of the live site. The images in `docs/img/` are frames of that video. Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
 
 ## Team
 

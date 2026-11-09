@@ -18,6 +18,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - THREAT-MODEL's spare-balance figure now names its block and comes from `scripts/spare.mjs`, which reads balance, storage and every amplop at one block: 2.0 NEAR spare on 9 November.
 - The browser scripts run without a Chrome already open and default to the live site (issue #14).
 - A hover label on a control near the top of the window, such as Save my key, was cut off by the window edge. It now opens below the control there.
+- The README opens with the story in pictures: the envelope ringing, the 40-second run in six frames, the ring and the give back, the guest's phone, passing the envelope on, the proof, and the 83-second pitch video. The video is served from the site, not committed. The old full-page screenshot, whose sky stopped one screen down, is gone from the README.
 - The Proof chapter's heading read "Don't trust us. Check.", which can sound like "we are not trustworthy". It is now "Don't take our word for it. Check.", in all six languages.
 
 ### Added
