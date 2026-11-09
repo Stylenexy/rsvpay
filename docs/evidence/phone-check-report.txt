@@ -1,4 +1,4 @@
-Phone check on https://rsvpay.vercel.app, 2026-11-08T19:47:50.216Z
+Phone check on https://rsvpay.vercel.app, 2026-11-09T05:56:22.423Z
 PASS | en 360x640 give: no sideways scroll | 0px
 PASS | en 360x640 give: every text field is 16 px or more, so iPhone does not zoom | 2 fields
 PASS | en 360x640 give: every control is at least 44x44 px | 14 controls
