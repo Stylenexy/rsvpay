@@ -85,14 +85,16 @@ export function TourCard() {
 
 /** A small label above anything marked data-tip. Touch screens never see it; the floating guide covers them. */
 export function PointerTip() {
-  const [tip, setTip] = useState<{ text: string; x: number; y: number } | null>(null);
+  const [tip, setTip] = useState<{ text: string; x: number; y: number; below: boolean } | null>(null);
   useEffect(() => {
     if (!matchMedia('(hover: hover)').matches) return;
     const show = (event: Event) => {
       const target = (event.target as Element | null)?.closest?.('[data-tip]');
       if (!target) return setTip(null);
       const box = target.getBoundingClientRect();
-      setTip({ text: target.getAttribute('data-tip') ?? '', x: Math.min(Math.max(box.left + box.width / 2, 150), innerWidth - 150), y: box.top });
+      // Near the top of the window there is no room above, so the label drops below the control.
+      const below = box.top < 90;
+      setTip({ text: target.getAttribute('data-tip') ?? '', x: Math.min(Math.max(box.left + box.width / 2, 150), innerWidth - 150), y: below ? box.bottom : box.top, below });
     };
     const hide = () => setTip(null);
     document.addEventListener('pointerover', show);
@@ -101,5 +103,5 @@ export function PointerTip() {
     return () => { document.removeEventListener('pointerover', show); document.removeEventListener('focusin', show); window.removeEventListener('scroll', hide); };
   }, []);
   if (!tip) return null;
-  return <div className="pointer-tip" role="tooltip" ref={(el) => { if (el) { el.style.left = `${tip.x}px`; el.style.top = `${tip.y}px`; } }}>{tip.text}</div>;
+  return <div className={tip.below ? 'pointer-tip below' : 'pointer-tip'} role="tooltip" ref={(el) => { if (el) { el.style.left = `${tip.x}px`; el.style.top = `${tip.y}px`; } }}>{tip.text}</div>;
 }

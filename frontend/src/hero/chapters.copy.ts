@@ -163,7 +163,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     proof: {
       kicker: 'For the careful',
-      big: "Don't trust us. Check.",
+      big: "Don't take our word for it. Check.",
       rows: [
         'Keys on the contract. Nobody can change the rules, including us.',
         'Attacks on the live contract refused.',
@@ -204,7 +204,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     proof: {
       kicker: 'Untuk yang teliti',
-      big: 'Jangan percaya kami. Cek sendiri.',
+      big: 'Tak perlu percaya kata kami. Cek sendiri.',
       rows: [
         'Kunci di kontrak. Tidak ada yang bisa mengubah aturannya, termasuk kami.',
         'Serangan ke kontrak yang berjalan ditolak.',
@@ -245,7 +245,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     proof: {
       kicker: '写给谨慎的人',
-      big: '别信我们，自己查。',
+      big: '不必只听我们说，自己查。',
       rows: [
         '合约上的密钥。规则谁也改不了，包括我们。',
         '针对线上合约的攻击全部被拒绝。',
@@ -286,7 +286,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     proof: {
       kicker: '꼼꼼한 분들께',
-      big: '믿지 말고 확인하세요.',
+      big: '우리 말만 믿지 말고 직접 확인하세요.',
       rows: [
         '컨트랙트의 키. 우리를 포함해 아무도 규칙을 바꿀 수 없습니다.',
         '실제 컨트랙트에 대한 공격을 모두 막았습니다.',
@@ -327,7 +327,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     proof: {
       kicker: '慎重な方へ',
-      big: '信じないで、確かめて。',
+      big: '言葉をうのみにせず、確かめて。',
       rows: [
         'コントラクトの鍵。私たちを含め、誰もルールを変えられません。',
         '稼働中のコントラクトへの攻撃をすべて拒否。',
@@ -368,7 +368,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
     },
     proof: {
       kicker: 'Cho người cẩn thận',
-      big: 'Đừng tin chúng tôi. Hãy kiểm tra.',
+      big: 'Đừng chỉ nghe chúng tôi nói. Hãy tự kiểm tra.',
       rows: [
         'Khóa trên hợp đồng. Không ai đổi được luật, kể cả chúng tôi.',
         'Các cuộc tấn công vào hợp đồng đang chạy đều bị từ chối.',

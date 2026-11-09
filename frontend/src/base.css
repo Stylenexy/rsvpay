@@ -315,6 +315,7 @@ h2 { margin: 0; font: 400 25px/1.3 var(--f-disp); letter-spacing: -0.03em; text-
 @media (max-width: 640px) { .tour-card ol { display: none; } .tour-card .guide-panel { gap: 6px; padding: 12px 14px; } }
 @keyframes guide-in { from { opacity: 0; transform: translateY(8px); } }
 .pointer-tip { position: fixed; z-index: 60; max-width: 280px; padding: 6px 12px; border-radius: 10px; background: var(--fg); color: var(--sky0); font: 500 12px/1.35 var(--f-body); text-align: center; transform: translate(-50%, calc(-100% - 10px)); pointer-events: none; }
+.pointer-tip.below { transform: translate(-50%, 10px); }
 @media (prefers-reduced-motion: reduce) { .guide-bubble { animation: none; } .lang-pill { transition: none; } }
 
 /* The couple writes on paper, which rises out of the envelope like the letters on the landing. */

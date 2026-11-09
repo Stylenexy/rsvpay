@@ -17,6 +17,8 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - ARCHITECTURE said accounts come from the public helper; the testnet purse comes first.
 - THREAT-MODEL's spare-balance figure now names its block and comes from `scripts/spare.mjs`, which reads balance, storage and every amplop at one block: 2.0 NEAR spare on 9 November.
 - The browser scripts run without a Chrome already open and default to the live site (issue #14).
+- A hover label on a control near the top of the window, such as Save my key, was cut off by the window edge. It now opens below the control there.
+- The Proof chapter's heading read "Don't trust us. Check.", which can sound like "we are not trustworthy". It is now "Don't take our word for it. Check.", in all six languages.
 
 ### Added
 - CI rebuilds the wasm on Windows and compares it with the code on chain: same hash (issue #15).
