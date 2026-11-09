@@ -64,7 +64,7 @@ Invariants, enforced by the tests in `contracts/src/tests.rs`:
 
 Pages only use the `AmplopClient` interface in `frontend/src/chain/types.ts`. Two clients implement it:
 
-- `near.ts` is the live client. It makes test accounts through the helper, keeps keys in `localStorage`, signs in the browser and polls views every 4 seconds.
+- `near.ts` is the live client. It makes test accounts through the testnet purse (`/api/dana`), or the public helper when the purse says no, keeps keys in `localStorage`, signs in the browser and polls views every 4 seconds.
 - `mock.ts` enforces the same rules in memory, for tests and offline work (`?mock`).
 
 Rupiah is display only (`lib/rupiah.ts`). The contract only knows NEAR.

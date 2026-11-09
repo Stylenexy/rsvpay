@@ -9,6 +9,7 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 | `long-settle-report.txt` | A receiver holds a sale open 404 and 409 blocks: the lock holds, nothing moves | `cd scripts && node long-settle.mjs` |
 | `long-settle-max-report.txt` | The longest hold one 300 TGas transaction can buy: 34,986 blocks | `cd scripts && node long-settle.mjs max` |
 | `scale-report.txt` | `pending_replies` on books of up to 300 gifts, and where the RPC view limit sits | `cd scripts && node scale.mjs` |
+| `spare-balance-report.txt` | Contract balance against storage plus what every amplop holds, read at one block | `cd scripts && REPORT=1 node spare.mjs` |
 | `phone-check-report.txt` | 96 checks on three phone sizes, two languages | `cd frontend && node e2e/hp.e2e.mjs https://rsvpay.vercel.app` |
 | `e2e-report.txt` | Whole story from a local build against the deployed contract, guest on a 360 px touch screen | `cd frontend && node e2e/alur.e2e.mjs` |
 | `coba-e2e-report.txt` | The one-button story on the live site | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |

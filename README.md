@@ -45,7 +45,7 @@ Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the l
 
 The browser requests one throwaway account for Maya from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Maya funds Sam's sub-account from her own test balance. It then opens Maya's wedding, sends Sam's gift, advances the story date by two years and opens Sam's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Sam**.
 
-Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; ten live checks took between 26.9 s and 60.9 s ([runs](docs/evidence/coba-e2e-runs.txt)) including the pause, the slowest just over target, see [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt). Network latency and helper availability affect it.
+Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; four live checks on today's contract took between 34.8 s and 41.3 s including the pause ([runs](docs/evidence/coba-e2e-runs.txt), last run in [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt)). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Sam's opening receipt.
 
@@ -201,9 +201,9 @@ Other measurements:
 | What | Result | When | Source |
 |---|---|---|---|
 | Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
-| New guest gives on the live site, 360 px emulated touch screen, account made on the way | 15.3 s | 7 Nov 2026 | [`guest-check-report.txt`](docs/evidence/guest-check-report.txt) |
+| New guest gives on the live site, 360 px emulated touch screen, account made on the way | 21.3 s | 9 Nov 2026 | [`guest-check-report.txt`](docs/evidence/guest-check-report.txt) |
 | Storage a gift pays for its own entry | about 0.0016 NEAR, depending on the message and the giver's name | 6 Nov 2026 UTC | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
-| Live attack checks passed | 14 of 14 | 7 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
+| Live attack checks passed | 14 of 14 | 9 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
 | Whole story on the live site, two browsers, the guest on a 360 px touch screen | 14 of 14 checks | 9 Nov 2026 | [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
 | A receiver holds a sale open: the amplop stays locked and refuses withdraw, reply and close, then settles | Held 404 and 409 blocks, then 34,986 blocks (5 h 50 min) until one 300 TGas transfer ran out of gas; every check passed | 9 Nov 2026 | [`long-settle-report.txt`](docs/evidence/long-settle-report.txt), [`long-settle-max-report.txt`](docs/evidence/long-settle-max-report.txt) |
 | The ring list of a 300-gift book whose giver holds 100 envelopes | 300 of 300 read in 9.0 s | 9 Nov 2026 | [`scale-report.txt`](docs/evidence/scale-report.txt) |

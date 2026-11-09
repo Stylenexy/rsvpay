@@ -11,6 +11,11 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - New guests from the testnet purse get 2.1 NEAR, so the Rp500.000 and Rp1.000.000 buttons work.
 - The ring list reads a big book in smaller pages when the RPC refuses a heavy one (issue #16).
 - README and THREAT-MODEL T4 said the 1,000,000-block lock bound is about twelve days. At testnet's 0.6-second blocks it is about seven (issue #12).
+- Story times in README and CLAIMS mixed runs on three contracts. They now quote only today's contract: four runs, 34.8 s to 41.3 s, three of them on 9 November with the raw output. Older runs stay in the file, labelled with their contract.
+- The attack report printed an empty gas figure for L14. Rerun on 9 November: 14 of 14, the resolver burnt 4.15 and 3.41 TGas.
+- The guest check and the asset check now write their own reports: the guest's transaction link, and the pages and screen sizes checked. Guest gives in 21.3 s on 9 November, so the claim now says about 20 seconds, not 20 or less.
+- ARCHITECTURE said accounts come from the public helper; the testnet purse comes first.
+- THREAT-MODEL's spare-balance figure now names its block and comes from `scripts/spare.mjs`, which reads balance, storage and every amplop at one block: 2.0 NEAR spare on 9 November.
 - The browser scripts run without a Chrome already open and default to the live site (issue #14).
 
 ### Added

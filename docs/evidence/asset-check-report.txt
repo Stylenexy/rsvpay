@@ -1,3 +1,5 @@
-2026-11-07 Asia/Jakarta, https://rsvpay.vercel.app, rsvpay-v2.testnet
-checked 111 files on https://rsvpay.vercel.app
+2026-11-09 Asia/Jakarta, https://rsvpay.vercel.app
+checked 110 files on https://rsvpay.vercel.app
+pages: / /#/beri/3 /#/buka /#/buku/3 /#/coba
+screens: 1366x768, 360x740, each page scrolled end to end
 PASS | every file answered and every image decoded

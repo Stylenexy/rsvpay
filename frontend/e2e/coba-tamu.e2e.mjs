@@ -1,7 +1,7 @@
 // The judge's first 30 seconds on a phone: home page, "Coba jadi tamu", give into the demo amplop.
 //   node e2e/coba-tamu.e2e.mjs [url]
 // E2E_PARENT works as in alur.e2e.mjs when the testnet helper rate-limits.
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { openBrowser } from './browser.mjs';
 
@@ -43,7 +43,15 @@ await page.mouse.down();
 await page.mouse.move(box.x + 300, box.y + box.height / 2, { steps: 14 });
 await page.mouse.up();
 await page.getByText('Terkirim.').waitFor({ timeout: 45_000 }).catch(async (e) => { await page.screenshot({ path: `${OUT}gagal-tamu.png` }); throw e; });
-console.log(`PASS | guest page, slide to give, sent | ${((Date.now() - t0) / 1000).toFixed(1)} s`);
+const took = `${((Date.now() - t0) / 1000).toFixed(1)} s`;
+const tx = await page.locator('a.txlink').first().getAttribute('href', { timeout: 5000 }).catch(() => null);
+const lines = [
+  `PASS | guest page, slide to give, sent | ${took}`,
+  `${tx ? 'PASS' : 'FAIL'} | the receipt on screen links to the transaction | ${tx ?? 'no link'}`,
+];
+console.log(lines.join('\n'));
+const day = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Jakarta', dateStyle: 'short', timeStyle: 'short' }).format(new Date());
+writeFileSync(`${OUT}guest-check-report.txt`, `${day} Asia/Jakarta, ${URL_BASE}, demo book #${process.env.DEMO ?? '3'}, 360x740 touch screen\n${lines.join('\n')}\n`);
 await page.waitForTimeout(2300);
 await page.screenshot({ path: `${OUT}2-guest-sent.png` });
 await browser.close();

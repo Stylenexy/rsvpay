@@ -1,0 +1,7 @@
+Read 2026-11-09 07:57 Asia/Jakarta from https://archival-rpc.testnet.fastnear.com
+rsvpay-v2.testnet at block 276848214
+account balance        38.1591 NEAR
+storage 876218 bytes  8.7621 NEAR
+owed to 371 amplop       27.3951 NEAR (sum of hajatan(id).balance)
+spare                  2.0018 NEAR
+PASS | the contract holds every amplop's balance plus its storage

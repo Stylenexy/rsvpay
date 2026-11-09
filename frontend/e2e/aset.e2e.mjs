@@ -1,4 +1,6 @@
 // Every page, scrolled end to end: no file of ours may answer 4xx or 5xx, and every image must decode.
+import { writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { openBrowser } from './browser.mjs';
 
 const BASE = process.argv[2] ?? 'http://localhost:5173';
@@ -40,8 +42,17 @@ for (const [width, height] of SIZES) {
 }
 await browser.close();
 
-console.log(`checked ${seen.size} files on ${origin}`);
-for (const line of [...new Set([...broken, ...failed])]) console.log(`FAIL | ${line}`);
 const bad = broken.length + failed.length;
-console.log(bad ? `FAIL | ${bad} problems` : 'PASS | every file answered and every image decoded');
+const lines = [
+  `checked ${seen.size} files on ${origin}`,
+  `pages: ${ROUTES.join(' ')}`,
+  `screens: ${SIZES.map(([w, h]) => `${w}x${h}`).join(', ')}, each page scrolled end to end`,
+  ...[...new Set([...broken, ...failed])].map((line) => `FAIL | ${line}`),
+  bad ? `FAIL | ${bad} problems` : 'PASS | every file answered and every image decoded',
+];
+console.log(lines.join('\n'));
+if (process.env.REPORT) {
+  const day = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Jakarta', dateStyle: 'short' }).format(new Date());
+  writeFileSync(fileURLToPath(new URL('../../docs/evidence/asset-check-report.txt', import.meta.url)), `${day} Asia/Jakarta, ${BASE}\n${lines.join('\n')}\n`);
+}
 process.exit(bad ? 1 : 0);

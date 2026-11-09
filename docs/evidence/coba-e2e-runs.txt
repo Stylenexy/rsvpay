@@ -1,15 +1,70 @@
-Every recorded run of frontend/e2e/coba.e2e.mjs on the live site, including the pause at the reply.
-Taken from the history of coba-e2e-report.txt. Asia/Jakarta time.
+Every recorded run of frontend/e2e/coba.e2e.mjs on the live site, including the pause at the reply. Asia/Jakarta time.
+Runs before 9 November are taken from the history of coba-e2e-report.txt; the 9 November runs are the script's own output, below.
 
-2026-11-05 03.48  27.6 s
-2026-11-05 04.34  29.5 s
-2026-11-05 04.39  29.4 s
-2026-11-05 15.58  60.9 s
-2026-11-06 02.07  28.8 s
-2026-11-06 02.34  28.6 s
-2026-11-06 15.53  37.4 s
-2026-11-06 16.25  45.0 s
-2026-11-07 01.58  26.9 s  (rsvpay.testnet)
-2026-11-07 03.27  34.8 s  (rsvpay-v2.testnet)
+On the contract the site uses today, rsvpay-v2.testnet:
+2026-11-07 03.27  34.8 s
+2026-11-09 06.52  41.3 s
+2026-11-09 06.53  40.9 s
+2026-11-09 06.54  40.3 s
+Four runs, every check passed in each. Fastest 34.8 s, slowest 41.3 s, target 60 s.
 
-Ten runs. Fastest 26.9 s, slowest 60.9 s, target 60 s.
+On earlier contracts, kept for the record. The site left them on 7 November; these times do not describe it today.
+2026-11-05 03.48  27.6 s  amplop-c-mvznhnlx.testnet
+2026-11-05 04.34  29.5 s  amplop-c-mvznhnlx.testnet
+2026-11-05 04.39  29.4 s  amplop-c-mvznhnlx.testnet
+2026-11-05 15.58  60.9 s  amplop-c-mvznhnlx.testnet
+2026-11-06 02.07  28.8 s  amplop-c-mvznhnlx.testnet
+2026-11-06 02.34  28.6 s  amplop-c-mvznhnlx.testnet
+2026-11-06 15.53  37.4 s  amplop-c-mvznhnlx.testnet
+2026-11-06 16.25  45.0 s  amplop-c-mvznhnlx.testnet
+2026-11-07 01.58  26.9 s  rsvpay.testnet
+
+Raw output of the 9 November runs:
+
+Run 1, 2026-11-09 06.52:
+PASS | one account request for both families | 1
+PASS | child-account funding has a real receipt
+PASS | funding, opening, gift and second opening each have a receipt
+PASS | the reply waits for a tap
+PASS | whole story including the pause in 60 seconds | 41.3 s
+PASS | reply has a real receipt
+PASS | no second account request while replying
+PASS | book layout at 1366x768 | {"separated":true,"overflow":0}
+PASS | book layout at 1440x860 | {"separated":true,"overflow":0}
+PASS | book layout at 1920x1080 | {"separated":true,"overflow":0}
+PASS | confirmation explains loss of access
+PASS | old keeper loses controls
+PASS | new keeper can open the inherited book and history
+PASS | no browser errors
+
+Run 2, 2026-11-09 06.53:
+PASS | one account request for both families | 1
+PASS | child-account funding has a real receipt
+PASS | funding, opening, gift and second opening each have a receipt
+PASS | the reply waits for a tap
+PASS | whole story including the pause in 60 seconds | 40.9 s
+PASS | reply has a real receipt
+PASS | no second account request while replying
+PASS | book layout at 1366x768 | {"separated":true,"overflow":0}
+PASS | book layout at 1440x860 | {"separated":true,"overflow":0}
+PASS | book layout at 1920x1080 | {"separated":true,"overflow":0}
+PASS | confirmation explains loss of access
+PASS | old keeper loses controls
+PASS | new keeper can open the inherited book and history
+PASS | no browser errors
+
+Run 3, 2026-11-09 06.54:
+PASS | one account request for both families | 1
+PASS | child-account funding has a real receipt
+PASS | funding, opening, gift and second opening each have a receipt
+PASS | the reply waits for a tap
+PASS | whole story including the pause in 60 seconds | 40.3 s
+PASS | reply has a real receipt
+PASS | no second account request while replying
+PASS | book layout at 1366x768 | {"separated":true,"overflow":0}
+PASS | book layout at 1440x860 | {"separated":true,"overflow":0}
+PASS | book layout at 1920x1080 | {"separated":true,"overflow":0}
+PASS | confirmation explains loss of access
+PASS | old keeper loses controls
+PASS | new keeper can open the inherited book and history
+PASS | no browser errors
