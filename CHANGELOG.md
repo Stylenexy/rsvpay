@@ -7,6 +7,8 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ### Added
 - A randomized test of the money rules: 120 random sequences of gives, replies, withdraws (one payout in four fails), transfers, closes and new amplops across five people. After every step a shadow ledger must match every amplop to the yoctoNEAR, and nothing may appear or disappear. A 300-sequence run passed every check on the builder's laptop. `cargo test` now shows 55.
 - CI badge in the README.
+- Workflow *Sandbox*: on every push a local NEAR chain starts in CI, the wasm built from that commit is deployed and its keys deleted (`scripts/sandbox.mjs`), and the testnet attack scripts run against it unchanged. First green run at `708c4d5`: 14 attacks, 21 checks of a held transfer, 6 transfer and payout lines. The scripts now sign before sending, so the transaction hash is known on any node.
+- *From zero* also runs `transfer-checks.mjs`; run by hand on 11 November at `708c4d5`, every command passed.
 - Five on-chain checks of paths a unit test cannot reach (`scripts/transfer-checks.mjs`, report in `docs/evidence/`): a stranger cannot move an envelope (P1), a refused `nft_transfer_call` leaves no lock (P2), a transfer needs its one yoctoNEAR (P3), the resolver burnt 3.31 of its fixed 5 TGas on its heaviest path (P4), and a payout made to fail on chain went back into the envelope to the yoctoNEAR (P5). Threat model row T22.
 - Threat model, not defended: plain `nft_transfer` is not stopped by the lock, the money goes wherever the token goes, a kept share is not proof of outside guests, and envelopes sent to a guest can crowd the ring. Found in the final audit on 11 November.
 

@@ -1,0 +1,60 @@
+Attacks on a local chain, GitHub Actions workflow "Sandbox"
+Run 42897284797 on commit 708c4d5, 2026-11-11 03.38 to 03.51 Asia/Jakarta: https://github.com/Stylenexy/rsvpay/actions/runs/42897284797
+A fresh GitHub Linux machine built the contract from that commit, started near-sandbox, deployed the wasm, called `new`,
+deleted every access key (scripts/sandbox.mjs), then ran scripts/attacks.mjs, scripts/long-settle.mjs and
+scripts/transfer-checks.mjs unchanged. No testnet, no faucet, no secret. Lines below are the scripts' own output.
+The code hash differs from the one on testnet because this is the Linux build of the same source (see wasm-build-check.txt).
+
+near-sandbox 2.14.0, protocol 88, chain test-chain-HEqnO, block 0
+contract      rsvpay.test.near on http://127.0.0.1:3030
+wasm          ../contracts/target/wasm32-unknown-unknown/release/amplop_balas.wasm (499524 bytes)
+code hash     46iAn2psWYZqcmnZQXC7Vrsg2xq8wrxxC18fJbifT3FE on the local chain, 46iAn2psWYZqcmnZQXC7Vrsg2xq8wrxxC18fJbifT3FE from the file
+access keys   0
+PASS | rsvpay.test.near holds this commit's wasm and has zero access keys
+PASS | L1 contract has zero access keys: no admin, cannot be changed | 0 keys
+PASS | L2 stranger withdraws from someone else's amplop | refused: Smart contract panicked: only the current holder of the amplop can do this
+PASS | L3 forged failed-payout callback to inflate the balance | refused: Smart contract panicked: Method on_withdraw_done is private
+PASS | L4 forged transfer resolver to take the amplop | refused: Smart contract panicked: Method nft_resolve_transfer is private
+PASS | L5 1 yocto gift that cannot pay its storage | refused: Smart contract panicked: deposit must cover storage and leave a gift
+PASS | L6 host redirects a guest's seed into another person's hajatan | refused: Smart contract panicked: reply must go to a hajatan held by the original giver
+PASS | L7 amplop rings only for the original giver | to #3
+PASS | L8 reply twice from the same seed | refused: Smart contract panicked: this gift was already replied to
+PASS | L9 old owner withdraws after selling the amplop | refused: Smart contract panicked: only the current holder of the amplop can do this
+PASS | L10 new holder withdraws free money, guest seeds stay locked | seed 9937000000000000000000
+PASS | L11 withdraw seeds after free money is gone | refused: Smart contract panicked: nothing to withdraw
+PASS | L12 give into a closed hajatan | refused: Smart contract panicked: this hajatan is not accepting gifts
+PASS | L13 host replies a guest's seed into a decoy mid-transfer | refused: Smart contract panicked: the giver's hajatan is mid-transfer, try after it settles
+PASS | L14 the resolver settles a refused transfer on its fixed gas and releases the lock | contract receipts burnt 3.92, 3.19 TGas
+Receiver recv-b5nr9a.test.near runs long-receiver (93976 bytes). Sender siti-b5nr9a.test.near. Contract rsvpay.test.near. Prepaid gas per transfer 300 TGas.
+N=250 back: amplop #8, transfer 2QKc84DLpBbH3UvPAJfYEDeAJEMjG3Tz3E6xDTpHRogx, sent near block 217
+PASS | N=250 back: is_locked is true while the receiver holds
+PASS | N=250 back: the receiver owns the amplop on paper during the hold | recv-b5nr9a.test.near
+PASS | N=250 back: receiver's withdraw during the hold is refused "amplop is mid-transfer"
+PASS | N=250 back: receiver's reciprocate during the hold is refused "amplop is mid-transfer"
+PASS | N=250 back: receiver's set_open during the hold is refused "amplop is mid-transfer"
+PASS | N=250 back: sender's withdraw during the hold is refused, it is not the holder now
+PASS | N=250 back: still locked 405 blocks after sending | last locked sample at block 622
+PASS | N=250 back: the resolver ran and is_locked is false again | at block 629 (+412)
+N=250 back: receiver answered true after 2 yield link(s); gas left 290.1 TGas at the start, 286.8 TGas at the last link; total gas burnt 12.8 TGas
+PASS | N=250 back: the amplop ends with the sender, as NEP-171 says when the receiver answers true or fails | siti-b5nr9a.test.near
+PASS | N=250 back: no coin moved while it was held | balance 60870000000000000000000, kept 924000000000000000000
+N=400 keep: amplop #9, transfer Hs9oEt5PRcSbkyFEHnP7J1cW3jTEYeGhCA2XYnUMwzaK, sent near block 642
+PASS | N=400 keep: is_locked is true while the receiver holds
+PASS | N=400 keep: the receiver owns the amplop on paper during the hold | recv-b5nr9a.test.near
+PASS | N=400 keep: receiver's withdraw during the hold is refused "amplop is mid-transfer"
+PASS | N=400 keep: receiver's reciprocate during the hold is refused "amplop is mid-transfer"
+PASS | N=400 keep: receiver's set_open during the hold is refused "amplop is mid-transfer"
+PASS | N=400 keep: sender's withdraw during the hold is refused, it is not the holder now
+PASS | N=400 keep: still locked 405 blocks after sending | last locked sample at block 1047
+PASS | N=400 keep: the resolver ran and is_locked is false again | at block 1054 (+412)
+N=400 keep: receiver answered false after 2 yield link(s); gas left 290.0 TGas at the start, 286.7 TGas at the last link; total gas burnt 11.7 TGas
+PASS | N=400 keep: the amplop ends with the receiver, which kept it | recv-b5nr9a.test.near
+PASS | N=400 keep: no coin moved while it was held | balance 62450000000000000000000, kept 924000000000000000000
+PASS | N=400 keep: after it settles the new holder can withdraw, so the lock let go
+PASS | every check
+PASS | P1 a stranger moves someone else's amplop with nft_transfer | refused: Smart contract panicked: Approval extension is disabled
+PASS | P2 a stranger's nft_transfer_call is refused and leaves no lock behind | refused: Smart contract panicked: Approval extension is disabled
+PASS | P3 a transfer without the one yoctoNEAR that proves a full-access key | refused: Smart contract panicked: Requires attached deposit of exactly 1 yoctoNEAR
+PASS | P4 a refused transfer between two 64-character names comes back whole and unlocks | owner c2e3e1db…, balance 90250000000000000000000
+PASS | P4 the resolver's heaviest path fits in its fixed 5 TGas | contract receipts burnt 3.87, 3.11 TGas; resolver 3.11 of 5
+PASS | P5 a payout that fails on chain goes back into the amplop, to the yoctoNEAR | withdraw 9JtmB4oXcUFWkHZzbnzxPgUBFvCGg6eiYfADsvz5biyu; free 88627500000000000000000 before, 88627500000000000000000 after the refund; attempt 1

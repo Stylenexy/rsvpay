@@ -6,7 +6,7 @@
 
 **A wedding gift that remembers, and gives back.**
 
-[![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attacks](https://img.shields.io/badge/live%20attacks-14%2F14%20refused-2ea44f)
+[![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![Sandbox](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attacks](https://img.shields.io/badge/live%20attacks-14%2F14%20refused-2ea44f)
 
 **[Try the whole story, about 40 s on testnet](https://rsvpay.vercel.app/#/coba)** · **[Open the site](https://rsvpay.vercel.app)** · **[Watch the 83-second pitch](https://rsvpay.vercel.app/media/rsvpay-pitch.mp4)**
 
@@ -60,7 +60,7 @@ The frames above are from the run recorded on 9 November. Its own screen says 37
 |---|---|
 | **0 access keys** | Nobody can change the rules, including us. [Check it yourself](#try-it) with one `curl` |
 | **Same hash** | GitHub's Windows machine rebuilds the contract on every push and gets the code hash on chain ([CI](.github/workflows/ci.yml)) |
-| **14 of 14** | Live attacks on the deployed contract, every one refused ([report](docs/evidence/attacks-report.txt), [threat model](docs/THREAT-MODEL.md)) |
+| **14 of 14** | Live attacks on the deployed contract, every one refused ([report](docs/evidence/attacks-report.txt), [threat model](docs/THREAT-MODEL.md)). The same script runs again on every push against that commit's wasm on a local chain ([Sandbox](.github/workflows/sandbox.yml)) |
 | **Almost six hours** | One transfer held a sale open for 34,986 blocks until its gas ran out. No coin moved ([report](docs/evidence/long-settle-max-report.txt)) |
 
 | | |
@@ -163,7 +163,9 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 
 Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_NASM=1` before cargo.
 
-The same commands also run on a fresh GitHub machine in the [From zero](.github/workflows/from-zero.yml) workflow, started by hand because it uses testnet.
+The same commands also run on a fresh GitHub machine in the [From zero](.github/workflows/from-zero.yml) workflow, started by hand because it uses testnet; the last run, on 11 November at commit `708c4d5`, passed every command.
+
+None of the on-chain checks needs testnet or our deployment. On every push the [Sandbox](.github/workflows/sandbox.yml) workflow starts a local NEAR chain (near-sandbox 2.14.0, the node near-workspaces drives), deploys the wasm built from that commit, deletes its access keys as on testnet, and runs `attacks.mjs`, `long-settle.mjs` and `transfer-checks.mjs` against it unchanged: 14 attacks, 21 checks of a transfer held open, 6 lines of transfer and payout paths ([first run](docs/evidence/sandbox-run.txt)). To do the same on Linux or macOS, start `near-sandbox`, then `node scripts/sandbox.mjs <validator_key.json> <amplop_balas.wasm> root.json` and pass `NEAR_RPC` and `ATTACK_ROOT=root.json` to the scripts.
 
 ```bash
 cd contracts && cargo test
