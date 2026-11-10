@@ -60,6 +60,8 @@ Invariants, enforced by the tests in `contracts/src/tests.rs`:
 5. One gift can be replied to once, and only into a hajatan held by its original giver.
 6. A sale in progress (`nft_transfer_call`) blocks `withdraw`, `reciprocate` and `set_open` until the resolver runs.
 
+Besides the 54 unit tests, `random_sequences_never_lose_or_make_a_yoctonear` runs 120 random sequences of gives, replies, withdraws (some payouts fail), transfers, closes and new amplops. After every step it checks invariants 1, 2, 4 and 5 for every amplop against a shadow ledger kept outside the contract, and that every yoctoNEAR that came in is held, paid out, or kept for storage.
+
 ## Frontend
 
 Pages only use the `AmplopClient` interface in `frontend/src/chain/types.ts`. Two clients implement it:

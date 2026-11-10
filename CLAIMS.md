@@ -18,7 +18,8 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | A gift can be replied to only once. | Test `a_gift_can_be_replied_only_once`; step A09; attack L8. | same |
 | A host keeps back at most 10%, set once. | Test `seed_above_ten_percent_rejected`; contract panic `seed_bps must be 0..=1000 (max 10%)`. | same |
 | No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. | same |
-| 54 contract tests pass. | Fresh `cargo test` on 7 November: 54 passed, 0 failed. CI runs the same command on Linux on every push to `master`. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
+| Random use never makes or loses a yoctoNEAR. | Test `random_sequences_never_lose_or_make_a_yoctonear`: 120 fixed-seed sequences of 120 random steps (give, reply, withdraw with one payout in four failing, transfer, close, reopen, new amplop) across five people. After every step a shadow ledger kept outside the contract matches every amplop's balance exactly, invariants 1, 2, 4 and 5 of ARCHITECTURE hold, and every yoctoNEAR in is held, paid out, or kept for storage. A 300-sequence run (36,000 steps) passed every ledger check on 11 November. | `cd contracts && cargo test random_sequences` |
+| 54 contract tests pass. | Fresh `cargo test` on 7 November: 54 passed, 0 failed. Since 11 November `cargo test` shows 55: the 54 and the randomized test below. CI runs the same command on Linux on every push to `master`. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
 
 ## On the site
 

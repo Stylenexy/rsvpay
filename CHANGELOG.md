@@ -2,6 +2,15 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-11
+
+### Added
+- A randomized test of the money rules: 120 random sequences of gives, replies, withdraws (one payout in four fails), transfers, closes and new amplops across five people. After every step a shadow ledger must match every amplop to the yoctoNEAR, and nothing may appear or disappear. A 300-sequence run passed every check. `cargo test` now shows 55.
+- CI badge in the README.
+
+### Fixed
+- A test comment pointed to a SPEC file that does not exist; it now points to the invariants in ARCHITECTURE.
+
 ## 2026-11-10
 
 ### Added

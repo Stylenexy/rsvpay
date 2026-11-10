@@ -49,7 +49,7 @@ fn entry(c: &Contract, token: &TokenId, index: u32) -> Entry {
     c.entries(token.clone(), Some(index), Some(1)).pop().unwrap().entry
 }
 
-/// Invariants 1 and 2 of SPEC §4.
+/// Invariants 1 and 2 of docs/ARCHITECTURE.md (Invariants).
 fn check_invariants(c: &Contract, token: &TokenId) {
     let v = c.hajatan(token.clone()).unwrap();
     assert_eq!(v.balance.0, v.free.0 + v.seed_locked.0, "balance = free + seed_locked");
@@ -847,4 +847,217 @@ fn audit_plain_nft_transfer_is_not_gated_by_the_lock() {
     assert!(c.nft_resolve_transfer(siti(), buyer(), a.clone(), None));
     assert_eq!(c.hajatan(a.clone()).unwrap().owner_id, stranger());
     assert!(!c.is_locked(a));
+}
+
+// ---------- randomized sequences ----------
+// Random give / reply / withdraw (paid or failed) / transfer / close / reopen / new amplop
+// steps across five people. A shadow ledger kept outside the contract must match every
+// amplop's balance to the yoctoNEAR after every step, invariants 1, 2, 4 and 5 of
+// docs/ARCHITECTURE.md must hold for every amplop, and every yoctoNEAR that came in must be
+// held, paid out, or kept for storage. 120 sequences of 120 steps with fixed seeds, so a
+// failure prints its seed and step and reruns the same way.
+
+struct Rng(u64);
+impl Rng {
+    fn next(&mut self) -> u64 {
+        // xorshift64*
+        self.0 ^= self.0 >> 12;
+        self.0 ^= self.0 << 25;
+        self.0 ^= self.0 >> 27;
+        self.0.wrapping_mul(0x2545_F491_4F6C_DD1D)
+    }
+    fn below(&mut self, n: u64) -> u64 {
+        self.next() % n
+    }
+}
+
+#[derive(Default)]
+struct Ledger {
+    tokens: Vec<TokenId>,
+    owner: std::collections::HashMap<TokenId, AccountId>,
+    open: std::collections::HashMap<TokenId, bool>,
+    balance: std::collections::HashMap<TokenId, u128>,
+    came_in: u128,
+    paid_out: u128,
+    kept: u128,
+}
+
+fn person(i: u64) -> AccountId {
+    accounts(1 + (i % 5) as usize)
+}
+
+fn unreplied_seeds(c: &Contract, t: &TokenId) -> u128 {
+    c.entries(t.clone(), None, Some(1000))
+        .iter()
+        .filter(|e| e.entry.replied.is_none())
+        .map(|e| e.entry.seed.0)
+        .sum()
+}
+
+fn ledger_matches(c: &Contract, l: &Ledger, at: &str) {
+    let mut held = 0u128;
+    for t in &l.tokens {
+        check_invariants(c, t);
+        let v = c.hajatan(t.clone()).unwrap();
+        assert_eq!(v.balance.0, l.balance[t], "{at}: balance of #{t} differs from the shadow ledger");
+        assert_eq!(&v.owner_id, &l.owner[t], "{at}: owner of #{t}");
+        assert_eq!(v.open, l.open[t], "{at}: open flag of #{t}");
+        for e in c.entries(t.clone(), None, Some(1000)) {
+            match &e.entry.replied {
+                None => assert_eq!(
+                    e.entry.seed.0,
+                    e.entry.amount.0 * v.seed_bps as u128 / 10_000,
+                    "{at}: unreplied gift #{t}:{} keeps exactly seed_bps of itself",
+                    e.index
+                ),
+                Some(r) => {
+                    assert_eq!(e.entry.seed.0, 0, "{at}: replied gift #{t}:{} has no seed left", e.index);
+                    let link = entry(c, &r.token_id, r.entry).reply_to.expect("the reply points back");
+                    assert_eq!((link.token_id, link.entry), (t.clone(), e.index), "{at}: reply link");
+                }
+            }
+        }
+        held += v.balance.0;
+    }
+    assert_eq!(l.came_in, held + l.paid_out + l.kept, "{at}: a yoctoNEAR appeared or disappeared");
+}
+
+fn open_one(c: &mut Contract, l: &mut Ledger, host: AccountId, bps: u16) {
+    let t = open(c, host.clone(), bps);
+    let b = c.hajatan(t.clone()).unwrap().balance.0;
+    l.came_in += 50 * MILLI_NEAR;
+    l.kept += 50 * MILLI_NEAR - b;
+    l.owner.insert(t.clone(), host);
+    l.open.insert(t.clone(), true);
+    l.balance.insert(t.clone(), b);
+    l.tokens.push(t);
+}
+
+// One sequence on its own thread, so it starts from an empty mocked chain.
+fn one_sequence(seed: u64) -> [u32; 5] {
+    let (mut gives, mut replies, mut withdraws, mut refunds, mut transfers) = (0, 0, 0, 0, 0);
+    {
+        let mut r = Rng(seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1);
+        let mut c = fresh();
+        let mut l = Ledger::default();
+        for i in 0..3 {
+            open_one(&mut c, &mut l, person(i), (r.below(11) * 100) as u16);
+        }
+        for step in 0..120 {
+            let at = format!("seed {seed} step {step}");
+            let t = l.tokens[r.below(l.tokens.len() as u64) as usize].clone();
+            let holder = l.owner[&t].clone();
+            match r.below(10) {
+                // give, 10 milliNEAR to 3 NEAR
+                0..=3 if l.open[&t] => {
+                    let deposit = 10 * MILLI_NEAR + r.below(3000) as u128 * MILLI_NEAR;
+                    let idx = give(&mut c, &t, person(r.next()), deposit);
+                    let amount = entry(&c, &t, idx).amount.0;
+                    let storage = deposit - amount;
+                    assert!(storage > 0 && storage < 5 * MILLI_NEAR, "{at}: storage {storage} for one gift");
+                    l.came_in += deposit;
+                    l.kept += storage;
+                    *l.balance.get_mut(&t).unwrap() += amount;
+                    gives += 1;
+                }
+                // the holder replies to an unreplied gift whose giver now holds an open amplop
+                4..=5 => {
+                    let pending: Vec<(u32, TokenId, u128)> = c
+                        .entries(t.clone(), None, Some(1000))
+                        .into_iter()
+                        .filter(|e| e.entry.replied.is_none())
+                        .filter_map(|e| {
+                            l.tokens
+                                .iter()
+                                .find(|u| **u != t && l.open[*u] && l.owner[*u] == e.entry.giver)
+                                .map(|u| (e.index, u.clone(), e.entry.seed.0))
+                        })
+                        .collect();
+                    if pending.is_empty() {
+                        continue;
+                    }
+                    let (idx, to, seed) = pending[r.below(pending.len() as u64) as usize].clone();
+                    let deposit = 5 * MILLI_NEAR + r.below(500) as u128 * MILLI_NEAR;
+                    testing_env!(ctx(holder.clone(), deposit).build());
+                    let j = c.reciprocate(t.clone(), idx, to.clone(), String::new());
+                    let reply = entry(&c, &to, j);
+                    assert_eq!(reply.giver, holder, "{at}: the reply is from the holder");
+                    assert_eq!(l.owner[&to], entry(&c, &t, idx).giver, "{at}: the reply lands with the giver");
+                    assert!(reply.amount.0 >= seed, "{at}: the seed reaches the giver whole");
+                    l.came_in += deposit;
+                    l.kept += deposit + seed - reply.amount.0;
+                    *l.balance.get_mut(&t).unwrap() -= seed;
+                    *l.balance.get_mut(&to).unwrap() += reply.amount.0;
+                    replies += 1;
+                }
+                // withdraw all free money; one payout in four fails and comes back into the amplop
+                6 => {
+                    let free = l.balance[&t] - unreplied_seeds(&c, &t);
+                    if free == 0 {
+                        continue;
+                    }
+                    testing_env!(ctx(holder.clone(), 0).build());
+                    let _ = c.withdraw(t.clone());
+                    assert_eq!(c.hajatan(t.clone()).unwrap().free.0, 0, "{at}: withdraw leaves no free money");
+                    let paid = r.below(4) != 0;
+                    testing_env!(ctx(accounts(0), 0).build());
+                    c.apply_withdraw_result(&t, free, paid);
+                    if paid {
+                        l.paid_out += free;
+                        *l.balance.get_mut(&t).unwrap() -= free;
+                        withdraws += 1;
+                    } else {
+                        refunds += 1;
+                    }
+                }
+                // sell or pass the amplop on: money, seeds and entries go with it
+                7 => {
+                    let to = person(r.next());
+                    if to == holder {
+                        continue;
+                    }
+                    testing_env!(ctx(holder.clone(), 1).build());
+                    c.nft_transfer(to.clone(), t.clone(), None, None);
+                    l.came_in += 1;
+                    l.kept += 1;
+                    l.owner.insert(t.clone(), to);
+                    transfers += 1;
+                }
+                // close or reopen
+                8 => {
+                    let now = !l.open[&t];
+                    testing_env!(ctx(holder.clone(), 0).build());
+                    c.set_open(t.clone(), now);
+                    l.open.insert(t.clone(), now);
+                }
+                // someone opens a new amplop, so old gifts start to ring
+                9 if l.tokens.len() < 8 => {
+                    open_one(&mut c, &mut l, person(r.next()), (r.below(11) * 100) as u16);
+                }
+                _ => continue,
+            }
+            ledger_matches(&c, &l, &at);
+        }
+    }
+    [gives, replies, withdraws, refunds, transfers]
+}
+
+#[test]
+fn random_sequences_never_lose_or_make_a_yoctonear() {
+    let mut n = [0u32; 5];
+    for seed in 1..=120u64 {
+        let got = std::thread::spawn(move || one_sequence(seed))
+            .join()
+            .unwrap_or_else(|e| std::panic::resume_unwind(e));
+        for k in 0..5 {
+            n[k] += got[k];
+        }
+    }
+    let [gives, replies, withdraws, refunds, transfers] = n;
+    eprintln!("random sequences: gives {gives} replies {replies} withdraws {withdraws} refunds {refunds} transfers {transfers}");
+    // the sequences really walk every path
+    assert!(
+        gives > 3_000 && replies > 1_000 && withdraws > 500 && refunds > 150 && transfers > 800,
+        "gives {gives} replies {replies} withdraws {withdraws} refunds {refunds} transfers {transfers}"
+    );
 }
