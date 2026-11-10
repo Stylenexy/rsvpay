@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { MockAmplopClient } from './mock';
 import { RECORDED, replyDeposit, replyStory, startStory, type StoryMark } from './story';
-import { REPLY_MARGIN_YOCTO, chainRp, rupiahToYocto } from '../lib/rupiah';
+import { REPLY_MARGIN_YOCTO, STORAGE_BYTE_YOCTO, chainRp, replyStorageYocto, rupiahToYocto } from '../lib/rupiah';
 import { readFileSync } from 'node:fs';
 
 describe('the story stops for the person, with one public account request', () => {
@@ -46,13 +46,23 @@ describe('the story stops for the person, with one public account request', () =
   });
 
   it('attaches the top-up and storage margin, and uses only recorded hashes from the evidence file', () => {
-    expect(BigInt(replyDeposit({ amount: '100', seed: '5' }))).toBe(95n + REPLY_MARGIN_YOCTO);
-    // a $100 gift carries ~$0.75 of storage leftover; the reply must still land as $100, not $101
-    const amount = rupiahToYocto(100_750);
+    // the reply measured on testnet on 11 November 2026: 210 bytes of storage (docs/evidence/reply-amount-check.txt)
+    const about = { from: '372', to: '373', caller: 'maya-4aaqqgm.rsvpay-dana-3ddy.testnet', message: 'Your turn to celebrate, Sam. Wishing you happiness.' };
+    expect(about.caller.length).toBe(37);
+    expect(new TextEncoder().encode(about.message).length).toBe(51);
+    // the entry number has one digit there and two are assumed, so the estimate is one byte above the 210 measured
+    expect(replyStorageYocto(about)).toBe(211n * STORAGE_BYTE_YOCTO);
+    expect(BigInt(replyDeposit({ amount: '100', seed: '5' }, about))).toBe(95n + replyStorageYocto(about) + REPLY_MARGIN_YOCTO);
+    // a $100 gift carries ~$0.60 of storage leftover; the reply must land as $100: not $99 (storage ate it), not $101
+    const amount = rupiahToYocto(100_600);
     const seed = (amount * 500n) / 10_000n;
-    const landed = seed + BigInt(replyDeposit({ amount: amount.toString(), seed: seed.toString() })) - REPLY_MARGIN_YOCTO / 2n;
+    const landed = seed + BigInt(replyDeposit({ amount: amount.toString(), seed: seed.toString() }, about)) - 210n * STORAGE_BYTE_YOCTO;
     expect(chainRp(landed)).toBe(chainRp(amount));
     expect(chainRp(amount) - chainRp(seed)).toBe(95_000);
+    // a long wish in a three-byte script costs more storage and still lands the same amount
+    const long = { ...about, message: '\u795d'.repeat(280) };
+    const cost = replyStorageYocto(long) - STORAGE_BYTE_YOCTO;
+    expect(chainRp(seed + BigInt(replyDeposit({ amount: amount.toString(), seed: seed.toString() }, long)) - cost)).toBe(chainRp(amount));
     const source = readFileSync(new URL('../../../docs/evidence/measured-testnet.txt', import.meta.url), 'utf8');
     for (const r of RECORDED) expect(source).toContain(r.hash);
   });

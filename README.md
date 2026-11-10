@@ -27,7 +27,9 @@ One button on the site runs the whole story on the real network: two families, o
 3. **Two years pass.**
 4. **Sam opens his own celebration, and Maya's envelope rings:** *"Sam once gave $100. $5 was kept for this day. Add $95 and send your reply."*
 5. **One tap** sends the $5 plus Maya's $95 into Sam's envelope, as a new gift linked to the old one.
-6. **39.2 seconds** for the recorded run in the video ([its log](docs/evidence/video-run-log.txt)); four live runs on today's contract took 34.8 s to 41.3 s ([runs](docs/evidence/coba-e2e-runs.txt)).
+6. **39.2 seconds** for the recorded run in the video ([its log](docs/evidence/video-run-log.txt)); five live runs on today's contract took 34.8 s to 41.8 s ([runs](docs/evidence/coba-e2e-runs.txt)).
+
+The frames above are from the run recorded on 9 November. Its own screen says 37.5 s because the page's timer starts once the page has loaded; 39.2 s counts from opening the address. That run's reply also landed one dollar short, "Sam received $99": the reply's storage, 210 bytes, was ten bytes more than the page attached for it. Since 11 November the page counts that storage exactly and the reply lands as the $100 the ring named ([check](docs/evidence/reply-amount-check.txt)). The video still shows the 9 November run.
 
 <table>
 <tr>
@@ -67,7 +69,7 @@ One button on the site runs the whole story on the real network: two families, o
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
-| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 84 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book, and six on-chain checks of the transfer and payout paths a unit test cannot reach ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 84 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book, and five on-chain checks of the transfer and payout paths a unit test cannot reach ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
@@ -96,7 +98,7 @@ Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the l
 
 The browser requests one throwaway account for Maya from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Maya funds Sam's sub-account from her own test balance. It then opens Maya's wedding, sends Sam's gift, advances the story date by two years and opens Sam's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Sam**.
 
-Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; four live checks on today's contract took between 34.8 s and 41.3 s including the pause ([runs](docs/evidence/coba-e2e-runs.txt), last run in [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt)). Network latency and helper availability affect it.
+Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; five live checks on today's contract took between 34.8 s and 41.8 s including the pause ([runs](docs/evidence/coba-e2e-runs.txt), last run in [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt)). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Sam's opening receipt.
 
@@ -154,7 +156,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 
 - **A contract can give up every key.** The account behind this contract has none, so the rules cannot change. That is what makes a 20-year promise believable.
 - **Whoever adds data pays for its storage.** Each gift covers the storage of its own entry, so a long guest list does not fall on the host, and spam pays for itself.
-- **Accounts have names.** A guest is `budi-….testnet`, not a hex string, which matters when a family reads its own book.
+- **Accounts have names.** A guest's account starts with the name they typed, like `maya-4aaqqgm.….testnet`, not a hex string, which matters when a family reads its own book.
 - **The missing pieces are native.** Google login (NEAR Auth) and sponsored gas (NEP-366) are the next steps on the [roadmap](docs/ROADMAP.md), not add-ons from elsewhere.
 
 ## Run it from zero

@@ -7,7 +7,7 @@
 // The public helper rate-limits by IP. If it refuses, set ATTACK_ROOT to a JSON file holding
 // { accountId, secret } of a testnet account with about 4 NEAR, and the accounts start under it.
 import fs from "node:fs";
-import { Account, JsonRpcProvider, KeyPair, actions as actionCreators, nearToYocto, teraToGas } from "near-api-js";
+import { Account, JsonRpcProvider, KeyPair, actions as actionCreators, baseEncode, nearToYocto, teraToGas } from "near-api-js";
 
 const RPC = process.env.NEAR_RPC ?? "https://test.rpc.fastnear.com";
 const HELPER = "https://helper.nearprotocol.com/account";
@@ -86,6 +86,14 @@ async function sub(parent, name, near) {
 }
 const call = (acc, methodName, args, deposit = 0n) =>
   acc.callFunction({ contractId: CONTRACT, methodName, args, gas: teraToGas("100"), deposit, waitUntil: "FINAL" });
+/** Signs first, so the hash is known before sending: a node's answer at INCLUDED does not always carry it. */
+async function sendIncluded(acc, receiverId, actionList) {
+  const signer = acc.getSigner();
+  const tx = await acc.createTransaction({ receiverId, actions: actionList, publicKey: await signer.getPublicKey() });
+  const { txHash, signedTransaction } = await signer.signTransaction(tx);
+  await provider.sendTransactionUntil(signedTransaction, "INCLUDED");
+  return baseEncode(txHash);
+}
 async function refusedWith(acc, methodName, args, mustContain) {
   try {
     await call(acc, methodName, args);
@@ -113,13 +121,9 @@ async function scenario(blocks, mode) {
   await call(siti, "give", { token_id: token, message: "a gift so there is money to steal" }, nearToYocto("0.02"));
   const before = await view("hajatan", { token_id: token });
 
-  const sent = await siti.signAndSendTransaction({
-    receiverId: CONTRACT,
-    actions: [actionCreators.functionCall("nft_transfer_call", { receiver_id: recv.accountId, token_id: token, msg: `${blocks}:${mode}` }, TX_GAS, 1n)],
-    waitUntil: "INCLUDED",
-    throwOnFailure: false,
-  });
-  const hash = sent.transaction?.hash ?? sent.transaction_outcome?.id;
+  const hash = await sendIncluded(siti, CONTRACT, [
+    actionCreators.functionCall("nft_transfer_call", { receiver_id: recv.accountId, token_id: token, msg: `${blocks}:${mode}` }, TX_GAS, 1n),
+  ]);
   const start = await height();
   note(`${label}: amplop #${token}, transfer ${hash}, sent near block ${start}`);
 

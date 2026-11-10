@@ -1,5 +1,5 @@
 import type { AmplopClient, Entry, PendingReply, Sent } from './types';
-import { OPEN_DEPOSIT_YOCTO, REPLY_MARGIN_YOCTO, STORAGE_MARGIN_YOCTO, chainRp, rupiahToYocto } from '../lib/rupiah';
+import { OPEN_DEPOSIT_YOCTO, REPLY_MARGIN_YOCTO, STORAGE_MARGIN_YOCTO, chainRp, replyStorageYocto, rupiahToYocto } from '../lib/rupiah';
 
 export type StoryStep = 'account' | 'family' | 'wedding' | 'gift' | 'years' | 'celebration' | 'ring' | 'reply';
 export interface StoryMark { step: StoryStep; ms: number; hash: string | null }
@@ -14,14 +14,14 @@ export const RECORDED = [
 
 /**
  * What the holder attaches to give back: the gift as the book shows it (whole Rp1.000), minus the part
- * kept, plus the reply's own storage. The guest then receives the amount the ring named, without the
- * gift's storage leftovers rounding it up by one.
+ * kept, plus exactly what the reply's own storage costs and a small headroom. The guest then receives
+ * the amount the ring named: not one less because the storage ate into it, not one more from leftovers.
  */
-export function replyDeposit(p: Pick<PendingReply, 'amount' | 'seed'>): string {
+export function replyDeposit(p: Pick<PendingReply, 'amount' | 'seed'>, about: { from: string; to: string; caller: string; message: string }): string {
   const shown = rupiahToYocto(chainRp(p.amount));
   const seed = BigInt(p.seed);
   const rest = shown > seed ? shown - seed : BigInt(p.amount) - seed;
-  return (rest + REPLY_MARGIN_YOCTO).toString();
+  return (rest + replyStorageYocto(about) + REPLY_MARGIN_YOCTO).toString();
 }
 
 /** The same calls as the ordinary pages. Time travel changes the story date, never the chain clock. */
@@ -65,7 +65,8 @@ export async function replyStory(client: AmplopClient, session: StorySession, me
     return { value: entry, txHash: null };
   }
   const r = await client.reciprocate({ tokenId: session.wedding, entry: session.pending.entry,
-    toTokenId: session.celebration, message, depositYocto: replyDeposit(session.pending) });
+    toTokenId: session.celebration, message,
+    depositYocto: replyDeposit(session.pending, { from: session.wedding, to: session.celebration, caller: session.siti, message }) });
   const [entry] = await client.entries(session.celebration, r.value, 1);
   if (!entry || entry.reply_to?.token_id !== session.wedding || entry.reply_to.entry !== session.pending.entry) throw new Error('reply not found');
   return { value: entry, txHash: r.txHash };

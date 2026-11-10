@@ -6,7 +6,8 @@ On the contract the site uses today, rsvpay-v2.testnet:
 2026-11-09 06.52  41.3 s
 2026-11-09 06.53  40.9 s
 2026-11-09 06.54  40.3 s
-Four runs, every check passed in each. Fastest 34.8 s, slowest 41.3 s, target 60 s.
+2026-11-11 03.30  41.8 s  (first run that also checks the amount: ring $100, landed $100)
+Five runs, every check passed in each. Fastest 34.8 s, slowest 41.8 s, target 60 s.
 
 On earlier contracts, kept for the record. The site left them on 7 November; these times do not describe it today.
 2026-11-05 03.48  27.6 s  amplop-c-mvznhnlx.testnet
@@ -59,6 +60,25 @@ PASS | child-account funding has a real receipt
 PASS | funding, opening, gift and second opening each have a receipt
 PASS | the reply waits for a tap
 PASS | whole story including the pause in 60 seconds | 40.3 s
+PASS | reply has a real receipt
+PASS | no second account request while replying
+PASS | book layout at 1366x768 | {"separated":true,"overflow":0}
+PASS | book layout at 1440x860 | {"separated":true,"overflow":0}
+PASS | book layout at 1920x1080 | {"separated":true,"overflow":0}
+PASS | confirmation explains loss of access
+PASS | old keeper loses controls
+PASS | new keeper can open the inherited book and history
+PASS | no browser errors
+
+Run of 2026-11-11, after the reply-amount fix:
+Manual testnet run: https://rsvpay.vercel.app
+2026-11-10T20:30:18.989Z
+PASS | one account request for both families | 1
+PASS | child-account funding has a real receipt
+PASS | funding, opening, gift and second opening each have a receipt
+PASS | the reply waits for a tap
+PASS | the reply lands as the amount the ring named | ring $100, landed $100
+PASS | whole story including the pause in 60 seconds | 41.8 s
 PASS | reply has a real receipt
 PASS | no second account request while replying
 PASS | book layout at 1366x768 | {"separated":true,"overflow":0}

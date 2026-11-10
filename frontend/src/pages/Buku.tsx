@@ -117,12 +117,13 @@ export function Buku({ id }: { id: string }) {
     mutation.current = true;
     setReplies((s) => ({ ...s, [p.entry]: { busy: true, hash: null, err: '' } }));
     try {
+      const message = say(t.bukuReplyWish, shortName(p.giver));
       const r = await client.reciprocate({
         tokenId: id,
         entry: p.entry,
         toTokenId: p.to_token_id,
-        message: say(t.bukuReplyWish, shortName(p.giver)),
-        depositYocto: replyDeposit(p),
+        message,
+        depositYocto: replyDeposit(p, { from: id, to: p.to_token_id, caller: h?.owner_id ?? '', message }),
       });
       setReplies((s) => ({ ...s, [p.entry]: { busy: false, hash: r.txHash, err: '' } }));
       setSent((s) => [...s.filter((x) => x.entry !== p.entry), { entry: p.entry, who: shortName(p.giver), hash: r.txHash }]);

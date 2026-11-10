@@ -11,7 +11,9 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - Threat model, not defended: plain `nft_transfer` is not stopped by the lock, the money goes wherever the token goes, a kept share is not proof of outside guests, and envelopes sent to a guest can crowd the ring. Found in the final audit on 11 November.
 
 ### Fixed
+- The reply at the end of the story landed one dollar short: the ring said "$5 kept, add $95" and the next screen said "Sam received $99". A reply's storage is 210 bytes for that wish and those account names, and the page attached 200. The page now counts the reply's storage exactly, in the story and in the book, and the rehearsal client charges the same. Live on 11 November: ring $100, landed $100. The frames in the README and the video are from 9 November and still show $99.
 - A test comment pointed to a SPEC file that does not exist; it now points to the invariants in ARCHITECTURE.
+- The two-device check asked the guest's gift to finish in 20 s or less, while the claim has said about 20 seconds since 9 November. A run on 11 November took 20.3 s and failed only that line (13 of 14). The check now allows 30 s and prints the time; the 9 November report with 19.1 s stays as the evidence.
 - The landing listed a test name that no longer exists (`stale_lock_releases_after_lock_max_blocks`). It now lists `reciprocate_blocked_while_sale_settles`, and a web test holds every listed name against `contracts/src/tests.rs`.
 - README and CLAIMS dated the zero-key reading 5 November, before this contract existed. Read again on 11 November at block 277,114,396: 0 keys.
 - CLAIMS said the last full run showed 6 handled rate-limit answers and that the guide check ran in six languages; the reports say 4 and English.

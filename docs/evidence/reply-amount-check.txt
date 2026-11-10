@@ -1,0 +1,21 @@
+Why a reply landed as $99, and the check after the fix
+Contract rsvpay-v2.testnet. Read from https://rpc.testnet.near.org on 2026-11-11 03.26 Asia/Jakarta with the view `entries`.
+
+Until 11 November the page attached to a reply: the gift as the book shows it, minus the share kept, plus 0.002 NEAR
+for the reply's storage (200 bytes at 10^19 yoctoNEAR per byte). The contract charges the reply's real storage.
+So: storage charged = amount shown + 0.002 NEAR - amount that landed.
+
+reply in #373 from #372: gift 0.201200 NEAR, shown $100, landed 0.199900 NEAR = $99.95, shown as $99; storage 210 bytes
+reply in #368 from #367: gift 0.201200 NEAR, shown $100, landed 0.199900 NEAR = $99.95, shown as $99; storage 210 bytes
+reply in #363 from #361: gift 0.201200 NEAR, shown $100, landed 0.199900 NEAR = $99.95, shown as $99; storage 210 bytes
+Each: caller name 37 characters, wish 51 bytes ("Your turn to celebrate, Sam. Wishing you happiness."), token ids of 3 digits.
+
+Counted from the contract's records (contracts/src/lib.rs, struct Entry, and the 40 bytes NEAR adds per record):
+  112 + 2 x len(to token id) + digits of the new entry number + len(caller) + bytes of the wish + len(from token id)
+  = 112 + 6 + 1 + 37 + 51 + 3 = 210 bytes. The same as measured.
+
+Since 11 November the page attaches that count (assuming a two-digit entry number) plus 0.0005 NEAR of headroom:
+frontend/src/lib/rupiah.ts `replyStorageYocto`, used by frontend/src/chain/story.ts `replyDeposit`.
+
+After the fix, live site, 2026-11-11 03.30 Asia/Jakarta (frontend/e2e/coba.e2e.mjs, full output in coba-e2e-report.txt):
+PASS | the reply lands as the amount the ring named | ring $100, landed $100

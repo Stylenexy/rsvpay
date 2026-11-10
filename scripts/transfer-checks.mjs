@@ -7,7 +7,7 @@
 // The public helper rate-limits by IP. If it refuses, set ATTACK_ROOT to a JSON file holding
 // { accountId, secret } of a testnet account with about 2 NEAR, and the accounts start under it.
 import fs from "node:fs";
-import { Account, JsonRpcProvider, KeyPair, actions, nearToYocto, teraToGas } from "near-api-js";
+import { Account, JsonRpcProvider, KeyPair, actions, baseEncode, nearToYocto, teraToGas } from "near-api-js";
 
 const RPC = process.env.NEAR_RPC ?? "https://test.rpc.fastnear.com";
 const HELPER = "https://helper.nearprotocol.com/account";
@@ -73,6 +73,14 @@ async function longNamed(parent, near) {
 const view = (method, args = {}) => provider.callFunction({ contractId: CONTRACT, method, args });
 const call = (acc, methodName, args, deposit = 0n) =>
   acc.callFunction({ contractId: CONTRACT, methodName, args, gas: GAS, deposit, waitUntil: "FINAL" });
+/** Signs first, so the hash is known before sending: a node's answer at INCLUDED does not always carry it. */
+async function sendIncluded(acc, receiverId, actionList) {
+  const signer = acc.getSigner();
+  const tx = await acc.createTransaction({ receiverId, actions: actionList, publicKey: await signer.getPublicKey() });
+  const { txHash, signedTransaction } = await signer.signTransaction(tx);
+  await provider.sendTransactionUntil(signedTransaction, "INCLUDED");
+  return baseEncode(txHash);
+}
 const open = async (who, title) => (await call(who, "open_hajatan", { title, date: "check", seed_bps: 500 }, nearToYocto("0.05"))).token_id;
 const snapshot = async (token) => JSON.stringify([await view("hajatan", { token_id: token }), await view("is_locked", { token_id: token })]);
 
@@ -158,14 +166,8 @@ for (let attempt = 1; attempt <= 4; attempt++) {
   await host.addFullAccessKey(spare.getPublicKey());
   const hostSpare = new Account(host.accountId, provider, spare.toString());
   const goodbye = await hostSpare.createSignedTransaction({ receiverId: host.accountId, actions: [actions.deleteAccount(root.accountId)] });
-  const sent = await host.signAndSendTransaction({
-    receiverId: CONTRACT,
-    actions: [actions.functionCall("withdraw", { token_id: T }, GAS, 0n)],
-    waitUntil: "INCLUDED",
-    throwOnFailure: false,
-  });
+  const hash = await sendIncluded(host, CONTRACT, [actions.functionCall("withdraw", { token_id: T }, GAS, 0n)]);
   await provider.sendTransactionUntil(goodbye, "NONE").catch(() => null);
-  const hash = sent.transaction?.hash ?? sent.transaction_outcome?.id;
   let logs = [];
   for (let i = 0; i < 20; i++) {
     await sleep(2000);

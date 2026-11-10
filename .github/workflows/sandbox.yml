@@ -64,6 +64,7 @@ jobs:
         run: node attacks.mjs rsvpay.test.near
 
       - name: A receiver holds a transfer open and tries to move the money (scripts/long-settle.mjs)
+        if: ${{ !cancelled() }}
         working-directory: scripts
         env:
           ATTACK_ROOT: ${{ runner.temp }}/root.json
@@ -71,6 +72,7 @@ jobs:
         run: node long-settle.mjs
 
       - name: Transfer and payout paths a unit test cannot reach (scripts/transfer-checks.mjs)
+        if: ${{ !cancelled() }}
         working-directory: scripts
         env:
           ATTACK_ROOT: ${{ runner.temp }}/root.json

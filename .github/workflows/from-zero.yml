@@ -48,6 +48,11 @@ jobs:
         continue-on-error: true
         run: cd scripts && npm ci && node attacks.mjs
 
+      - id: transfer
+        name: cd scripts && node transfer-checks.mjs
+        continue-on-error: true
+        run: cd scripts && node transfer-checks.mjs
+
       - id: e2e
         name: cd frontend && node e2e/alur.e2e.mjs
         continue-on-error: true
@@ -70,8 +75,9 @@ jobs:
             echo "| \`cd frontend && npm run dev\` | ${{ steps.dev.outcome }} |"
             echo "| \`LIVE=1 npx vitest run src/chain/near.live.test.ts\` | ${{ steps.live.outcome }} |"
             echo "| \`cd scripts && npm ci && node attacks.mjs\` | ${{ steps.attacks.outcome }} |"
+            echo "| \`cd scripts && node transfer-checks.mjs\` | ${{ steps.transfer.outcome }} |"
             echo "| \`cd frontend && node e2e/alur.e2e.mjs\` | ${{ steps.e2e.outcome }} |"
           } >> "$GITHUB_STEP_SUMMARY"
-          for r in "${{ steps.contract.outcome }}" "${{ steps.web.outcome }}" "${{ steps.dev.outcome }}" "${{ steps.live.outcome }}" "${{ steps.attacks.outcome }}" "${{ steps.e2e.outcome }}"; do
+          for r in "${{ steps.contract.outcome }}" "${{ steps.web.outcome }}" "${{ steps.dev.outcome }}" "${{ steps.live.outcome }}" "${{ steps.attacks.outcome }}" "${{ steps.transfer.outcome }}" "${{ steps.e2e.outcome }}"; do
             [ "$r" = success ] || exit 1
           done

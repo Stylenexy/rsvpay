@@ -12,8 +12,20 @@ export const GIFT_STEPS = [100_000, 250_000, 500_000, 1_000_000] as const;
 
 /** extra NEAR attached on top of a gift so the contract can pay the storage of the entry */
 export const STORAGE_MARGIN_YOCTO = (YOCTO_PER_NEAR * 3n) / 1000n; // 0,003 NEAR
-/** a reply carries the same amount as the gift it answers, so it only adds what its own entry costs */
-export const REPLY_MARGIN_YOCTO = (YOCTO_PER_NEAR * 2n) / 1000n; // 0,002 NEAR
+/** one byte of contract storage: 10^19 yoctoNEAR */
+export const STORAGE_BYTE_YOCTO = 10n ** 19n;
+/**
+ * What the contract charges a reply for storage: the reply's own entry and key, plus the link written into
+ * the gift it answers. Counted from the contract's records and checked against testnet: a 51-byte wish
+ * between 37-character accounts cost 210 bytes on 11 November 2026. The entry number is not known before
+ * the call; two digits are assumed, and the headroom below covers the difference.
+ */
+export function replyStorageYocto(a: { from: string; to: string; caller: string; message: string }): bigint {
+  const bytes = 112 + 2 * a.to.length + 2 + a.caller.length + new TextEncoder().encode(a.message).length + a.from.length;
+  return BigInt(bytes) * STORAGE_BYTE_YOCTO;
+}
+/** headroom on top of a reply's storage: a quarter of the smallest amount the book shows (Rp1.000) */
+export const REPLY_MARGIN_YOCTO = (YOCTO_PER_NEAR * 5n) / 10000n; // 0,0005 NEAR
 
 /** NEAR attached when opening a hajatan; covers the amplop's storage, the rest becomes free balance */
 export const OPEN_DEPOSIT_YOCTO = (YOCTO_PER_NEAR * 5n) / 100n; // 0,05 NEAR

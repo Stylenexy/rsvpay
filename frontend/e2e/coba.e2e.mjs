@@ -44,8 +44,13 @@ try {
   await page.waitForTimeout(1200);
   check(await page.locator('[data-step="reply"][data-state="done"]').count() === 0, 'the reply waits for a tap');
   await page.screenshot({ path: `${OUT}coba-ring.png`, fullPage: true });
+  const ringText = await page.locator('.ring-card').innerText();
   await page.getByRole('button', { name: 'Give back to Sam' }).click();
   await page.locator('[data-story-complete]').waitFor({ timeout: 60_000 });
+  const landedText = await page.locator('[data-story-complete]').innerText();
+  const named = ringText.match(/\$\d+/)?.[0];
+  const got = landedText.match(/\$\d+/)?.[0];
+  check(!!named && named === got, 'the reply lands as the amount the ring named', `ring ${named}, landed ${got}`);
   const seconds = (Date.now() - start) / 1000;
   check(seconds <= 60, 'whole story including the pause in 60 seconds', `${seconds.toFixed(1)} s`);
   check(await page.locator('[data-step="reply"] .txlink').count() === 1, 'reply has a real receipt');

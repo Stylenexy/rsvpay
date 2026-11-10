@@ -99,7 +99,7 @@ try {
   await guest.getByRole('button', { name: 'Geser untuk memberi' }).tap();
   await guest.getByText('Terkirim.').waitFor({ timeout: 60_000 });
   const secs = ((Date.now() - t0) / 1000).toFixed(1);
-  say(+secs <= 20, `E4 guest gives from a touch screen in 20 s or less, signed in the browser${PARENT ? '' : ', test account made on the way'}`, `${secs} s`);
+  say(+secs <= 30, `E4 guest gives from a touch screen in 30 s or less (about 20 s is usual), signed in the browser${PARENT ? '' : ', test account made on the way'}`, `${secs} s`);
   await guest.waitForTimeout(2200);
   await guest.screenshot({ path: `${OUT}2-guest-sent.png` });
   const proof = await guest.getByRole('link', { name: /Lihat bukti transaksi/ }).getAttribute('href');

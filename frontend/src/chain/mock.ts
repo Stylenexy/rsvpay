@@ -1,4 +1,5 @@
 import { AMPLOP_ERRORS as E, type AccountId, type AmplopClient, type Entry, type Hajatan, type PendingReply, type Sent, type TokenId, type Yocto } from './types';
+import { replyStorageYocto } from '../lib/rupiah';
 
 /**
  * In-memory client that enforces the same rules as contract/src/lib.rs, for tests and
@@ -166,7 +167,9 @@ export class MockAmplopClient implements AmplopClient {
     const dep = BigInt(a.depositYocto);
     const seed = BigInt(old.seed);
     const total = seed + dep;
-    if (dep < MOCK_ENTRY_COST || total <= MOCK_ENTRY_COST) throw new Error(E.replyStorage);
+    // a reply's storage is counted the way the contract charges it, so the rehearsal lands the same amount as the chain
+    const cost = replyStorageYocto({ from: a.tokenId, to: a.toTokenId, caller: this.me(), message: a.message });
+    if (dep < cost || total <= cost) throw new Error(E.replyStorage);
     this.pay(dep);
     r.balance -= seed;
     r.seedLocked -= seed;
@@ -174,7 +177,7 @@ export class MockAmplopClient implements AmplopClient {
     t.entries.push(e);
     old.seed = '0';
     old.replied = { token_id: a.toTokenId, entry: e.index };
-    this.credit(a.toTokenId, e, total - MOCK_ENTRY_COST);
+    this.credit(a.toTokenId, e, total - cost);
     return this.sent(e.index);
   }
 
