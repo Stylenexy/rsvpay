@@ -1,0 +1,97 @@
+name: Sandbox
+
+# The attack scripts that ran on testnet, run again on every push against the wasm built from
+# this commit, on a local NEAR chain: near-sandbox, the node near-workspaces drives.
+# No testnet, no faucet, no secret. The contract gives up its keys there too before the attacks start.
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  attacks:
+    name: Attacks on a local chain
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      NEAR_RPC: http://127.0.0.1:3030
+      SANDBOX_VERSION: 2.14.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rust 1.99.1, as pinned in contracts/rust-toolchain.toml
+        run: rustup toolchain install 1.99.1 --profile minimal --target wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            contracts
+            scripts/long-receiver
+
+      - name: Build the contract and the receiver that stalls a transfer
+        run: |
+          (cd contracts && cargo build --target wasm32-unknown-unknown --release --locked)
+          (cd scripts/long-receiver && cargo build --target wasm32-unknown-unknown --release --locked)
+
+      - name: Start a local NEAR chain
+        run: |
+          mkdir -p "$RUNNER_TEMP/sandbox"
+          curl -sSfL "https://s3-us-west-1.amazonaws.com/build.nearprotocol.com/nearcore/Linux-x86_64/$SANDBOX_VERSION/near-sandbox.tar.gz" | tar -xz -C "$RUNNER_TEMP/sandbox"
+          BIN=$(find "$RUNNER_TEMP/sandbox" -type f -name near-sandbox | head -1)
+          chmod +x "$BIN"
+          "$BIN" --home "$RUNNER_TEMP/chain" init
+          nohup "$BIN" --home "$RUNNER_TEMP/chain" run > "$RUNNER_TEMP/sandbox.log" 2>&1 &
+          for i in $(seq 1 60); do curl -sf "$NEAR_RPC/status" > /dev/null && break; sleep 1; done
+          curl -sf "$NEAR_RPC/status" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const j=JSON.parse(s);console.log(`near-sandbox ${j.version.version}, protocol ${j.protocol_version}, chain ${j.chain_id}, block ${j.sync_info.latest_block_height}`)})'
+
+      - name: Deploy this commit's wasm, initialise it, delete every access key
+        working-directory: scripts
+        run: |
+          npm ci
+          # the reports in the repository are testnet runs; this job must only ever show its own
+          rm -f ../docs/evidence/attacks-report.txt ../docs/evidence/long-settle-report.txt ../docs/evidence/transfer-checks-report.txt
+          node sandbox.mjs "$RUNNER_TEMP/chain/validator_key.json" ../contracts/target/wasm32-unknown-unknown/release/amplop_balas.wasm "$RUNNER_TEMP/root.json"
+
+      - name: The 14 attacks (scripts/attacks.mjs)
+        working-directory: scripts
+        env:
+          ATTACK_ROOT: ${{ runner.temp }}/root.json
+        run: node attacks.mjs rsvpay.test.near
+
+      - name: A receiver holds a transfer open and tries to move the money (scripts/long-settle.mjs)
+        working-directory: scripts
+        env:
+          ATTACK_ROOT: ${{ runner.temp }}/root.json
+          CONTRACT: rsvpay.test.near
+        run: node long-settle.mjs
+
+      - name: Transfer and payout paths a unit test cannot reach (scripts/transfer-checks.mjs)
+        working-directory: scripts
+        env:
+          ATTACK_ROOT: ${{ runner.temp }}/root.json
+        run: node transfer-checks.mjs rsvpay.test.near
+
+      - name: Reports
+        if: always()
+        run: |
+          {
+            echo '### Attacks on a local chain'
+            echo '```'
+            cat docs/evidence/attacks-report.txt || true
+            echo '```'
+            echo '### A transfer held open'
+            echo '```'
+            cat docs/evidence/long-settle-report.txt || true
+            echo '```'
+            echo '### Transfer and payout paths'
+            echo '```'
+            cat docs/evidence/transfer-checks-report.txt || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "--- last lines of the chain's log"
+          tail -n 20 "$RUNNER_TEMP/sandbox.log" || true

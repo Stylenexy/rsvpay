@@ -1,6 +1,6 @@
 # amplop_balas
 
-Wedding-gift NFT that holds its own money, remembers who gave, and replies when the giver hosts their own celebration. Built on the Kado engine (escrow per token id). Testnet only, not audited.
+Wedding-gift NFT that holds its own money, remembers who gave, and replies when the giver hosts their own celebration. Built on the escrow-per-token-id engine of Kado, our own spike from the first days of this hackathon (2 November 2026), not an earlier project. Testnet only, not audited.
 
 ```
 rustup target add wasm32-unknown-unknown

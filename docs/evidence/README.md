@@ -8,6 +8,9 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 | `wasm-build-check.txt` | An outside rebuild on Linux, and why only a Windows build with the same cargo home matches the code on chain | CI job *Rebuild the wasm and compare it with the chain* |
 | `long-settle-report.txt` | A receiver holds a sale open 404 and 409 blocks: the lock holds, nothing moves | `cd scripts && node long-settle.mjs` |
 | `long-settle-max-report.txt` | The longest hold one 300 TGas transaction can buy: 34,986 blocks | `cd scripts && node long-settle.mjs max` |
+| `long-settle-1000tgas-report.txt` | The same hold with 1,000 TGas, the most testnet allows: 109,561 blocks | read from chain, see the report |
+| `transfer-checks-report.txt` | A stranger cannot move an envelope, a refused transfer leaves no lock, the resolver's gas on its heaviest path, a payout made to fail on chain | `cd scripts && node transfer-checks.mjs` |
+| `video-run-log.txt` | Timings of the one-button story as recorded for the pitch video: 39.18 s | recording log, 9 November |
 | `scale-report.txt` | `pending_replies` on books of up to 300 gifts, and where the RPC view limit sits | `cd scripts && node scale.mjs` |
 | `spare-balance-report.txt` | Contract balance against storage plus what every amplop holds, read at one block | `cd scripts && REPORT=1 node spare.mjs` |
 | `phone-check-report.txt` | 96 checks on three phone sizes, two languages | `cd frontend && node e2e/hp.e2e.mjs https://rsvpay.vercel.app` |

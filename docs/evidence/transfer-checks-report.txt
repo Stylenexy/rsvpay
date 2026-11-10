@@ -1,0 +1,8 @@
+Transfer and payout checks, contract rsvpay-v2.testnet (testnet, node 2.14.0-rc.5, protocol 88)
+2026-11-10T20:06:16.942Z
+PASS | P1 a stranger moves someone else's amplop with nft_transfer | refused: Smart contract panicked: Approval extension is disabled
+PASS | P2 a stranger's nft_transfer_call is refused and leaves no lock behind | refused: Smart contract panicked: Approval extension is disabled
+PASS | P3 a transfer without the one yoctoNEAR that proves a full-access key | refused: Smart contract panicked: Requires attached deposit of exactly 1 yoctoNEAR
+PASS | P4 a refused transfer between two 64-character names comes back whole and unlocks | owner cf05a5d9…, balance 90020000000000000000000
+PASS | P4 the resolver's heaviest path fits in its fixed 5 TGas | contract receipts burnt 4.07, 3.31 TGas; resolver 3.31 of 5
+PASS | P5 a payout that fails on chain goes back into the amplop, to the yoctoNEAR | withdraw B7hv39WNm1RoabLxpmXjdCYj1LWU1T59CSTf3q5Pm255; free 88086000000000000000000 before, 88086000000000000000000 after the refund; attempt 1

@@ -27,7 +27,7 @@ One button on the site runs the whole story on the real network: two families, o
 3. **Two years pass.**
 4. **Sam opens his own celebration, and Maya's envelope rings:** *"Sam once gave $100. $5 was kept for this day. Add $95 and send your reply."*
 5. **One tap** sends the $5 plus Maya's $95 into Sam's envelope, as a new gift linked to the old one.
-6. **39.2 seconds** for the recorded run in the video; four live runs on today's contract took 34.8 s to 41.3 s ([runs](docs/evidence/coba-e2e-runs.txt)).
+6. **39.2 seconds** for the recorded run in the video ([its log](docs/evidence/video-run-log.txt)); four live runs on today's contract took 34.8 s to 41.3 s ([runs](docs/evidence/coba-e2e-runs.txt)).
 
 <table>
 <tr>
@@ -67,7 +67,7 @@ One button on the site runs the whole story on the real network: two families, o
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
-| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 83 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book. What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 84 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book, and six on-chain checks of the transfer and payout paths a unit test cannot reach ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
@@ -108,7 +108,7 @@ To inspect the fixed deployment's keys:
 curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_access_key_list","finality":"final","account_id":"rsvpay-v2.testnet"}}'
 ```
 
-The read-only check on 5 November 2026 (Asia/Jakarta) returned `"keys":[]`.
+The read-only check on 11 November 2026 (Asia/Jakarta), at block 277,114,396, returned `"keys":[]`.
 
 The app uses only the fixed testnet deployment `rsvpay-v2.testnet` and offers English, Indonesian, Chinese, Korean, Japanese and Vietnamese. Amounts show in rupiah in Indonesian and in dollars elsewhere, at a demo rate of 1 NEAR = Rp500.000 = $500.
 
@@ -126,7 +126,7 @@ The ordinary `#/buka`, `#/beri/<id>` and `#/buku/<id>` pages remain available fo
 
 Accounts are throwaway testnet accounts. The browser makes the key, which stays on that device, and a small testnet purse (`frontend/api/dana.ts`) funds them. That purse's one key is a Vercel secret and guards play money only. Clearing browser storage removes access to those accounts.
 
-History asks the public Nearblocks v3 API, without a key, for one envelope's NFT events. Those name every holder, and each holder's own calls to the contract hold the opening, sales and payouts. Every row is then checked against receipts on archival testnet RPC, because regular RPC forgets transactions after about two days. The scan reads up to six holders and 25 calls each, and labels the history partial when it hits a limit. Receipts for transactions made on this device are also saved locally and verified again when read. Failed payouts are shown as refunds, never as money paid out. Live check: [history-source-check.txt](docs/evidence/history-source-check.txt) (envelope #1, two holders, 1.27 NEAR paid out, coverage complete).
+History asks the public Nearblocks v3 API, without a key, for one envelope's NFT events. Those name every holder, and each holder's own calls to the contract hold the opening, sales and payouts. Every row is then checked against receipts on archival testnet RPC, because regular RPC forgets transactions after about two days. The scan reads up to six holders and 25 calls each, and labels the history partial when it hits a limit. Receipts for transactions made on this device are also saved locally and verified again when read. Failed payouts are shown as refunds, never as money paid out. Live check: [history-source-check.txt](docs/evidence/history-source-check.txt) (envelope #1, two holders, 1.27 NEAR paid out; the report prints `coverage: indexed`, its word for a scan that reached no limit).
 
 ## Track requirements and where to check them
 
@@ -171,7 +171,7 @@ See `test result: ok. 55 passed`: 54 unit tests and the randomized one.
 ```bash
 cd frontend && npm ci && npm test
 ```
-The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 83 passed, 4 skipped.
+The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 84 passed, 4 skipped.
 
 ```bash
 cd frontend && npm run dev
@@ -190,6 +190,11 @@ See `1 passed`: the web client opens, gives, rings, replies and withdraws on tes
 cd scripts && npm ci && node attacks.mjs
 ```
 See 14 `PASS` lines, one per attack, against the deployed contract. Report: [`docs/evidence/attacks-report.txt`](docs/evidence/attacks-report.txt).
+
+```bash
+cd scripts && node transfer-checks.mjs
+```
+See `PASS` on every line: a stranger cannot move an envelope, a refused transfer leaves no lock, the resolver fits its fixed gas on its heaviest path, and a payout that really fails goes back into the envelope. The last check races an account deletion against the payout and prints `SKIP` if it loses the race four times. Report: [`docs/evidence/transfer-checks-report.txt`](docs/evidence/transfer-checks-report.txt).
 
 ```bash
 cd frontend && node e2e/alur.e2e.mjs
@@ -219,19 +224,20 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 
 ## What we attacked
 
-[21 attacks](docs/THREAT-MODEL.md), each with its defence and the test that proves it. 14 checks ran for real against the deployed contract on testnet: ten are calls that must fail with the state unchanged, and four confirm the expected safe state, such as zero keys. The ones that matter most to a buyer or a guest:
+[22 attacks](docs/THREAT-MODEL.md), each with its defence and the test that proves it. 14 checks ran for real against the deployed contract on testnet: ten are calls that must fail with the state unchanged, and four confirm the expected safe state, such as zero keys. The ones that matter most to a buyer or a guest:
 
 | Attack | Defence | Proof |
 |---|---|---|
 | Seller keeps withdrawing after the sale | Holder read from NEP-171 at call time | `old_owner_cannot_withdraw_after_transfer`, live L9 |
 | Buyer drains the amplop inside `nft_on_transfer`, then the sale reverts | Lock set before the transfer | `withdraw_blocked_while_sale_settles` |
 | Receiver delays the resolver to drain the amplop | Lock holds until the resolver runs | `lock_holds_past_any_delay_until_the_resolver_runs` |
-| A resolver fails and freezes the amplop | Lock lets go after 1,000,000 blocks | `a_lock_whose_resolver_never_ran_lets_go_after_the_long_bound` |
+| A resolver fails and freezes the amplop | Lock lets go after 1,000,000 blocks; the resolver's heaviest path burnt 3.31 of its fixed 5 TGas | `a_lock_whose_resolver_never_ran_lets_go_after_the_long_bound`, live P4 |
 | Host withdraws the guests' seeds | `withdraw` pays only `balance - seed_locked` | `withdraw_pays_only_free_money_and_never_touches_seeds`, live L10, L11 |
 | Host sends a seed to a friend | Target must be held by the original giver | `reply_cannot_be_redirected_to_someone_else`, live L6 |
 | Reply twice from one seed | Entry marked `replied` | `a_gift_can_be_replied_only_once`, live L8 |
 | Forge the payout callback | `#[private]` | Live L3 |
-| Payout fails and the money vanishes | Refund into the amplop | `failed_payout_refunds_into_the_amplop` |
+| Payout fails and the money vanishes | Refund into the amplop | `failed_payout_refunds_into_the_amplop`, live P5 (a payout made to fail on chain) |
+| A stranger moves someone else's amplop | NEP-171 owner check; a refused call leaves no lock | Live P1, P2 |
 | The developer changes the rules later | Zero access keys | Live L1 |
 
 ## Measured on testnet
@@ -251,12 +257,14 @@ Other measurements:
 
 | What | Result | When | Source |
 |---|---|---|---|
-| Whole cycle by the web client: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
+| Whole cycle by the web client on the first deployment: open, give, ring, reply, withdraw | 31.7 s | 3 Nov 2026 | [`web-client-live.txt`](docs/evidence/web-client-live.txt) |
 | New guest gives on the live site, 360 px emulated touch screen, account made on the way | 21.3 s | 9 Nov 2026 | [`guest-check-report.txt`](docs/evidence/guest-check-report.txt) |
 | Storage a gift pays for its own entry | about 0.0016 NEAR, depending on the message and the giver's name | 6 Nov 2026 UTC | Step A02 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt) |
 | Live attack checks passed | 14 of 14 | 9 Nov 2026 | [`attacks-report.txt`](docs/evidence/attacks-report.txt) |
 | Whole story on the live site, two browsers, the guest on a 360 px touch screen | 14 of 14 checks | 9 Nov 2026 | [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
 | A receiver holds a sale open: the amplop stays locked and refuses withdraw, reply and close, then settles | Held 404 and 409 blocks, then 34,986 blocks (5 h 50 min) until one 300 TGas transfer ran out of gas; every check passed | 9 Nov 2026 | [`long-settle-report.txt`](docs/evidence/long-settle-report.txt), [`long-settle-max-report.txt`](docs/evidence/long-settle-max-report.txt) |
+| The resolver on its heaviest path: a refused transfer between two 64-character names, the sender holding only that envelope | 3.31 of its fixed 5 TGas; the envelope came back whole and unlocked | 11 Nov 2026 | [`transfer-checks-report.txt`](docs/evidence/transfer-checks-report.txt) |
+| A payout made to fail on chain: the holder's account is deleted before the coins arrive | The envelope reads the same balance after the refund, to the yoctoNEAR | 11 Nov 2026 | [`transfer-checks-report.txt`](docs/evidence/transfer-checks-report.txt) |
 | The ring list of a 300-gift book whose giver holds 100 envelopes | 300 of 300 read in 9.0 s | 9 Nov 2026 | [`scale-report.txt`](docs/evidence/scale-report.txt) |
 | Guest pages on 360, 375 and 390 px phones: controls at least 44 px, fields 16 px, the slide on the first screen with nothing over it | 96 of 96 checks | 9 Nov 2026 | [`phone-check-report.txt`](docs/evidence/phone-check-report.txt) |
 

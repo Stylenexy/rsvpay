@@ -1,6 +1,6 @@
 # Claims
 
-Every claim this project makes, and where to check it. Checked on 5 November 2026 unless a row says otherwise. Where this file and the chain disagree, trust the chain.
+Every claim this project makes, and where to check it. Each row names its evidence, and each evidence file carries its own date. The whole file was checked against those files and the chain on 11 November 2026. Where this file and the chain disagree, trust the chain.
 
 Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet). Live site: https://rsvpay.vercel.app. The contract moved here on 7 November to close issues #1, #7 and #8 (T18 to T20). Reports dated earlier ran against `amplop-c-mvznhnlx.testnet`.
 
@@ -8,7 +8,7 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 
 | Claim | Proof | Check it yourself |
 |---|---|---|
-| Nobody can change the rules. The contract account has zero access keys. | RPC answer on 5 November at block 276,347,018: 0 keys. Attack L1 in [`attacks-report.txt`](docs/evidence/attacks-report.txt). | The `curl` line in the [README](README.md), or **Ask the network now** on the site |
+| Nobody can change the rules. The contract account has zero access keys. | RPC answer on 11 November at block 277,114,396: 0 keys. Attack L1 in [`attacks-report.txt`](docs/evidence/attacks-report.txt). | The `curl` line in the [README](README.md), or **Ask the network now** on the site |
 | The code on chain is this source. | Hash `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw` read from RPC. GitHub's Windows machine rebuilds this source and gets the same hash on every push: CI job *Rebuild the wasm and compare it with the chain*, first `MATCH` on 9 November (see Not claimed for the limit). | `node scripts/code-hash.mjs <wasm>` after the build in the README |
 | A buyer that holds a sale open cannot move the money, and the amplop settles normally after. | [`long-settle-report.txt`](docs/evidence/long-settle-report.txt): a receiver contract held `nft_on_transfer` for 404 and 409 blocks on testnet; the lock held, withdraw, reply and close were refused, no coin moved, 9 November. [`long-settle-max-report.txt`](docs/evidence/long-settle-max-report.txt): one 300 TGas transfer held 34,986 blocks (5 h 50 min) until its gas ran out, with the same checks. | `cd scripts && node long-settle.mjs` (add `max` for the longest hold) |
 | A big book still rings. | [`scale-report.txt`](docs/evidence/scale-report.txt): a book of 300 gifts from one giver holding 100 envelopes. One RPC call for 50 or more rows is refused for gas there; the page splits it and reads all 300 in 9.0 s. | `cd frontend && LIVE=1 npx vitest run src/chain/scale.live.test.ts` |
@@ -17,8 +17,9 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | A kept share can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; attacks L6, L11. | same |
 | A gift can be replied to only once. | Test `a_gift_can_be_replied_only_once`; step A09; attack L8. | same |
 | A host keeps back at most 10%, set once. | Test `seed_above_ten_percent_rejected`; contract panic `seed_bps must be 0..=1000 (max 10%)`. | same |
-| No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. | same |
-| Random use never makes or loses a yoctoNEAR. | Test `random_sequences_never_lose_or_make_a_yoctonear`: 120 fixed-seed sequences of 120 random steps (give, reply, withdraw with one payout in four failing, transfer, close, reopen, new amplop) across five people. After every step a shadow ledger kept outside the contract matches every amplop's balance exactly, invariants 1, 2, 4 and 5 of ARCHITECTURE hold, and every yoctoNEAR in is held, paid out, or kept for storage. A 300-sequence run (36,000 steps) passed every ledger check on 11 November. | `cd contracts && cargo test random_sequences` |
+| No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. On chain, P5 in [`transfer-checks-report.txt`](docs/evidence/transfer-checks-report.txt), 11 November: a payout made to fail, and the envelope reads the same balance after the refund. | same; `cd scripts && node transfer-checks.mjs` |
+| A stranger cannot move an envelope, a refused transfer leaves no lock, and the resolver fits its fixed 5 TGas on its heaviest path. | P1 to P4 in the same report: both transfers refused with owner, balance, kept shares and lock unchanged; the resolver burnt 3.31 TGas returning an envelope between two 64-character names. | `cd scripts && node transfer-checks.mjs` |
+| Random use never makes or loses a yoctoNEAR. | Test `random_sequences_never_lose_or_make_a_yoctonear`: 120 fixed-seed sequences of 120 random steps (give, reply, withdraw with one payout in four failing, transfer, close, reopen, new amplop) across five people. After every step a shadow ledger kept outside the contract matches every amplop's balance exactly, invariants 1, 2, 4 and 5 of ARCHITECTURE hold, and every yoctoNEAR in is held, paid out, or kept for storage. A 300-sequence run (36,000 steps) passed every ledger check on the builder's laptop on 11 November; no report file was kept, so the run to trust is the one CI repeats. | `cd contracts && cargo test random_sequences` |
 | 54 contract tests pass. | Fresh `cargo test` on 7 November: 54 passed, 0 failed. Since 11 November `cargo test` shows 55: the 54 and the randomized test below. CI runs the same command on Linux on every push to `master`. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
 
 ## On the site
@@ -32,16 +33,16 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | Every file of the site answers and every image decodes. | [`asset-check-report.txt`](docs/evidence/asset-check-report.txt), 9 November: 110 files, the five pages and two screen sizes listed in the report. | `cd frontend && REPORT=1 node e2e/aset.e2e.mjs https://rsvpay.vercel.app` |
 | A reply shows on both sides: the gift says it was given back, and the receiver's book shows the reply as its own card. | Fields `reply_to` and `replied` from the contract, shown in `frontend/src/pages/Buku.tsx`; screenshot [`coba-book-1366.png`](docs/evidence/coba-book-1366.png). | Finish the story at `#/coba` |
 | The landing stays whole after leaving it and coming back. | [`return-check-report.txt`](docs/evidence/return-check-report.txt): back by logo and by browser button, from the very bottom of the page, then 18 quick round trips. | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |
-| Each inner page says who you are and what happens next, floating over the page without moving it. | [`demo-check-report.txt`](docs/evidence/demo-check-report.txt): layout identical before and after opening the guide, in all six languages. | `cd frontend && node e2e/demo.e2e.mjs https://rsvpay.vercel.app` |
+| Each inner page says who you are and what happens next, floating over the page without moving it. | [`demo-check-report.txt`](docs/evidence/demo-check-report.txt): layout identical before and after opening the guide. The check runs in English. | `cd frontend && node e2e/demo.e2e.mjs https://rsvpay.vercel.app` |
 | A demo runs itself from the first field to the last screen, on a laptop and on a phone. It uses the rehearsal client, not testnet, and says so on screen. | Same report. | same |
-| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 83 web tests passing (4 skipped) on 9 November. | `cd frontend && npx vitest run` |
+| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 84 web tests passing (4 skipped) on 11 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
 
 - **Real money.** Testnet only, play money.
 - **An audit.** Nobody independent has reviewed the contract.
 - **Users.** No independent users yet.
-- **A console with no errors at all.** The last full run on the live site, 9 November, passed all 14 checks. Its console still showed 6 rate-limit answers (429) from the purse and the public indexer, which the page handles by falling back to the helper or retrying.
+- **A console with no errors at all.** The last full run on the live site, 9 November, passed all 14 checks. Its console still showed 4 rate-limit answers (429) from the purse and the public indexer, which the page handles by falling back to the helper or retrying.
 - **Complete history under load.** The keyless indexer answers a few calls a minute. When it refuses, the page shows what it has and labels the history partial.
 - **A reproducible build on Linux or macOS.** The wasm on chain carries the deploying machine's cargo path inside the dependencies' panic messages, and Rust names crates differently per host, so the bytes match only on Windows with cargo home `C:\Users\MSI\.cargo` and Rust 1.99.1. GitHub's Windows machine reproduces it that way; an outside rebuild on Linux shows both causes ([`wasm-build-check.txt`](docs/evidence/wasm-build-check.txt)). A path-free build would need a new deployment, and this contract has no keys to accept one.
 - **Native-speaker translations.** They were written with AI help and checked by a second AI.

@@ -1,0 +1,8 @@
+One-button story (#/coba) as recorded for the pitch video
+2026-11-09 03.0x Asia/Jakarta, https://rsvpay.vercel.app, contract rsvpay-v2.testnet, Chrome over DevTools
+Seconds since the page was opened, from the recording log:
+  0.00 s  goto #/coba
+ 30.48 s  ring card on screen
+ 33.72 s  click Give back
+ 39.18 s  reply landed
+The video shows 39.2 s. Scripted runs of the same route with a full report per run: coba-e2e-runs.txt.

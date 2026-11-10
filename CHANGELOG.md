@@ -5,11 +5,16 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ## 2026-11-11
 
 ### Added
-- A randomized test of the money rules: 120 random sequences of gives, replies, withdraws (one payout in four fails), transfers, closes and new amplops across five people. After every step a shadow ledger must match every amplop to the yoctoNEAR, and nothing may appear or disappear. A 300-sequence run passed every check. `cargo test` now shows 55.
+- A randomized test of the money rules: 120 random sequences of gives, replies, withdraws (one payout in four fails), transfers, closes and new amplops across five people. After every step a shadow ledger must match every amplop to the yoctoNEAR, and nothing may appear or disappear. A 300-sequence run passed every check on the builder's laptop. `cargo test` now shows 55.
 - CI badge in the README.
+- Five on-chain checks of paths a unit test cannot reach (`scripts/transfer-checks.mjs`, report in `docs/evidence/`): a stranger cannot move an envelope (P1), a refused `nft_transfer_call` leaves no lock (P2), a transfer needs its one yoctoNEAR (P3), the resolver burnt 3.31 of its fixed 5 TGas on its heaviest path (P4), and a payout made to fail on chain went back into the envelope to the yoctoNEAR (P5). Threat model row T22.
+- Threat model, not defended: plain `nft_transfer` is not stopped by the lock, the money goes wherever the token goes, a kept share is not proof of outside guests, and envelopes sent to a guest can crowd the ring. Found in the final audit on 11 November.
 
 ### Fixed
 - A test comment pointed to a SPEC file that does not exist; it now points to the invariants in ARCHITECTURE.
+- The landing listed a test name that no longer exists (`stale_lock_releases_after_lock_max_blocks`). It now lists `reciprocate_blocked_while_sale_settles`, and a web test holds every listed name against `contracts/src/tests.rs`.
+- README and CLAIMS dated the zero-key reading 5 November, before this contract existed. Read again on 11 November at block 277,114,396: 0 keys.
+- CLAIMS said the last full run showed 6 handled rate-limit answers and that the guide check ran in six languages; the reports say 4 and English.
 
 ## 2026-11-10
 

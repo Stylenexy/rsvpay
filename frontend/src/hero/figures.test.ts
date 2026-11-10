@@ -20,4 +20,10 @@ describe('landing figures', () => {
     expect(readme).toContain(`${tests} Rust`);
     expect(readme).toContain(`${refused} live attacks`);
   });
+
+  // The landing once listed a test that had been renamed away. Every name it shows must be a test in the contract.
+  it('list only tests that exist in the contract', () => {
+    const rust = readFileSync(new URL('../../../contracts/src/tests.rs', import.meta.url), 'utf8');
+    for (const name of CH_DATA.tests) expect(rust, name).toContain(`fn ${name}()`);
+  });
 });

@@ -34,7 +34,7 @@ export const CH_DATA = {
   tests: [
     'old_owner_cannot_withdraw_after_transfer',
     'withdraw_blocked_while_sale_settles',
-    'stale_lock_releases_after_lock_max_blocks',
+    'reciprocate_blocked_while_sale_settles',
     'withdraw_pays_only_free_money_and_never_touches_seeds',
     'reply_cannot_be_redirected_to_someone_else',
     'a_gift_can_be_replied_only_once',
