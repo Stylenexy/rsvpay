@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CH_DATA, CH_UI } from './chapters.copy';
+import { BEAT, split } from './math';
 
 // The landing once said "12 of 12 refused" and "45 contract tests" beside figures of 14/14 and 54.
 // Every sentence that repeats a figure must say the same number as the figure and the README.
@@ -25,5 +26,13 @@ describe('landing figures', () => {
   it('list only tests that exist in the contract', () => {
     const rust = readFileSync(new URL('../../../contracts/src/tests.rs', import.meta.url), 'utf8');
     for (const name of CH_DATA.tests) expect(rust, name).toContain(`fn ${name}()`);
+  });
+});
+
+// Autoplay once stopped at KEEP while the card still counted up to "For Maya $92" under the headline "$95 goes straight to Maya".
+describe('hero beats', () => {
+  it('finish the $95 / $5 split before autoplay stops at KEEP', () => {
+    expect(split(BEAT.KEEP)).toBe(1);
+    expect(split(BEAT.GIVE)).toBe(0);
   });
 });

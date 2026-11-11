@@ -39,3 +39,6 @@ export function track(keys: number[][], p: number): number[] {
 
 /** Story beats on the timeline; autoplay stops at RING and waits for the click. */
 export const BEAT = { GIVE: 0.13, KEEP: 0.36, YEARS: 0.6, RING: 0.84, END: 1 } as const;
+
+/** How far the $100 has split into $95 for the couple and $5 kept back. Done before autoplay stops at KEEP, so the cards there read $95 and $5, as the headline says. */
+export const split = (p: number) => ease(seg(p, 0.27, 0.35));

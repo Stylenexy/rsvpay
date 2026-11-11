@@ -19,6 +19,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - The landing listed a test name that no longer exists (`stale_lock_releases_after_lock_max_blocks`). It now lists `reciprocate_blocked_while_sale_settles`, and a web test holds every listed name against `contracts/src/tests.rs`.
 - README and CLAIMS dated the zero-key reading 5 November, before this contract existed. Read again on 11 November at block 277,114,396: 0 keys.
 - CLAIMS said the last full run showed 6 handled rate-limit answers and that the guide check ran in six languages; the reports say 4 and English.
+- The hero's autoplay stopped at the KEEP beat while the card still counted "For Maya $92" under the headline "$95 goes straight to Maya". The split now finishes before that stop, and a test holds it there.
 
 ## 2026-11-10
 

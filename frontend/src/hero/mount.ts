@@ -1,5 +1,5 @@
 import { Frames } from './frames';
-import { BEAT, clamp, ease, lerp, seg, win } from './math';
+import { BEAT, clamp, ease, lerp, seg, split as splitAt, win } from './math';
 import { createScene } from './scene';
 import type { HeroCopy } from './copy';
 
@@ -248,7 +248,7 @@ export function mountHero(root: HTMLElement, copy: () => HeroCopy) {
     show(cards.gift, small ? 0 : giftV);
     put(nums.gift, 'gift', rp(100000 * ease(seg(p, 0.03, 0.11))));
 
-    const split = ease(seg(p, 0.27, 0.37));
+    const split = splitAt(p);
     const paid = ease(seg(p, 0.87, 0.92));
     // the reply card takes the stage alone
     const room = 1 - win(p, 0.73, 0.76, 2, 3);
