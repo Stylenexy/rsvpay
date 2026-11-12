@@ -5,6 +5,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ## 2026-11-12
 
 ### Changed
+- The pitch video is the second cut: 1 min 54 s, narrated in Dex's own voice, its screen recordings taken again on the live site on 11 November (the reply lands as $100, the page counts 40.2 s). New poster frame, two recording logs in `docs/evidence/` (`video-run-log-v2.txt`, `pass-on-run-log.txt`), and the README no longer says the video shows $99 or uses a synthetic voice.
 - The site's own address is now https://rsvpay.xyz: link previews (`og:url`, the preview image), a canonical link, the README links and the note inside a saved key file. https://rsvpay.vercel.app is the same deployment and keeps working, and the reports in `docs/evidence/` keep the address they ran against.
 
 ## 2026-11-11

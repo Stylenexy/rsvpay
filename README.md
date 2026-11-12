@@ -8,7 +8,7 @@
 
 [![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![Sandbox](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attacks](https://img.shields.io/badge/live%20attacks-14%2F14%20refused-2ea44f)
 
-**[Try the whole story, about 40 s on testnet](https://rsvpay.xyz/#/coba)** · **[Open the site](https://rsvpay.xyz)** · **[Watch the 83-second pitch](https://rsvpay.xyz/media/rsvpay-pitch.mp4)**
+**[Try the whole story, about 40 s on testnet](https://rsvpay.xyz/#/coba)** · **[Open the site](https://rsvpay.xyz)** · **[Watch the pitch, 1 min 54 s](https://rsvpay.xyz/media/rsvpay-pitch.mp4)**
 
 </div>
 
@@ -27,9 +27,9 @@ One button on the site runs the whole story on the real network: two families, o
 3. **Two years pass.**
 4. **Sam opens his own celebration, and Maya's envelope rings:** *"Sam once gave $100. $5 was kept for this day. Add $95 and send your reply."*
 5. **One tap** sends the $5 plus Maya's $95 into Sam's envelope, as a new gift linked to the old one.
-6. **39.2 seconds** for the recorded run in the video ([its log](docs/evidence/video-run-log.txt)); five live runs on today's contract took 34.8 s to 41.8 s ([runs](docs/evidence/coba-e2e-runs.txt)).
+6. **40.2 seconds** for the run recorded in the video, as the page itself counted it ([its log](docs/evidence/video-run-log-v2.txt)); five live runs on today's contract took 34.8 s to 41.8 s ([runs](docs/evidence/coba-e2e-runs.txt)).
 
-The frames above are from the run recorded on 9 November. Its own screen says 37.5 s because the page's timer starts once the page has loaded; 39.2 s counts from opening the address. That run's reply also landed one dollar short, "Sam received $99": the reply's storage, 210 bytes, was ten bytes more than the page attached for it. Since 11 November the page counts that storage exactly and the reply lands as the $100 the ring named ([check](docs/evidence/reply-amount-check.txt)). The video still shows the 9 November run.
+The frames above are from an earlier run, recorded on 9 November ([its log](docs/evidence/video-run-log.txt)). Its own screen says 37.5 s because the page's timer starts once the page has loaded; 39.2 s counts from opening the address. That run's reply also landed one dollar short, "Sam received $99": the reply's storage, 210 bytes, was ten bytes more than the page attached for it. Since 11 November the page counts that storage exactly and the reply lands as the $100 the ring named ([check](docs/evidence/reply-amount-check.txt)). The pitch video was recorded again on 11 November and shows the reply landing as $100.
 
 <table>
 <tr>
@@ -48,7 +48,7 @@ The frames above are from the run recorded on 9 November. Its own screen says 37
 
 <div align="center">
 
-<a href="https://rsvpay.xyz/media/rsvpay-pitch.mp4"><img src="docs/img/video-poster.webp" width="80%" alt="Watch the 83-second pitch, sound on"></a>
+<a href="https://rsvpay.xyz/media/rsvpay-pitch.mp4"><img src="docs/img/video-poster.webp" width="80%" alt="Watch the pitch, 1 min 54 s, sound on"></a>
 
 </div>
 
@@ -302,7 +302,7 @@ There is no `backend/` on purpose; see [Architecture](docs/ARCHITECTURE.md). See
 - Web: React 19, Vite 8, TypeScript, `near-api-js` 7.4.0, `qrcode`, `three`, GSAP. App display and body fonts: Zodiak and Satoshi; the landing also loads Figtree and DM Mono from Google Fonts.
 - Tests: `cargo test`, Vitest, `playwright-core` driving an installed Chrome.
 - Testnet RPC: FastNEAR. Accounts: NEAR testnet helper. Hosting: Vercel.
-- AI: code and documentation were written with AI coding assistants (Claude Code, OpenAI Codex), and several AI chat assistants were consulted when choosing the idea. The landing page sky video comes from Google Flow (Veo). Photographs, envelopes, clouds and glass objects were generated with OpenAI image generation. The pitch video's narration is a synthetic voice (a Microsoft neural voice through `edge-tts`), its music is synthesised in code; the screen recordings in it are of the live site. The images in `docs/img/` are frames of that video. Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
+- AI: code and documentation were written with AI coding assistants (Claude Code, OpenAI Codex), and several AI chat assistants were consulted when choosing the idea. The landing page sky video comes from Google Flow (Veo). Photographs, envelopes, clouds and glass objects were generated with OpenAI image generation. The pitch video's narration is Dex's own voice. Its music is synthesised in code, and its sound effects are ElevenLabs Sound Effects clips from a friend's video kit. The people in its photographs were generated with OpenAI image generation; the QR in them is the site's real `#/beri/3` code. Its screen recordings are of the live site. The images in `docs/img/` are frames of the site and of the pitch videos. Listed here as the hackathon rules ask. Test counts and attack results in this README come from the commands above.
 
 ## Team
 

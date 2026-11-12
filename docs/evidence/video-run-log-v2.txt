@@ -1,0 +1,24 @@
+One-button story (#/coba) as recorded for the pitch video, second recording
+2026-11-11 Asia/Jakarta, https://rsvpay.vercel.app, contract rsvpay-v2.testnet, Chrome over DevTools
+Seconds since the page was opened, from the recording log below:
+  0.00 s  goto #/coba
+ 33.96 s  ring card on screen
+ 36.49 s  click Give back
+ 41.93 s  reply landed
+The page's own screen at the end: "Sam received $100" and "Whole story: 40.2 s, including your pause. Measured steps: 36.9 s".
+The page's timer starts once the page has loaded, so it reads less than the time since opening the address.
+The video shows 40.2 s. The first recording, 9 November, is video-run-log.txt.
+
+Raw recording log:
+coba (live testnet)
+  [coba-cast]   0.00s goto
+  [coba-cast]  33.96s ring card
+  [coba-cast]  36.49s click give back
+  [coba-cast]  41.93s reply landed
+  [coba-cast] 1278 frame, 44.9s
+  shot coba-reply
+  teks layar balasan: Sam received $100. His book links this reply to his first gift to Maya.
+  shot sam-book
+  shot sam-book-2
+  shot sam-book-3
+  shot sam-book-4

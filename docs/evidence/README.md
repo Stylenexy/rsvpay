@@ -12,7 +12,9 @@ Reports from real runs. Each one can be reproduced with the command beside it (s
 | `transfer-checks-report.txt` | A stranger cannot move an envelope, a refused transfer leaves no lock, the resolver's gas on its heaviest path, a payout made to fail on chain | `cd scripts && node transfer-checks.mjs` |
 | `sandbox-run.txt` | The attack scripts on a local chain in CI, against the wasm built from the commit: 14 attacks, 21 hold checks, 6 transfer lines | workflow *Sandbox*, every push |
 | `reply-amount-check.txt` | Why a reply landed as $99 until 11 November, the storage measured on chain, and the run after the fix | `cd frontend && node e2e/coba.e2e.mjs https://rsvpay.vercel.app` |
-| `video-run-log.txt` | Timings of the one-button story as recorded for the pitch video: 39.18 s | recording log, 9 November |
+| `video-run-log.txt` | Timings of the one-button story as first recorded for the pitch video: 39.18 s | recording log, 9 November |
+| `video-run-log-v2.txt` | The run in the current pitch video: the page counts 40.2 s, the reply lands as $100 | recording log, 11 November |
+| `pass-on-run-log.txt` | Two guests give from a phone (17.2 s and 19.2 s), then an envelope is passed on with the site's button | recording log, 11 November |
 | `scale-report.txt` | `pending_replies` on books of up to 300 gifts, and where the RPC view limit sits | `cd scripts && node scale.mjs` |
 | `spare-balance-report.txt` | Contract balance against storage plus what every amplop holds, read at one block | `cd scripts && REPORT=1 node spare.mjs` |
 | `phone-check-report.txt` | 96 checks on three phone sizes, two languages | `cd frontend && node e2e/hp.e2e.mjs https://rsvpay.vercel.app` |

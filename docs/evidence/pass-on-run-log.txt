@@ -1,0 +1,37 @@
+A guest gives from a phone, then an envelope is passed on, through the site's own buttons
+2026-11-11 Asia/Jakarta, https://rsvpay.vercel.app, contract rsvpay-v2.testnet, Chrome over DevTools, phone screen emulated
+- A guest gives test money to Maya's envelope #418 from the guest page: 17.2 s, account made on the way
+  (sam-9zj1bun.rsvpay-dana-3ddy.testnet).
+- Guest Lia gives to Sam's envelope #419: 19.2 s (lia-a06ypd0.rsvpay-dana-3ddy.testnet).
+- Sam passes envelope #419 on to Lia with "Pass the envelope on" (receipt 96enfL9B...). The page then reads
+  "Now held by lia-a06ypd0...", "This envelope belongs to Lia", and Sam is only a visitor; after a reload it still says the envelope belongs to Lia.
+Scenes from this run are in the pitch video. The labels in the raw log are Indonesian: kartu berbunyi = ring card,
+tamu = guest, terkirim dalam = sent in, sesudah kirim = after sending, tombol = button, selesai = done, buku = book.
+
+Raw recording log:
+[  30.8s] kartu berbunyi; akun desktop: ['amplop.receipts.rsvpay-v2.testnet']
+[  30.8s] tautan di #/coba: ['#/', '#/beri/3', '#/buka', '#/buku/3', '#/coba']
+[  44.4s] buku Sam: https://rsvpay.vercel.app/#/buku/419 tautan: ['#/', '#/beri/3', '#/buka', '#/buku/3', '#/buku/418', '#/coba']
+[  44.4s] amplop Maya 418 amplop Sam 419
+[  50.1s] tamu halaman tamu: ['RSVPay', 'EN', 'ID', '中文', '한국어', '日本語', 'VI', 'Welcome', 'Restore a key', '?', 'Maya', '&', 'Leo', 'November 21, 2026']
+[  54.0s] tamu kenop {'x': 44, 'y': 619.8125, 'width': 46, 'height': 46}
+[  71.2s] tamu terkirim dalam 17.2 s
+[  75.3s] tamu sesudah kirim: ['RSVPay', 'EN', 'ID', '中文', '한국어', '日本語', 'VI', 'Signed in as sam-9zj1bun.rsvpay-dana-3ddy.testnet', 'Save my key', 'Restore a key', '?', 'Maya', '&', 'Leo', 'November 21, 2026', 'Your gift', 'Envelope 418', '$', '1', '0']
+[  75.3s] tamu tautan: ['#/', '#/beri/3', '#/buka', '#/buku/3', '#/buku/418', '#/coba']
+[  75.3s] tamu akun di HP ini: ['sam-9zj1bun.rsvpay-dana-3ddy.testnet']
+[  81.1s] lia halaman tamu: ['RSVPay', 'EN', 'ID', '中文', '한국어', '日本語', 'VI', 'Welcome', 'Restore a key', '?', 'Sam', '&', 'Nina', 'November 20, 2028']
+[  85.0s] lia kenop {'x': 44, 'y': 619.8125, 'width': 46, 'height': 46}
+[ 104.3s] lia terkirim dalam 19.2 s
+[ 108.3s] lia sesudah kirim: ['RSVPay', 'EN', 'ID', '中文', '한국어', '日本語', 'VI', 'Signed in as lia-a06ypd0.rsvpay-dana-3ddy.testnet', 'Save my key', 'Restore a key', '?', 'Sam', '&', 'Nina', 'November 20, 2028', 'Your gift', 'Envelope 419', '$', '1', '0']
+[ 108.3s] lia tautan: ['#/', '#/beri/3', '#/buka', '#/buku/3', '#/buku/419', '#/coba']
+[ 108.3s] lia akun di HP ini: ['lia-a06ypd0.rsvpay-dana-3ddy.testnet']
+[ 108.3s] akun Lia: lia-a06ypd0.rsvpay-dana-3ddy.testnet
+[ 117.8s] tombol pass {'x': 975.5, 'y': 424.921875, 'width': 418, 'height': 50.84375} gulir 891
+[ 122.9s] kolom akun {'x': 975.5, 'y': 580.390625, 'width': 418, 'height': 46.25}
+[ 131.6s] tombol kirim {'x': 975.5, 'y': 648.640625, 'width': 418, 'height': 50.84375} | Pass it on to lia-a06ypd0.rsvpay-dana-3ddy.testnet
+[ 131.6s] diklik, menunggu rantai...
+[ 135.7s] selesai? True teks: ['RSVPay', 'EN', 'ID', '中文', '한국어', '日本語', 'VI', 'Signed in as sam-9yhqx.maya-9ye5dhy.rsvpay-dana-3ddy.testnet', 'maya-9ye5dhy.rsvpay-dana-3ddy.testnet', 'sam-9yhqx.maya-9ye5dhy.rsvpay-dana-3ddy.testnet', 'Save my key', 'Restore a key', 'You are visiting', 'This book is private to the couple. You can still give them a gift.', '?', 'How it works', '|', 'Step 3 of 4', 'Sam', '&', 'Nina', 'November 20, 2028', 'A happy day, surrounded by the people who matter. The couple keeps their gift book here. Y', 'Now held by lia-a06ypd0.rsvpay-dana-3ddy.testnet', 'See the gift’s receipt · 96enfL9B…', '✧', 'This envelope belongs to Lia', 'Guest names and gift amounts are shown here only to the couple. The underlying payment rec', 'You can still be part of their day.', 'Give the couple a gift', 'Make your own envelope', 'Back to the sky ↗', 'A trial with play money on NEAR.']
+[ 141.2s] cast pass-cast: 261 frame
+[ 141.2s] tautan sesudah pindah: ['#/', '#/beri/3', '#/beri/419', '#/buka', '#/buku/3', '#/coba']
+[ 151.5s] buku sesudah muat ulang (Sam): ['RSVPay', 'EN', 'ID', '中文', '한국어', '日本語', 'VI', 'Signed in as sam-9yhqx.maya-9ye5dhy.rsvpay-dana-3ddy.testnet', 'maya-9ye5dhy.rsvpay-dana-3ddy.testnet', 'sam-9yhqx.maya-9ye5dhy.rsvpay-dana-3ddy.testnet', 'Save my key', 'Restore a key', '?', 'How it works', '|', 'Step 3 of 4', 'Sam', '&', 'Nina', 'November 20, 2028', 'A happy day, surrounded by the people who matter. The couple keeps their gift book here. Y', '✧', 'This envelope belongs to Lia', 'Guest names and gift amounts are shown here only to the couple. The underlying payment rec', 'You can still be part of their day.', 'Give the couple a gift', 'Make your own envelope', 'Back to the sky ↗', 'A trial with play money on NEAR.']
+exit 0
