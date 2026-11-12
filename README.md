@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://rsvpay.vercel.app"><img src="docs/img/hero.webp" width="100%" alt="A glass envelope rings above the clouds: A gift finds its way back."></a>
+<a href="https://rsvpay.xyz"><img src="docs/img/hero.webp" width="100%" alt="A glass envelope rings above the clouds: A gift finds its way back."></a>
 
 # RSVPay
 
@@ -8,7 +8,7 @@
 
 [![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![Sandbox](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attacks](https://img.shields.io/badge/live%20attacks-14%2F14%20refused-2ea44f)
 
-**[Try the whole story, about 40 s on testnet](https://rsvpay.vercel.app/#/coba)** · **[Open the site](https://rsvpay.vercel.app)** · **[Watch the 83-second pitch](https://rsvpay.vercel.app/media/rsvpay-pitch.mp4)**
+**[Try the whole story, about 40 s on testnet](https://rsvpay.xyz/#/coba)** · **[Open the site](https://rsvpay.xyz)** · **[Watch the 83-second pitch](https://rsvpay.xyz/media/rsvpay-pitch.mp4)**
 
 </div>
 
@@ -48,7 +48,7 @@ The frames above are from the run recorded on 9 November. Its own screen says 37
 
 <div align="center">
 
-<a href="https://rsvpay.vercel.app/media/rsvpay-pitch.mp4"><img src="docs/img/video-poster.webp" width="80%" alt="Watch the 83-second pitch, sound on"></a>
+<a href="https://rsvpay.xyz/media/rsvpay-pitch.mp4"><img src="docs/img/video-poster.webp" width="80%" alt="Watch the 83-second pitch, sound on"></a>
 
 </div>
 
@@ -65,7 +65,7 @@ The frames above are from the run recorded on 9 November. Its own screen says 37
 
 | | |
 |---|---|
-| Live demo | https://rsvpay.vercel.app |
+| Live demo | https://rsvpay.xyz (the same deployment also answers at rsvpay.vercel.app, where the reports in `docs/evidence/` ran) |
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
@@ -94,7 +94,7 @@ Words used below:
 
 ## Try it
 
-Open https://rsvpay.vercel.app/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
+Open https://rsvpay.xyz/#/coba, or click **Try the whole story** on the landing page. The route starts immediately. No account selection or second device is needed.
 
 The browser requests one throwaway account for Maya from a small testnet purse (`frontend/api/dana.ts`), or from NEAR's public testnet helper if the purse is empty. Maya funds Sam's sub-account from her own test balance. It then opens Maya's wedding, sends Sam's gift, advances the story date by two years and opens Sam's celebration. The chain clock is unchanged. The envelope stops at the ring until you click **Give back to Sam**.
 

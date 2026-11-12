@@ -2,6 +2,11 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-12
+
+### Changed
+- The site's own address is now https://rsvpay.xyz: link previews (`og:url`, the preview image), a canonical link, the README links and the note inside a saved key file. https://rsvpay.vercel.app is the same deployment and keeps working, and the reports in `docs/evidence/` keep the address they ran against.
+
 ## 2026-11-11
 
 ### Added

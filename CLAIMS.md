@@ -2,7 +2,7 @@
 
 Every claim this project makes, and where to check it. Each row names its evidence, and each evidence file carries its own date. The whole file was checked against those files and the chain on 11 November 2026. Where this file and the chain disagree, trust the chain.
 
-Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet). Live site: https://rsvpay.vercel.app. The contract moved here on 7 November to close issues #1, #7 and #8 (T18 to T20). Reports dated earlier ran against `amplop-c-mvznhnlx.testnet`.
+Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet). Live site: https://rsvpay.xyz, the same deployment as https://rsvpay.vercel.app, where the reports below ran. The contract moved here on 7 November to close issues #1, #7 and #8 (T18 to T20). Reports dated earlier ran against `amplop-c-mvznhnlx.testnet`.
 
 ## On chain
 

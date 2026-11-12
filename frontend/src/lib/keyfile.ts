@@ -9,7 +9,7 @@ const KIND = 'rsvpay-key';
 
 export function makeKeyFile(accountId: string, secret: string, contract: string): string {
   return JSON.stringify({ kind: KIND, version: 1, network: 'testnet', contract, accountId, secret,
-    note: 'Full access to this test account. Keep it private. Restore it on rsvpay.vercel.app.' }, null, 2);
+    note: 'Full access to this test account. Keep it private. Restore it on rsvpay.xyz.' }, null, 2);
 }
 
 /** Refuses anything that is not a whole RSVPay key file for testnet. */
