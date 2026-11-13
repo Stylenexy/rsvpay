@@ -1,0 +1,5 @@
+Holder gate check on rsvpay-v2.testnet, 2026-11-13T21:46:26.793Z
+host gatecheck-iavaaw5.testnet opened envelope #424 (tx 94bVQj4wmETc4FCwLExXt7fxrX28wbz7zTt2Mi3x3vYf)
+PASS | the holder's own key, listed on chain, signs a NEP-413 message that verifies | key ed25519:5yRwZKNUd65xNpA4kKuB4N6jcnXaYhEjBiicaraRZcw4; message "RSVPay: open the book of envelope 424 as gatecheck-iavaaw5.testnet"
+PASS | the same account name with a key the chain does not list stays shut
+PASS | the host's real key on envelope #1, held by buyer.amplop-ppl-5f8ki3.rsvpay-dana-3ddy.testnet, stays shut

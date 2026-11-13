@@ -1,3 +1,4 @@
+import type { HolderProof } from './holder';
 /**
  * Client interface that mirrors the RSVPay contract (contracts/src/lib.rs) one to one.
  * Pages only talk to this interface. The live testnet client (near.ts) and the
@@ -99,6 +100,13 @@ export interface AmplopClient {
   hajatanOf(accountId: AccountId): Promise<Hajatan[]>;
   entries(tokenId: TokenId, from?: number, limit?: number): Promise<Entry[]>;
   pendingReplies(tokenId: TokenId): Promise<PendingReply[]>;
+
+  /**
+   * Holder gate: resolves with a proof only when the active account is the envelope's current NEP-171 owner on
+   * chain, its key on this device is one of that owner's access keys, and that key signs a fresh NEP-413 message
+   * that verifies (see holder.ts). Null otherwise.
+   */
+  proveHolder(tokenId: TokenId): Promise<HolderProof | null>;
 
   /** public explorer page for a transaction (empty for the mock) */
   explorerTx(hash: string): string;

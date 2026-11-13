@@ -8,6 +8,7 @@ import { useFormat, useLang } from '../lib/lang';
 import { useBookMotion, usePageMotion } from '../lib/motion';
 import { chainRp } from '../lib/rupiah';
 import { replyDeposit } from '../chain/story';
+import type { HolderProof } from '../chain/holder';
 import { validReceiver } from '../lib/accounts';
 import { Guide } from '../components/Guide';
 import { History } from '../components/History';
@@ -68,6 +69,27 @@ export function Buku({ id }: { id: string }) {
   }, [load]);
   usePoll(() => load(), 4000);
 
+  // Holder gate: the book opens only after this browser proves, by a NEP-413 signature with a key the chain lists
+  // for the current owner, that it holds the envelope (chain/holder.ts). undefined = still checking.
+  const [proof, setProof] = useState<HolderProof | null | undefined>(undefined);
+  const ownerId = h ? h.owner_id : null;
+  useEffect(() => {
+    let alive = true;
+    if (!ownerId || account !== ownerId) {
+      setProof(null);
+      return;
+    }
+    setProof(undefined);
+    client
+      .proveHolder(id)
+      .then((p) => alive && setProof(p))
+      .catch(() => alive && setProof(null));
+    return () => {
+      alive = false;
+    };
+  }, [client, id, account, ownerId]);
+  const proven = !!proof && proof.accountId === account;
+
   const total = useCountUp(h ? chainRp(h.balance) : 0);
   const stars = useMemo(() => {
     const plain = entries.filter((e) => BigInt(e.seed) === 0n && !fresh.includes(e.index));
@@ -81,14 +103,14 @@ export function Buku({ id }: { id: string }) {
     };
   }, [entries, fresh]);
 
-  const isRinging = !!h && account === h.owner_id && pending.some((p) => !later.includes(p.entry));
+  const isRinging = !!h && account === h.owner_id && proven && pending.some((p) => !later.includes(p.entry));
   usePageMotion(root, !!h);
   useBookMotion(root, `${h?.token_id}:${peek}:${entries.map((e) => e.index).join(',')}`, isRinging);
 
-  if (h === undefined) return <Loading />;
+  if (h === undefined || (h && account === h.owner_id && proof === undefined)) return <Loading />;
   if (h === null) return <Missing />;
 
-  const holder = account === h.owner_id;
+  const holder = account === h.owner_id && proven;
   const locked = !holder || peek === 'other';
   const freeRp = chainRp(h.free);
   const seedRp = chainRp(h.seed_locked);

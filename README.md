@@ -20,6 +20,17 @@ Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHO
 
 **What it is.** RSVPay is a NEP-171 NFT contract (Rust, `near-sdk` 5.30.0) plus a React site, deployed on NEAR testnet as `rsvpay-v2.testnet`. Each wedding gets one NFT, the *envelope*. The NFT holds the gift money and a book of who gave what. A fixed part of every gift (0 to 10%, set once by the host) stays locked in the giver's name and can only be sent to that giver's own envelope, when they host their own wedding. Transfer the NFT and the money, the book and the locked shares move with it; the old holder is refused by the contract from that block on. The contract account has zero access keys, so nobody can change these rules. How each track requirement is met, including where the design differs from the example prompt, is in [Track requirements](#track-requirements-and-where-to-check-them); the limits are in [What is not solved](#what-is-not-solved).
 
+**The six requirements of the track's example prompt, and where to check each:**
+
+| Requirement | How RSVPay meets it | Evidence |
+|---|---|---|
+| NEP-171 token tied to its own money | Each token id has its own balance and kept shares inside one keyless contract (a record per token, not a sub-account) | [`lib.rs`](contracts/src/lib.rs) line 81, test `transfer_moves_money_seeds_and_entries_with_the_token` |
+| Control passes on transfer; the old owner is locked out | Every money method reads the NEP-171 owner at call time; a lock covers `nft_transfer_call` | `require_holder` line 407, test `old_owner_cannot_withdraw_after_transfer`, live L9 |
+| A page only current holders can open | The book opens only after the browser signs a fresh NEP-413 message with a key the chain lists for the current owner | [`holder.ts`](frontend/src/chain/holder.ts), [`holder.test.ts`](frontend/src/chain/holder.test.ts), [live check](docs/evidence/holder-gate-check.txt) |
+| History per NFT: earned, paid out, who held it | Gifts and replies from contract state; holders and payouts from the indexer, each row checked on archival RPC | [`history.ts`](frontend/src/chain/history.ts), [live check](docs/evidence/history-source-check.txt) |
+| Tests for transfers, including a sale in the middle of a payout | Unit tests, plus P6 on chain with real receipts: the payout fails, the refund lands in the envelope the buyer now holds | [P6 report](docs/evidence/sale-during-payout-report.txt), testnet and the Sandbox workflow on every push |
+| A threat model of every way a seller could keep the money | 22 attacks, each with its defence and proof, and what is not defended | [`THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
+
 **Code map.** The whole contract is [`contracts/src/lib.rs`](contracts/src/lib.rs) (591 lines): money per token id in `hajatans` (line 128, a map of `Hajatan` records, line 81), the holder check `require_holder` (line 407), `withdraw` (line 304) and `reciprocate` (line 250), the transfer lock around `nft_transfer_call` (lines 519-535), the payout refund `apply_withdraw_result` (line 493). Its 55 tests are [`contracts/src/tests.rs`](contracts/src/tests.rs). The site reads and writes the chain through [`frontend/src/chain/near.ts`](frontend/src/chain/near.ts).
 
 **Check it without taking our word** (no wallet, no testnet account needed):
@@ -29,7 +40,7 @@ Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHO
 | Zero access keys | the `curl` in [Try it](#try-it) | `"keys":[]` |
 | Code on chain is this source | `view_account` on `rsvpay-v2.testnet` (same `curl`, with `"request_type":"view_account"`), then the CI job *Rebuild the wasm and compare it with the chain* ([its output](docs/evidence/ci-hash-match.txt), since job logs need a GitHub login) | `code_hash` `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`; the job prints `MATCH` (Windows, Rust 1.99.1, cargo home `C:\Users\MSI\.cargo`; other hosts build different bytes) |
 | 55 contract tests | `cd contracts && cargo test` | `test result: ok. 55 passed` |
-| 85 web tests | `cd frontend && npm ci && npm test`, from a clone of the whole repository (the tests also read `README.md`, `docs/` and `contracts/src/tests.rs`) | `85 passed`, `4 skipped` |
+| 91 web tests | `cd frontend && npm ci && npm test`, from a clone of the whole repository (the tests also read `README.md`, `docs/` and `contracts/src/tests.rs`) | `91 passed`, `5 skipped` |
 | Attacks pass on a local chain, independent of our deployment | latest [Sandbox run](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) | green; 14 attacks, 21 hold checks, transfer lines P1 to P6 |
 | A sale in the middle of a payout, with real receipts | `cd scripts && ONLY=P6 node transfer-checks.mjs` (makes throwaway testnet accounts through NEAR's public helper) | two `PASS` lines; last run in [`sale-during-payout-report.txt`](docs/evidence/sale-during-payout-report.txt) |
 | CI is green on the head commit | `curl -s "https://api.github.com/repos/Stylenexy/rsvpay/actions/runs?branch=master&per_page=3"` | `"conclusion": "success"` |
@@ -91,7 +102,7 @@ The frames above come from an earlier run on 9 November ([its log](docs/evidence
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
-| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 85 web, 14 live attack checks, plus live checks of a long-held transfer and a 300-gift book, and five on-chain checks of the transfer and payout paths a unit test cannot reach (P1 to P5; P4 prints two lines, so the report has six) ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 91 web, 14 live attack checks, plus live checks of a long-held transfer and a 300-gift book, and on-chain checks of the transfer and payout paths a unit test cannot reach (P1 to P5 in the [report](docs/evidence/transfer-checks-report.txt), P6 in the [sale-during-payout report](docs/evidence/sale-during-payout-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
@@ -160,7 +171,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 |---|---|---|
 | NEP-171 contract plus logic that ties each token to its money | Done, with one difference: the money is booked per token id inside one keyless contract, **not in a sub-account per token** (see the table at the top) | [`contracts/src/lib.rs`](contracts/src/lib.rs), [how control moves](#how-control-moves-when-the-nft-is-transferred) |
 | README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
-| Gated page only current holders can open | **Partial. Not access control.** The book is hidden on screen from every account except the NFT's holder, but the holder is read from the account name stored in the browser, and the same data is readable by anyone through RPC | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) test the screen only |
+| Gated page only current holders can open | Done, checked in the browser. The book and its controls open only after three checks: the owner is read from `nft_token` on chain, the browser's key is one of that owner's access keys on chain, and that key signs a fresh NEP-413 message (random nonce, this contract as recipient) that verifies. A name typed into storage or a key of another account stays shut. The data itself stays public on chain | [`holder.ts`](frontend/src/chain/holder.ts), six tests in [`holder.test.ts`](frontend/src/chain/holder.test.ts), [live check on testnet](docs/evidence/holder-gate-check.txt); steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) |
 | History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from Nearblocks v3, and every row is checked against its receipt on archival RPC | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
 | Tests for the transfer path, including a sale in the middle of a payout | Done, with real receipts. One transaction from the holder carries `withdraw` and then `nft_transfer` to a buyer, a spare key deletes the seller's account so the payout fails, and the refund lands in the envelope the buyer now holds; the buyer then withdraws exactly that amount (P6, testnet, 14 November). The "sale" is a transfer: there is no priced sale method | P6 in [`sale-during-payout-report.txt`](docs/evidence/sale-during-payout-report.txt), also run on every push in the [Sandbox](.github/workflows/sandbox.yml) workflow; unit tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
@@ -206,7 +217,7 @@ See `test result: ok. 55 passed`: 54 unit tests and the randomized one.
 ```bash
 cd frontend && npm ci && npm test
 ```
-The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 85 passed, 4 skipped.
+The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 91 passed, 5 skipped.
 
 ```bash
 cd frontend && npm run dev
@@ -312,7 +323,7 @@ Written down so nobody has to discover it. Full list: [threat model](docs/THREAT
 - **"No wallet" still means someone funds the guest.** Here the testnet helper does. A real product needs rupiah in through QRIS, a stablecoin, and gas sponsored by a relayer. None of that is built.
 - **Rupiah is a demo rate,** not a market price.
 - **History depends on a free public indexer.** The page uses Nearblocks' keyless v3 API, which answers only a few calls a minute, so a busy moment can show a partial history. Chain entries and the current holder are read from the contract and never depend on it.
-- **The holder gate is a screen.** The book is shown only to the browser account that holds the NFT, and that account name comes from browser storage. Reading the contract directly shows the same data. The methods that move money check the NEP-171 owner on chain.
+- **The holder gate decides who sees the book, not who can read the chain.** It checks a NEP-413 signature by a key the chain lists for the current owner, in the browser; reading the contract directly shows the same data. The methods that move money check the NEP-171 owner on chain.
 - **A seller can empty the free money before a sale.** No method enforces a minimum balance for a buyer; read `hajatan(token_id)` just before buying. Locked shares cannot be withdrawn by anyone.
 - **A locked share is a promise about where money may go, not that it will go.** Nothing forces the holder to reply, a share never expires, and the guest cannot claim it.
 - **No sub-account per NFT.** Each NFT's money is a record inside one keyless contract. Transfers and settled locks use storage paid from a shared spare balance, so that balance has to last.

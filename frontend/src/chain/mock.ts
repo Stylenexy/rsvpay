@@ -1,3 +1,4 @@
+import type { HolderProof } from './holder';
 import { AMPLOP_ERRORS as E, type AccountId, type AmplopClient, type Entry, type Hajatan, type PendingReply, type Sent, type TokenId, type Yocto } from './types';
 import { replyStorageYocto } from '../lib/rupiah';
 
@@ -226,6 +227,12 @@ export class MockAmplopClient implements AmplopClient {
       if (target) out.push({ entry: e.index, giver: e.giver, amount: e.amount, seed: e.seed, to_token_id: target[0] });
     }
     return out;
+  }
+  /** The rehearsal has no keys to sign with: the holder is whoever the mock says owns the envelope. */
+  async proveHolder(tokenId: TokenId): Promise<HolderProof | null> {
+    const h = await this.hajatan(tokenId);
+    if (!h || !this.active || h.owner_id !== this.active) return null;
+    return { accountId: this.active, publicKey: 'mock', message: `rehearsal: envelope ${tokenId}`, at: Date.now() };
   }
   explorerTx() {
     return '';

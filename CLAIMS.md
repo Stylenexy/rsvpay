@@ -37,11 +37,11 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | The landing stays whole after leaving it and coming back. | [`return-check-report.txt`](docs/evidence/return-check-report.txt): back by logo and by browser button, from the very bottom of the page, then 18 quick round trips. | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |
 | Each inner page says who you are and what happens next, floating over the page without moving it. | [`demo-check-report.txt`](docs/evidence/demo-check-report.txt): layout identical before and after opening the guide. The check runs in English. | `cd frontend && node e2e/demo.e2e.mjs https://rsvpay.vercel.app` |
 | A demo runs itself from the first field to the last screen, on a laptop and on a phone. It uses the rehearsal client, not testnet, and says so on screen. | Same report. | same |
-| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 85 web tests passing (4 skipped) on 11 November. | `cd frontend && npx vitest run` |
+| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 91 web tests passing (5 skipped) on 14 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
 
-- **Access control on the holder page.** The book is hidden on screen from every browser account except the NFT's holder. The holder comes from the account name stored in the browser, and the same data is readable through RPC, so this is a screen, not a gate. The contract methods that move money check the NEP-171 owner on chain.
+- **Secrecy of the book.** Since 14 November the holder page opens only after a NEP-413 signature by a key the chain lists for the current owner ([`holder.ts`](frontend/src/chain/holder.ts), [live check](docs/evidence/holder-gate-check.txt)). That decides who sees the book on the site; the same data is readable by anyone through RPC. The contract methods that move money check the NEP-171 owner on chain.
 - **A sub-account per NFT.** The money of each NFT is a record keyed by token id inside one contract with no access keys. Transfers and settled locks use storage that a shared spare balance pays.
 - **Enforceable replies.** A locked share can only be sent to the guest who gave it, but nothing forces the holder to send it, it never expires, and the guest cannot claim it.
 - **Every attack check on every run.** `attacks.mjs` check L13 and `transfer-checks.mjs` checks P5 and P6 print `SKIP` when their race is lost; a skip does not fail the run.

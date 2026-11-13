@@ -1,6 +1,7 @@
 import { Account, JsonRpcProvider, KeyPair, actions, getTransactionLastResult, teraToGas } from 'near-api-js';
 import type { AccountId, AmplopClient, Entry, Hajatan, PendingReply, Sent, TokenId, Yocto } from './types';
 import { rememberHistoryTransaction } from './history';
+import { freshNonce, nep413Sign, nep413Verify, type HolderProof } from './holder';
 import { walkPages } from './paging';
 
 /**
@@ -266,6 +267,24 @@ export class NearAmplopClient implements AmplopClient {
     const { rows } = await walkPages(h?.entries ?? 0, async (from, limit) =>
       (await this.view<PendingReply[]>('pending_replies', { token_id: tokenId, from, limit })) ?? []);
     return rows;
+  }
+
+  async proveHolder(tokenId: TokenId): Promise<HolderProof | null> {
+    const id = this.account();
+    if (!id) return null;
+    const secret = this.store.keys()[id];
+    try {
+      const token = await this.view<{ owner_id: string } | null>('nft_token', { token_id: tokenId });
+      if (!token || token.owner_id !== id) return null;
+      const m = { message: `RSVPay: open the book of envelope ${tokenId} as ${id}`, nonce: freshNonce(), recipient: this.contractId };
+      const signed = await nep413Sign(secret, m);
+      // throws when the chain does not list this public key for the account
+      await this.provider.viewAccessKey({ accountId: id, publicKey: signed.publicKey });
+      if (!(await nep413Verify(signed.publicKey, m, signed.signature))) return null;
+      return { accountId: id, publicKey: signed.publicKey, message: m.message, at: Date.now() };
+    } catch {
+      return null;
+    }
   }
 
   explorerTx(hash: string): string {
