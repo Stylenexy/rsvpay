@@ -12,6 +12,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - README: "Design choices, and what they cost".
 
 ### Changed
+- `transfer-checks.mjs`: P5 and P6 now fail, not skip, when a payout settles with neither a paid nor a refunded log. The README keeps one table of the track requirements, at the top, and explains four of them below.
 - README: a short box for screeners at the top (what it is, commands to check the claims, names, why testnet only); the limits list in "What is not solved" now covers the holder gate, selling after a withdrawal, unenforced replies, the shared storage balance and the unit-level sale test. CLAIMS: 55 contract tests, new "Not claimed" rows.
 
 ### Fixed

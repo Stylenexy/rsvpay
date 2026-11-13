@@ -183,6 +183,11 @@ for (let attempt = 1; attempt <= 4; attempt++) {
     }
   }
   const after = await view("hajatan", { token_id: T });
+  if (!logs.some((l) => l.startsWith("amplop:paid") || l.startsWith("amplop:payout_failed_refunded"))) {
+    say(false, "P5 the payout settled with neither a paid nor a refunded log", `withdraw ${hash}; attempt ${attempt}`);
+    p5 = "";
+    break;
+  }
   if (logs.some((l) => l.startsWith("amplop:payout_failed_refunded"))) {
     say(
       after.balance === before.balance && after.free === before.free && after.seed_locked === before.seed_locked,
@@ -232,6 +237,11 @@ for (let attempt = 1; attempt <= 4; attempt++) {
     }
   }
   const after = await view("hajatan", { token_id: S });
+  if (!logs.some((l) => l.startsWith("amplop:paid") || l.startsWith("amplop:payout_failed_refunded"))) {
+    say(false, "P6 the payout settled with neither a paid nor a refunded log", `withdraw + nft_transfer in ${hash}; attempt ${attempt}`);
+    p6 = "";
+    break;
+  }
   const sold = after.owner_id === buyer.accountId;
   const seedsKept = after.seed_locked === before.seed_locked;
   if (logs.some((l) => l.startsWith("amplop:payout_failed_refunded"))) {
