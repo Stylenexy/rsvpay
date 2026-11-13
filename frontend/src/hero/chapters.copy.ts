@@ -166,7 +166,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       big: "Don't take our word for it. Check.",
       rows: [
         'Keys on the contract. Nobody can change the rules, including us.',
-        'Attacks on the live contract refused.',
+        'Attack checks on the live contract pass.',
         'Contract tests pass, including a sale in the middle of a payout.',
         'The most a host can keep back. Fixed for good when the envelope opens.',
       ],
@@ -207,7 +207,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       big: 'Tak perlu percaya kata kami. Cek sendiri.',
       rows: [
         'Kunci di kontrak. Tidak ada yang bisa mengubah aturannya, termasuk kami.',
-        'Serangan ke kontrak yang berjalan ditolak.',
+        'Cek serangan ke kontrak yang berjalan lulus.',
         'Tes kontrak lulus, termasuk penjualan di tengah pembayaran.',
         'Batas simpanan. Tetap selamanya sejak amplop dibuka.',
       ],
@@ -248,7 +248,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       big: '不必只听我们说，自己查。',
       rows: [
         '合约上的密钥。规则谁也改不了，包括我们。',
-        '针对线上合约的攻击全部被拒绝。',
+        '线上合约的攻击检查全部通过。',
         '合约测试通过，包括付款途中转售。',
         '留存比例上限。红包打开后永久固定。',
       ],
@@ -289,7 +289,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       big: '우리 말만 믿지 말고 직접 확인하세요.',
       rows: [
         '컨트랙트의 키. 우리를 포함해 아무도 규칙을 바꿀 수 없습니다.',
-        '실제 컨트랙트에 대한 공격을 모두 막았습니다.',
+        '실제 컨트랙트의 공격 점검을 모두 통과했습니다.',
         '컨트랙트 테스트 통과. 지급 도중 판매 상황도 포함합니다.',
         '남겨 둘 수 있는 최대치. 봉투를 여는 순간 고정됩니다.',
       ],
@@ -330,7 +330,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       big: '言葉をうのみにせず、確かめて。',
       rows: [
         'コントラクトの鍵。私たちを含め、誰もルールを変えられません。',
-        '稼働中のコントラクトへの攻撃をすべて拒否。',
+        '稼働中のコントラクトで攻撃チェックすべてに合格。',
         'コントラクトのテストに合格。支払い途中の売却も含みます。',
         '残せる上限。袋を開いた時点で固定されます。',
       ],
@@ -371,7 +371,7 @@ export const CHAPTERS: Record<Lang, ChaptersCopy> = {
       big: 'Đừng chỉ nghe chúng tôi nói. Hãy tự kiểm tra.',
       rows: [
         'Khóa trên hợp đồng. Không ai đổi được luật, kể cả chúng tôi.',
-        'Các cuộc tấn công vào hợp đồng đang chạy đều bị từ chối.',
+        'Các kiểm tra tấn công trên hợp đồng đang chạy đều đạt.',
         'Bài kiểm tra hợp đồng đạt, gồm cả bán giữa lúc đang thanh toán.',
         'Mức giữ lại tối đa. Cố định từ lúc mở phong bì.',
       ],

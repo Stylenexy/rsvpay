@@ -6,7 +6,7 @@
 
 **A wedding gift that remembers, and gives back.**
 
-[![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![Sandbox](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attacks](https://img.shields.io/badge/live%20attacks-14%2F14%20refused-2ea44f)
+[![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![Sandbox](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attack checks](https://img.shields.io/badge/live%20attack%20checks-14%2F14%20pass-2ea44f)
 
 **[Try the whole story, about 40 s on testnet](https://rsvpay.xyz/#/coba)** · **[Open the site](https://rsvpay.xyz)** · **[Watch the pitch, 1 min 54 s](https://rsvpay.xyz/media/rsvpay-pitch.mp4)**
 
@@ -54,13 +54,13 @@ The frames above are from an earlier run, recorded on 9 November ([its log](docs
 
 ## Don't take our word for it. Check.
 
-<img src="docs/img/proof.webp" width="100%" alt="Zero access keys, GitHub rebuilds the same hash, 14 live attacks refused, a transfer held open for 34,986 blocks with no coin moved">
+<img src="docs/img/proof.webp" width="100%" alt="Zero access keys, GitHub rebuilds the same hash, 14 live attack checks passed, a transfer held open for 34,986 blocks with no coin moved">
 
 | | |
 |---|---|
 | **0 access keys** | Nobody can change the rules, including us. [Check it yourself](#try-it) with one `curl` |
 | **Same hash** | GitHub's Windows machine rebuilds the contract on every push and gets the code hash on chain ([CI](.github/workflows/ci.yml)) |
-| **14 of 14** | Live attacks on the deployed contract, every one refused ([report](docs/evidence/attacks-report.txt), [threat model](docs/THREAT-MODEL.md)). The same script runs again on every push against that commit's wasm on a local chain ([Sandbox](.github/workflows/sandbox.yml)) |
+| **14 of 14** | Live attack checks on the deployed contract, all PASS: ten hostile calls refused with the state unchanged, four confirm the safe state, such as zero keys ([report](docs/evidence/attacks-report.txt), [threat model](docs/THREAT-MODEL.md)). The same script runs again on every push against that commit's wasm on a local chain ([Sandbox](.github/workflows/sandbox.yml)) |
 | **Almost six hours** | One transfer held a sale open for 34,986 blocks until its gas ran out. No coin moved ([report](docs/evidence/long-settle-max-report.txt)) |
 
 | | |
@@ -69,7 +69,7 @@ The frames above are from an earlier run, recorded on 9 November ([its log](docs
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
-| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 84 web, 14 live attacks, plus live checks of a long-held transfer and a 300-gift book, and five on-chain checks of the transfer and payout paths a unit test cannot reach ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 85 web, 14 live attack checks, plus live checks of a long-held transfer and a 300-gift book, and five on-chain checks of the transfer and payout paths a unit test cannot reach ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.

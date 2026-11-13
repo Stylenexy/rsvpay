@@ -37,7 +37,7 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | The landing stays whole after leaving it and coming back. | [`return-check-report.txt`](docs/evidence/return-check-report.txt): back by logo and by browser button, from the very bottom of the page, then 18 quick round trips. | `cd frontend && node e2e/balik.e2e.mjs https://rsvpay.vercel.app` |
 | Each inner page says who you are and what happens next, floating over the page without moving it. | [`demo-check-report.txt`](docs/evidence/demo-check-report.txt): layout identical before and after opening the guide. The check runs in English. | `cd frontend && node e2e/demo.e2e.mjs https://rsvpay.vercel.app` |
 | A demo runs itself from the first field to the last screen, on a laptop and on a phone. It uses the rehearsal client, not testnet, and says so on screen. | Same report. | same |
-| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 84 web tests passing (4 skipped) on 11 November. | `cd frontend && npx vitest run` |
+| The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 85 web tests passing (4 skipped) on 11 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
 

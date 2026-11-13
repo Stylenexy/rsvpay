@@ -19,7 +19,7 @@ describe('landing figures', () => {
   it('match the README', () => {
     const readme = readFileSync(new URL('../../../README.md', import.meta.url), 'utf8');
     expect(readme).toContain(`${tests} Rust`);
-    expect(readme).toContain(`${refused} live attacks`);
+    expect(readme).toContain(`${refused} live attack checks`);
   });
 
   // The landing once listed a test that had been renamed away. Every name it shows must be a test in the contract.
