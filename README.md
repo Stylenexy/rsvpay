@@ -20,12 +20,14 @@ Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHO
 
 **What it is.** RSVPay is a NEP-171 NFT contract (Rust, `near-sdk` 5.30.0) plus a React site, deployed on NEAR testnet as `rsvpay-v2.testnet`. Each wedding gets one NFT, the *envelope*. The NFT holds the gift money and a book of who gave what. A fixed part of every gift (0 to 10%, set once by the host) stays locked in the giver's name and can only be sent to that giver's own envelope, when they host their own wedding. Transfer the NFT and the money, the book and the locked shares move with it; the old holder is refused by the contract from that block on. The contract account has zero access keys, so nobody can change these rules. How each track requirement is met, including where the design differs from the example prompt, is in [Track requirements](#track-requirements-and-where-to-check-them); the limits are in [What is not solved](#what-is-not-solved).
 
+**Code map.** The whole contract is [`contracts/src/lib.rs`](contracts/src/lib.rs) (591 lines): money per token id in `hajatans` (line 128, a map of `Hajatan` records, line 81), the holder check `require_holder` (line 407), `withdraw` (line 304) and `reciprocate` (line 250), the transfer lock around `nft_transfer_call` (lines 519-535), the payout refund `apply_withdraw_result` (line 493). Its 55 tests are [`contracts/src/tests.rs`](contracts/src/tests.rs). The site reads and writes the chain through [`frontend/src/chain/near.ts`](frontend/src/chain/near.ts).
+
 **Check it without taking our word** (no wallet, no testnet account needed):
 
 | Claim | Command | Expected |
 |---|---|---|
 | Zero access keys | the `curl` in [Try it](#try-it) | `"keys":[]` |
-| Code on chain is this source | `view_account` on `rsvpay-v2.testnet` (same `curl`, with `"request_type":"view_account"`), then the CI job *Rebuild the wasm and compare it with the chain* | `code_hash` `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`; the job prints `MATCH` (Windows, Rust 1.99.1, cargo home `C:\Users\MSI\.cargo`; other hosts build different bytes) |
+| Code on chain is this source | `view_account` on `rsvpay-v2.testnet` (same `curl`, with `"request_type":"view_account"`), then the CI job *Rebuild the wasm and compare it with the chain* ([its output](docs/evidence/ci-hash-match.txt), since job logs need a GitHub login) | `code_hash` `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`; the job prints `MATCH` (Windows, Rust 1.99.1, cargo home `C:\Users\MSI\.cargo`; other hosts build different bytes) |
 | 55 contract tests | `cd contracts && cargo test` | `test result: ok. 55 passed` |
 | 85 web tests | `cd frontend && npm ci && npm test`, from a clone of the whole repository (the tests also read `README.md`, `docs/` and `contracts/src/tests.rs`) | `85 passed`, `4 skipped` |
 | Attacks pass on a local chain, independent of our deployment | latest [Sandbox run](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) | green; 14 attacks, 21 hold checks, 6 transfer lines |
@@ -33,7 +35,7 @@ Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHO
 
 **Names and numbers.** RSVPay is the product. *Amplop Balas* ("reply envelope") is its first name and the contract crate; *Kado* is our own spike from the first days of this hackathon (2 November) whose escrow-per-token-id engine it reuses (see [ARCHITECTURE](docs/ARCHITECTURE.md)). Maya and Sam are Siti and Budi in the Indonesian interface and the tests. Amounts show as dollars at a demo rate of 1 NEAR = $500, so "$100" in the story is 0.2 testnet NEAR of play money. On a full clone, `git log --reverse --format='%h %ad %s' | head -1` shows the first commit, 2 November 2026 at 19:30 UTC.
 
-**Why testnet only.** HACKATHON.md Q-010: "Testnet-only projects eligible? Yes, all tracks. Mainnet only where the integration is mainnet-only." Nothing here needs a mainnet-only integration. A mainnet copy of this contract would lock about 5 NEAR of storage for the 497,654-byte wasm, which a keyless account can never recover, and the demo's account purse would hand out real money to anyone who presses the button.
+**Why testnet only.** The organizers' [HACKATHON.md](https://nearhackathon.com/HACKATHON.md), Q-010: "Testnet-only projects eligible? Yes, all tracks. Mainnet only where the integration is mainnet-only." Nothing here needs a mainnet-only integration. A mainnet copy of this contract would lock about 5 NEAR of storage for the 497,654-byte wasm, which a keyless account can never recover, and the demo's account purse would hand out real money to anyone who presses the button.
 
 ## One family's story, in about 40 seconds
 
@@ -48,7 +50,7 @@ One button on the site runs the whole story on the real network: two families, o
 5. **One tap** sends the $5 plus Maya's $95 into Sam's envelope, as a new gift linked to the old one.
 6. **40.2 seconds** for the run recorded in the video, as the page itself counted it ([its log](docs/evidence/video-run-log-v2.txt)); five live runs on today's contract took 34.8 s to 41.8 s ([runs](docs/evidence/coba-e2e-runs.txt)).
 
-The frames above are from an earlier run, recorded on 9 November ([its log](docs/evidence/video-run-log.txt)). Its own screen says 37.5 s because the page's timer starts once the page has loaded; 39.2 s counts from opening the address. That run's reply also landed one dollar short, "Sam received $99": the reply's storage, 210 bytes, was ten bytes more than the page attached for it. Since 11 November the page counts that storage exactly and the reply lands as the $100 the ring named ([check](docs/evidence/reply-amount-check.txt)). The pitch video was recorded again on 11 November and shows the reply landing as $100.
+The frames above come from an earlier run on 9 November ([its log](docs/evidence/video-run-log.txt)); its timer and a reply one dollar short were fixed on 11 November ([check](docs/evidence/reply-amount-check.txt)). The numbers to use are the ones in step 6.
 
 <table>
 <tr>
@@ -88,7 +90,7 @@ The frames above are from an earlier run, recorded on 9 November ([its log](docs
 | Contract (testnet) | [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.testnet), zero access keys |
 | Standard | NEP-171, NEP-177, NEP-181 (`near-sdk` 5.30.0) |
 | Code on chain | `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`. GitHub's Windows machine rebuilds this source to the same hash on every push ([CI](.github/workflows/ci.yml)) |
-| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 85 web, 14 live attack checks, plus live checks of a long-held transfer and a 300-gift book, and five on-chain checks of the transfer and payout paths a unit test cannot reach ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
+| Tests | 54 Rust unit tests plus one randomized test (120 random sequences, a shadow ledger matched to the yoctoNEAR after every step), 85 web, 14 live attack checks, plus live checks of a long-held transfer and a 300-gift book, and five on-chain checks of the transfer and payout paths a unit test cannot reach (P1 to P5; P4 prints two lines, so the report has six) ([report](docs/evidence/transfer-checks-report.txt)). What each one proves is in [CLAIMS.md](CLAIMS.md) |
 | Docs | [Architecture](docs/ARCHITECTURE.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Roadmap](docs/ROADMAP.md) · [Claims](CLAIMS.md) · [Changelog](CHANGELOG.md) · [Evidence](docs/evidence/) |
 
 The project began as *Amplop Balas*, Indonesian for "reply envelope". The contract's internal crate keeps that name; the deployed account is `rsvpay-v2.testnet`.
@@ -139,7 +141,7 @@ The app uses only the fixed testnet deployment `rsvpay-v2.testnet` and offers En
 | Wait for Maya's envelope to ring | Sam's original gift, the part kept for him and the amount Maya will add |
 | Click **Give back to Sam** | A real reply into Sam's envelope, its transaction link and the measured elapsed time |
 | Click **Open Sam's book** | The browser switches to Sam, the current holder, and opens his book |
-| Read **The envelope's history** | Incoming gifts, linked replies, current holder and any verified payouts or holder changes. Missing history is labelled explicitly |
+| Read **The envelope's history** | Incoming gifts, linked replies, current holder and any verified payouts or holder changes. A history cut short by the indexer or the scan limit is labelled partial; a payout the scan never finds is not shown |
 | Click **Pass the envelope on**, enter an existing testnet account and read the confirmation | The book, remaining balance and promises will all move. The old holder loses the book's controls |
 | Confirm the named recipient | A real `nft_transfer` with one yoctoNEAR, a transaction link and the new holder. Switching to that holder on this device opens the inherited book |
 
@@ -179,6 +181,8 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 - **The missing pieces are native.** Google login (NEAR Auth) and sponsored gas (NEP-366) are the next steps on the [roadmap](docs/ROADMAP.md), not add-ons from elsewhere.
 
 ## Run it from zero
+
+Every command below starts from the repository root.
 
 Needs Node 22+ and, for the contract, Rust. On Windows set `AWS_LC_SYS_PREBUILT_NASM=1` before cargo.
 
@@ -299,7 +303,7 @@ Written down so nobody has to discover it. Full list: [threat model](docs/THREAT
 - **The guest's key lives in the browser.** Change phones or clear the browser and that account is gone, so the old amplop can no longer find you. **Save my key** next to the account name downloads a small file, and **Restore a key** on the new phone brings the account back. That file is full access to the test account, which is why a real product needs NEAR Auth.
 - **"No wallet" still means someone funds the guest.** Here the testnet helper does. A real product needs rupiah in through QRIS, a stablecoin, and gas sponsored by a relayer. None of that is built.
 - **Rupiah is a demo rate,** not a market price.
-- **History depends on a free public indexer.** Nearblocks retired its v1 API on 5 November 2026 and the keyless v3 API answers only a few calls a minute, so a busy moment can show a partial history. Chain entries and the current holder are read from the contract and never depend on it.
+- **History depends on a free public indexer.** The page uses Nearblocks' keyless v3 API, which answers only a few calls a minute, so a busy moment can show a partial history. Chain entries and the current holder are read from the contract and never depend on it.
 - **The holder gate is a screen.** The book is shown only to the browser account that holds the NFT, and that account name comes from browser storage. Reading the contract directly shows the same data. The methods that move money check the NEP-171 owner on chain.
 - **A seller can empty the free money before a sale.** No method enforces a minimum balance for a buyer; read `hajatan(token_id)` just before buying. Locked shares cannot be withdrawn by anyone.
 - **A locked share is a promise about where money may go, not that it will go.** Nothing forces the holder to reply, a share never expires, and the guest cannot claim it.

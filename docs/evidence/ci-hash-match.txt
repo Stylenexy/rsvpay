@@ -1,0 +1,9 @@
+CI output, job "Rebuild the wasm and compare it with the chain", step "Same hash as rsvpay-v2.testnet".
+Workflow run 43487377865 (CI) on commit 06124f8, windows-latest, Rust 1.99.1, CARGO_HOME=C:\Users\MSI\.cargo.
+Copied from the job log with `gh run view 43487377865 --log` on 14 November 2026, because GitHub serves job logs only to signed-in users.
+That commit changed one comment line in contracts/src/lib.rs; the hash is unchanged.
+
+2026-11-13T18:57:23.6672705Z local wasm   sha256 710dfb1fc473743efbeaf951c1ca87f63bbb5f7441eca8eb19c72f5532313966
+2026-11-13T18:57:23.6673710Z local wasm   base58 8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw
+2026-11-13T18:57:23.6674127Z rsvpay-v2.testnet code_hash 8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw (block 277549850)
+2026-11-13T18:57:23.6674507Z MATCH: the code on chain is this build

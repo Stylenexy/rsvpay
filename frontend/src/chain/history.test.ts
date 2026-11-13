@@ -11,7 +11,10 @@ function evidence(logs: string[], status: Record<string, unknown> = { SuccessVal
 afterEach(() => vi.unstubAllGlobals());
 
 describe('history from successful execution events', () => {
-  it('reads the actual payout callback obtained with a read-only testnet RPC query', () => {
+  // withdraw.json is a real testnet payout (transaction CVz6QvXk..., 3 November, first deployment amplop-c-mvznhnlx.testnet),
+  // read with a read-only RPC query. When the contract moved on 7 November its account names in the fixture were
+  // replaced with the current deployment's, so the parser is tested against today's address. Amounts, logs and hash are unchanged.
+  it('reads a real testnet payout callback (account names updated to the current deployment)', () => {
     const fixture = JSON.parse(readFileSync(new URL('./fixtures/withdraw.json', import.meta.url), 'utf8').replace(/^\uFEFF/, ''));
     const events = parseHistoryEvents('5', C, fixture, null);
     expect(events).toHaveLength(1);
