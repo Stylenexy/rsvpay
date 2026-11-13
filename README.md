@@ -175,7 +175,7 @@ See `test result: ok. 55 passed`: 54 unit tests and the randomized one.
 ```bash
 cd frontend && npm ci && npm test
 ```
-The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 84 passed, 4 skipped.
+The regular suite includes pure-logic and in-memory tests. The live-network tests are skipped unless `LIVE=1`. See 85 passed, 4 skipped.
 
 ```bash
 cd frontend && npm run dev

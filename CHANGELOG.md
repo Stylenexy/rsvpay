@@ -8,7 +8,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 - The pitch video's sound effects now sit under Dex's voice; picture, words and length (1 min 54 s) are unchanged.
 
 ### Fixed
-- The README badge, proof table and image text, and the landing's proof row, said 14 live attacks were refused. Ten of the fourteen are hostile calls that are refused; four (L1, L7, L10, L14) confirm the safe state. They now say 14 attack checks pass, as the report and CLAIMS already did. The README's web test count is 85, not 84.
+- The README badge, proof table and image text, and the landing's proof row, said 14 live attacks were refused. Ten of the fourteen are hostile calls that are refused; four (L1, L7, L10, L14) confirm the safe state. They now say 14 attack checks pass, as the report and CLAIMS already did. The README's web test count is 85, not 84, in both places; CLAIMS says the 14 checks pass (10 refused, 4 safe-state checks).
 
 ## 2026-11-12
 
