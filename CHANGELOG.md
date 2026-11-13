@@ -5,7 +5,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ## 2026-11-14
 
 ### Changed
-- README: a "Read this first" box (how the project differs from the track's example prompt, known limits, names, commands to check the claims, why testnet only). CLAIMS: 55 contract tests, new "Not claimed" rows.
+- README: a short box for screeners at the top (what it is, commands to check the claims, names, why testnet only); the limits list in "What is not solved" now covers the holder gate, selling after a withdrawal, unenforced replies, the shared storage balance and the unit-level sale test. CLAIMS: 55 contract tests, new "Not claimed" rows.
 
 ### Fixed
 - Site text: the visitor message on a book no longer says the book is "private to the couple" (it is hidden on screen; the data is public on chain), and the message after Withdraw no longer says the money "reached your account", because a failed payout is refunded and the transaction still succeeds. Six languages. Text only, no layout change.
