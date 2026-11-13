@@ -5,6 +5,7 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 ## 2026-11-14
 
 ### Added
+- One uncut take of the live site, 1 min 17 s (`frontend/e2e/klip.e2e.mjs`, served at `/media/rsvpay-one-take.mp4`). Fresh live run of the one-button story with the holder gate: all 15 checks pass, 39.1 s (`docs/evidence/coba-e2e-report.txt`).
 - Holder gate: the book page opens only after the browser proves it holds a key the chain lists for the envelope's current NEP-171 owner, by a fresh NEP-413 signature (`frontend/src/chain/holder.ts`, six tests, live check `docs/evidence/holder-gate-check.txt`). No layout change; while the check runs the page shows its usual loading state.
 - README: a six-row table of the track requirements and their evidence at the top.
 - Check P6 in `scripts/transfer-checks.mjs`: a sale in the middle of a payout with real receipts (withdraw and nft_transfer in one transaction, the seller's account deleted so the payout fails). On testnet on 14 November both lines passed; the Sandbox workflow runs it on every push.

@@ -8,7 +8,7 @@
 
 [![CI](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/ci.yml) [![Sandbox](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml/badge.svg)](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE) [![Network](https://img.shields.io/badge/NEAR-testnet-00BFFF)](https://testnet.nearblocks.io/address/rsvpay-v2.testnet) ![Access keys](https://img.shields.io/badge/access%20keys-0-2ea44f) ![Live attack checks](https://img.shields.io/badge/live%20attack%20checks-14%2F14%20pass-2ea44f)
 
-**[Try the whole story, about 40 s on testnet](https://rsvpay.xyz/#/coba)** · **[Open the site](https://rsvpay.xyz)** · **[Watch the pitch, 1 min 54 s](https://rsvpay.xyz/media/rsvpay-pitch.mp4)**
+**[Try the whole story, about 40 s on testnet](https://rsvpay.xyz/#/coba)** · **[Open the site](https://rsvpay.xyz)** · **[Watch the pitch, 1 min 54 s](https://rsvpay.xyz/media/rsvpay-pitch.mp4)** · **[Watch one uncut take, 1 min 17 s](https://rsvpay.xyz/media/rsvpay-one-take.mp4)**
 
 </div>
 
@@ -134,6 +134,8 @@ The browser requests one throwaway account for Maya from a small testnet purse (
 Each completed transaction has a receipt link and a measured duration. The end shows elapsed time including your pause, plus the sum of measured steps. The target is 60 seconds; five live checks on today's contract took between 34.8 s and 41.8 s including the pause ([runs](docs/evidence/coba-e2e-runs.txt), last run in [coba-e2e-report.txt](docs/evidence/coba-e2e-report.txt)). Network latency and helper availability affect it.
 
 If the helper refuses the request, the page says so and offers **View recorded run**. This is explicitly a past run from 3 November 2026, with the four hashes in [measured-testnet.txt](docs/evidence/measured-testnet.txt). That evidence contains opening, giving, replying and withdrawing; it does not contain Sam's opening receipt.
+
+One uncut take of the live site, recorded by a script on 14 November ([`frontend/e2e/klip.e2e.mjs`](frontend/e2e/klip.e2e.mjs)): the whole story, the envelope passed on with its receipt, the old holder's controls gone, and the new holder's signed check opening the inherited book and its history. Captions are drawn over the page only in the recording: [rsvpay-one-take.mp4](https://rsvpay.xyz/media/rsvpay-one-take.mp4), 1 min 17 s, no edits except the first two seconds of blank page.
 
 To watch instead of waiting on the network, open **How it works** on any inner page and press **Show me, step by step**. The site types the names, opens the book, gives, rings and gives back on its own, then says the demo is finished. That demo runs on a rehearsal client in your browser with play money, and it is labelled as a rehearsal on screen. The button above is the one that uses real testnet.
 
