@@ -2,3 +2,8 @@ Transfer and payout checks, contract rsvpay-v2.testnet (testnet, node 2.14.1, pr
 2026-11-13T21:22:32.918Z
 PASS | P6 a sale in the middle of a payout that fails: the refund lands in the envelope the buyer now holds | withdraw + nft_transfer in 8SZ1xJi9EaNmepv4HsRoA3Myg7rgSxQ2DibvxN45ZGdy; owner buyer1-fhf121; free 87749000000000000000000 before, 87749000000000000000000 after; attempt 1
 PASS | P6 the buyer then withdraws exactly that refund, and the guests' kept shares stay | paid 87749000000000000000000 to buyer1-fhf121; seeds 2421000000000000000000
+
+Same check in CI: workflow Sandbox, run 43510328889, commit d629618, a local chain (near-sandbox) with this commit's wasm and every key deleted.
+Copied from the job log, which GitHub serves only to signed-in users.
+PASS | P6 a sale in the middle of a payout that fails: the refund lands in the envelope the buyer now holds | withdraw + nft_transfer in 6g8poFkT54F5wK6NV7jP666nVcrHTdcQp6Wher1oYnw; owner buyer1-fhwfrp; free 88290500000000000000000 before, 88290500000000000000000 after; attempt 1
+PASS | P6 the buyer then withdraws exactly that refund, and the guests' kept shares stay | paid 88290500000000000000000 to buyer1-fhwfrp; seeds 2429500000000000000000
