@@ -2,6 +2,11 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-13
+
+### Changed
+- The pitch video's sound effects now sit under Dex's voice; picture, words and length (1 min 54 s) are unchanged.
+
 ## 2026-11-12
 
 ### Changed
