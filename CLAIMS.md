@@ -21,7 +21,7 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | No coin is lost if a payout fails or the NFT is sold in the middle of one. | Tests `failed_payout_refunds_into_the_amplop`, `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`. On chain, P5 in [`transfer-checks-report.txt`](docs/evidence/transfer-checks-report.txt), 11 November: a payout made to fail, and the envelope reads the same balance after the refund. | same; `cd scripts && node transfer-checks.mjs` |
 | A stranger cannot move an envelope, a refused transfer leaves no lock, and the resolver fits its fixed 5 TGas on its heaviest path. | P1 to P4 in the same report: both transfers refused with owner, balance, kept shares and lock unchanged; the resolver burnt 3.31 TGas returning an envelope between two 64-character names. | `cd scripts && node transfer-checks.mjs` |
 | Random use never makes or loses a yoctoNEAR. | Test `random_sequences_never_lose_or_make_a_yoctonear`: 120 fixed-seed sequences of 120 random steps (give, reply, withdraw with one payout in four failing, transfer, close, reopen, new amplop) across five people. After every step a shadow ledger kept outside the contract matches every amplop's balance exactly, invariants 1, 2, 4 and 5 of ARCHITECTURE hold, and every yoctoNEAR in is held, paid out, or kept for storage. A 300-sequence run (36,000 steps) passed every ledger check on the builder's laptop on 11 November; no report file was kept, so the run to trust is the one CI repeats. | `cd contracts && cargo test random_sequences` |
-| 54 contract tests pass. | Fresh `cargo test` on 7 November: 54 passed, 0 failed. Since 11 November `cargo test` shows 55: the 54 and the randomized test below. CI runs the same command on Linux on every push to `master`. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
+| 55 contract tests pass (54 unit tests and one randomized test). | Fresh `cargo test` on 7 November: 54 passed, 0 failed. Since 11 November `cargo test` shows 55: the 54 and the randomized test above. CI runs the same command on Linux on every push to `master`. | `cd contracts && cargo test`. On Windows without NASM, set `AWS_LC_SYS_PREBUILT_NASM=1` first. |
 
 ## On the site
 
@@ -40,6 +40,13 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 | The app works in six languages. | Text check in `frontend/src/copy.test.ts`, part of 85 web tests passing (4 skipped) on 11 November. | `cd frontend && npx vitest run` |
 
 ## Not claimed
+
+- **Access control on the holder page.** The book is hidden on screen from every browser account except the NFT's holder. The holder comes from the account name stored in the browser, and the same data is readable through RPC, so this is a screen, not a gate. The contract methods that move money check the NEP-171 owner on chain.
+- **A sub-account per NFT.** The money of each NFT is a record keyed by token id inside one contract with no access keys. Transfers and settled locks use storage that a shared spare balance pays.
+- **Enforceable replies.** A locked share can only be sent to the guest who gave it, but nothing forces the holder to send it, it never expires, and the guest cannot claim it.
+- **A correct delivery message after a failed payout.** If a payout fails, the contract refunds the envelope and the transaction still succeeds, so the page can say "reached your account" wrongly. Reloading shows the right balance. Not fixed.
+- **Every attack check on every run.** `attacks.mjs` check L13 and `transfer-checks.mjs` check P5 print `SKIP` when their race is lost; a skip does not fail the run.
+- **A lock comment that matches the constant.** The source comment on the lock bound says about twelve days; the constant is 1,000,000 blocks, about seven. The contract has no keys, so the comment stays.
 
 - **Real money.** Testnet only, play money.
 - **An audit.** There has been no formal audit. A fellow builder read the code and filed issues on this repository (T18 in the threat model came from that review), and the builder ran AI code reviewers against it. Neither is an audit.
