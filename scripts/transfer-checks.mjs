@@ -6,6 +6,7 @@
 //   NEAR_RPC=http://127.0.0.1:3030 ATTACK_ROOT=root.json node transfer-checks.mjs rsvpay.test.near   local chain (CI)
 // The public helper rate-limits by IP. If it refuses, set ATTACK_ROOT to a JSON file holding
 // { accountId, secret } of a testnet account with about 2 NEAR, and the accounts start under it.
+// ONLY=P6 runs just the sale-during-a-payout race (about 0.6 NEAR, most of it comes back) and writes its own report.
 import fs from "node:fs";
 import { Account, JsonRpcProvider, KeyPair, actions, baseEncode, nearToYocto, teraToGas } from "near-api-js";
 
@@ -103,6 +104,8 @@ async function refused(name, token, attack, mustContain) {
 const rootFile = process.env.ATTACK_ROOT;
 const rootKeys = rootFile ? JSON.parse(fs.readFileSync(rootFile, "utf8")) : null;
 const root = rootKeys ? new Account(rootKeys.accountId, provider, rootKeys.secret) : await helperAccount("check-root");
+const only = process.env.ONLY;
+if (!only) {
 const siti = await sub(root, "siti", "0.5");
 const budi = await sub(root, "budi", "0.5");
 const maling = await sub(root, "maling", "0.3");
@@ -192,8 +195,77 @@ for (let attempt = 1; attempt <= 4; attempt++) {
   p5 = `attempt ${attempt}: the payout arrived before the account was gone (free ${after.free})`;
 }
 if (p5) note(`SKIP | P5 the holder's account outlived the payout every time | ${p5}`);
+}
+
+// P6: a sale in the middle of a payout, with real receipts. One transaction from the holder carries two actions,
+// withdraw and then nft_transfer to a buyer, so the payout and its callback are still in flight when the buyer
+// already holds the token. A spare key then deletes the seller's account, so the payout has nowhere to land and
+// its callback runs after the sale. Whatever the race does, no coin may be made or lost: either the seller was
+// paid what was free when they asked, or the refund lands in the envelope the buyer now holds, and the buyer can
+// withdraw it. The deletion is a race; the refund branch is tried up to four times.
+let paidSeen = false;
+let p6 = "the seller's account was never gone in time";
+for (let attempt = 1; attempt <= 4; attempt++) {
+  const seller = await sub(root, `seller${attempt}`, "0.45");
+  const buyer = await sub(root, `buyer${attempt}`, "0.25");
+  const S = await open(seller, `Sale during payout ${run} ${attempt}`);
+  await call(root, "give", { token_id: S, message: "money in the envelope at the sale" }, nearToYocto("0.05"));
+  const before = await view("hajatan", { token_id: S });
+  const spare = KeyPair.fromRandom("ed25519");
+  await seller.addFullAccessKey(spare.getPublicKey());
+  const sellerSpare = new Account(seller.accountId, provider, spare.toString());
+  const goodbye = await sellerSpare.createSignedTransaction({ receiverId: seller.accountId, actions: [actions.deleteAccount(root.accountId)] });
+  const hash = await sendIncluded(seller, CONTRACT, [
+    actions.functionCall("withdraw", { token_id: S }, teraToGas("100"), 0n),
+    actions.functionCall("nft_transfer", { receiver_id: buyer.accountId, token_id: S }, teraToGas("100"), 1n),
+  ]);
+  await provider.sendTransactionUntil(goodbye, "NONE").catch(() => null);
+  let logs = [];
+  for (let i = 0; i < 20; i++) {
+    await sleep(2000);
+    try {
+      const st = await rpc("EXPERIMENTAL_tx_status", { tx_hash: hash, sender_account_id: seller.accountId, wait_until: "FINAL" });
+      logs = st.receipts_outcome.flatMap((r) => r.outcome.logs);
+      if (logs.some((l) => l.startsWith("amplop:paid") || l.startsWith("amplop:payout_failed_refunded"))) break;
+    } catch {
+      // not final yet
+    }
+  }
+  const after = await view("hajatan", { token_id: S });
+  const sold = after.owner_id === buyer.accountId;
+  const seedsKept = after.seed_locked === before.seed_locked;
+  if (logs.some((l) => l.startsWith("amplop:payout_failed_refunded"))) {
+    say(
+      sold && seedsKept && after.balance === before.balance && after.free === before.free,
+      "P6 a sale in the middle of a payout that fails: the refund lands in the envelope the buyer now holds",
+      `withdraw + nft_transfer in ${hash}; owner ${after.owner_id.split(".")[0]}; free ${before.free} before, ${after.free} after; attempt ${attempt}`,
+    );
+    const take = await buyer
+      .callFunctionRaw({ contractId: CONTRACT, methodName: "withdraw", args: { token_id: S }, gas: GAS, deposit: 0n, waitUntil: "FINAL" })
+      .catch((e) => e);
+    const takeLogs = (take?.receipts_outcome ?? []).flatMap((r) => r.outcome.logs);
+    const end = await view("hajatan", { token_id: S });
+    say(
+      takeLogs.some((l) => l.startsWith(`amplop:paid token=${S} yocto=${before.free}`)) && end.free === "0" && end.seed_locked === before.seed_locked,
+      "P6 the buyer then withdraws exactly that refund, and the guests' kept shares stay",
+      `paid ${before.free} to ${buyer.accountId.split(".")[0]}; seeds ${end.seed_locked}`,
+    );
+    p6 = "";
+    break;
+  }
+  if (!paidSeen && logs.some((l) => l.startsWith("amplop:paid"))) {
+    paidSeen = true;
+    say(
+      sold && seedsKept && after.free === "0" && BigInt(after.balance) === BigInt(before.balance) - BigInt(before.free),
+      "P6 a sale in the middle of a payout that lands: the seller got only what was free, the buyer holds the rest",
+      `attempt ${attempt}; owner ${after.owner_id.split(".")[0]}; free ${after.free}; seeds ${after.seed_locked}`,
+    );
+  }
+  p6 = `attempt ${attempt}: the payout arrived before the seller's account was gone`;
+}
+if (p6) note(`SKIP | P6 the refund branch was not reached | ${p6}`);
 
 const chain = await rpc("status", []).then((s) => `${s.chain_id}, node ${s.version?.version}, protocol ${s.protocol_version}`, () => RPC);
 const report = `Transfer and payout checks, contract ${CONTRACT} (${chain})\n${new Date().toISOString()}\n${lines.join("\n")}\n`;
-fs.writeFileSync(new URL(`../docs/evidence/transfer-checks-report.txt`, import.meta.url), report);
+fs.writeFileSync(new URL(only ? `../docs/evidence/sale-during-payout-report.txt` : `../docs/evidence/transfer-checks-report.txt`, import.meta.url), report);
 process.exit(failed ? 1 : 0);

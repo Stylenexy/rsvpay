@@ -1,0 +1,4 @@
+Transfer and payout checks, contract rsvpay-v2.testnet (testnet, node 2.14.1, protocol 88)
+2026-11-13T21:22:32.918Z
+PASS | P6 a sale in the middle of a payout that fails: the refund lands in the envelope the buyer now holds | withdraw + nft_transfer in 8SZ1xJi9EaNmepv4HsRoA3Myg7rgSxQ2DibvxN45ZGdy; owner buyer1-fhf121; free 87749000000000000000000 before, 87749000000000000000000 after; attempt 1
+PASS | P6 the buyer then withdraws exactly that refund, and the guests' kept shares stay | paid 87749000000000000000000 to buyer1-fhf121; seeds 2421000000000000000000

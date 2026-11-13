@@ -30,7 +30,8 @@ Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHO
 | Code on chain is this source | `view_account` on `rsvpay-v2.testnet` (same `curl`, with `"request_type":"view_account"`), then the CI job *Rebuild the wasm and compare it with the chain* ([its output](docs/evidence/ci-hash-match.txt), since job logs need a GitHub login) | `code_hash` `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`; the job prints `MATCH` (Windows, Rust 1.99.1, cargo home `C:\Users\MSI\.cargo`; other hosts build different bytes) |
 | 55 contract tests | `cd contracts && cargo test` | `test result: ok. 55 passed` |
 | 85 web tests | `cd frontend && npm ci && npm test`, from a clone of the whole repository (the tests also read `README.md`, `docs/` and `contracts/src/tests.rs`) | `85 passed`, `4 skipped` |
-| Attacks pass on a local chain, independent of our deployment | latest [Sandbox run](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) | green; 14 attacks, 21 hold checks, 6 transfer lines |
+| Attacks pass on a local chain, independent of our deployment | latest [Sandbox run](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) | green; 14 attacks, 21 hold checks, transfer lines P1 to P6 |
+| A sale in the middle of a payout, with real receipts | `cd scripts && ONLY=P6 node transfer-checks.mjs` (makes throwaway testnet accounts through NEAR's public helper) | two `PASS` lines; last run in [`sale-during-payout-report.txt`](docs/evidence/sale-during-payout-report.txt) |
 | CI is green on the head commit | `curl -s "https://api.github.com/repos/Stylenexy/rsvpay/actions/runs?branch=master&per_page=3"` | `"conclusion": "success"` |
 
 **Names and numbers.** RSVPay is the product. *Amplop Balas* ("reply envelope") is its first name and the contract crate; *Kado* is our own spike from the first days of this hackathon (2 November) whose escrow-per-token-id engine it reuses (see [ARCHITECTURE](docs/ARCHITECTURE.md)). Maya and Sam are Siti and Budi in the Indonesian interface and the tests. Amounts show as dollars at a demo rate of 1 NEAR = $500, so "$100" in the story is 0.2 testnet NEAR of play money. On a full clone, `git log --reverse --format='%h %ad %s' | head -1` shows the first commit, 2 November 2026 at 19:30 UTC.
@@ -101,7 +102,7 @@ Also by the same builder: **Mintless** (*Kota Tanpa Cetak Uang*, track Games Wit
 
 1. **A host opens a hajatan** (celebration). The contract mints one NFT, the *amplop*, to the host. The host fixes a *reply seed* of 0–10%, which can never change.
 2. **A guest scans a QR and gives.** No wallet to install. The gift becomes an entry in the NFT: who, how much, the wish, when. The seed part (say 5%) stays locked in that guest's name. The rest is free for the host to withdraw.
-3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Sam gave $500. Seed $25 is ready. Add $475?"* One tap releases the seed plus the top-up into Sam's amplop as a new entry linked to the old one. Saying "later" changes nothing.
+3. **Years later the guest hosts their own hajatan.** The old amplop rings: *"Sam gave $100. Seed $5 is ready. Add $95?"* One tap releases the seed plus the top-up into Sam's amplop as a new entry linked to the old one. Saying "later" changes nothing.
 
 Each reply is itself an entry with its own seed, so the chain of giving back can continue between two families for decades.
 
@@ -161,7 +162,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 | README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
 | Gated page only current holders can open | **Partial. Not access control.** The book is hidden on screen from every account except the NFT's holder, but the holder is read from the account name stored in the browser, and the same data is readable by anyone through RPC | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) test the screen only |
 | History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from Nearblocks v3, and every row is checked against its receipt on archival RPC | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
-| Tests for the transfer path, including a sale in the middle of a payout | Partial: unit level (the payout result is injected into the callback helper, no purchase payment changes hands); on chain, a failed payout is refunded (P5) and a held-open transfer moves no coin | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
+| Tests for the transfer path, including a sale in the middle of a payout | Done, with real receipts. One transaction from the holder carries `withdraw` and then `nft_transfer` to a buyer, a spare key deletes the seller's account so the payout fails, and the refund lands in the envelope the buyer now holds; the buyer then withdraws exactly that amount (P6, testnet, 14 November). The "sale" is a transfer: there is no priced sale method | P6 in [`sale-during-payout-report.txt`](docs/evidence/sale-during-payout-report.txt), also run on every push in the [Sandbox](.github/workflows/sandbox.yml) workflow; unit tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
 
 ## Why an NFT, not a database
@@ -171,7 +172,14 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 | **The cycle outlives apps.** Giving back takes 5 to 20 years. This book belongs to the family, not to a company. | The book is contract state, readable with `hajatan(token_id)` without our site |
 | **The money is held by the token, not by us.** No admin, no owner function, no access keys. | Live attack L1: 0 keys |
 | **The rights move with the NFT.** The money, the book and the promises travel with it. The previous holder is locked out. | Step A11 in [`full-cycle-report.txt`](docs/evidence/full-cycle-report.txt), test `old_owner_cannot_withdraw_after_transfer`, live attack L9 |
-| **The seed is a promise kept by code.** It can only go to the guest who gave it. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; live attacks L6, L11 |
+| **Where the seed can go is fixed by code.** It can only go to the guest who gave it. Whether it goes is up to the holder. | Tests `withdraw_pays_only_free_money_and_never_touches_seeds`, `reply_cannot_be_redirected_to_someone_else`; live attacks L6, L11 |
+
+### Design choices, and what they cost
+
+- **One keyless contract, not a sub-account per envelope.** Sub-accounts would need a factory to create them and code on each. One contract with no keys means one set of rules nobody can change, and a transfer has nothing to hand over but the NEP-171 owner. The cost: storage that transfers add is paid from a shared spare balance.
+- **No marketplace approvals.** An approved marketplace could move an envelope, with the guests' kept shares inside it, without the holder signing that move. An envelope is meant to move between people who know each other: a parent or a wedding committee who opened it hands it to the couple, a family book passes to the children, or a family moves to a new account.
+- **The holder may withdraw the free money at any time, including just before a transfer.** That money is the hosts' own gift money. What the code protects is the kept shares, which nobody can withdraw.
+- **A reply is never forced.** Giving back is a social promise in this custom, not a debt. The code fixes where a kept share can go and keeps it waiting for as long as it takes; it does not take the decision away from the family.
 
 ## Why NEAR
 
@@ -308,7 +316,7 @@ Written down so nobody has to discover it. Full list: [threat model](docs/THREAT
 - **A seller can empty the free money before a sale.** No method enforces a minimum balance for a buyer; read `hajatan(token_id)` just before buying. Locked shares cannot be withdrawn by anyone.
 - **A locked share is a promise about where money may go, not that it will go.** Nothing forces the holder to reply, a share never expires, and the guest cannot claim it.
 - **No sub-account per NFT.** Each NFT's money is a record inside one keyless contract. Transfers and settled locks use storage paid from a shared spare balance, so that balance has to last.
-- **The sale-during-a-payout test is a unit test.** It injects the payout result; on chain we showed a failed payout refunded (P5) and a held-open transfer moving no coin, but not the two racing each other. Checks L13 and P5 print `SKIP` when a race is lost, without failing the run.
+- **There is no priced sale.** Approvals (NEP-178) and payouts (NEP-199) are off, so an envelope moves by `nft_transfer` and any payment happens outside the contract. The sale-during-a-payout check (P6) races real receipts, but no purchase payment is part of it. Checks L13, P5 and P6 print `SKIP` when a race is lost, without failing the run.
 - **An owner's envelopes past the first 100 are not seen.** `hajatan_of` and the ring read an owner's first 100 envelopes. Nobody hosts that many; a fix needs a new deployment.
 - **Not audited, and no independent users yet.** The tests above were run by the builder, and the README list also by a fresh GitHub machine.
 

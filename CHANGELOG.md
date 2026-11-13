@@ -4,6 +4,10 @@ What changed, by day. The project started on 3 November 2026. Commit messages ar
 
 ## 2026-11-14
 
+### Added
+- Check P6 in `scripts/transfer-checks.mjs`: a sale in the middle of a payout with real receipts (withdraw and nft_transfer in one transaction, the seller's account deleted so the payout fails). On testnet on 14 November both lines passed; the Sandbox workflow runs it on every push.
+- README: "Design choices, and what they cost".
+
 ### Changed
 - README: a short box for screeners at the top (what it is, commands to check the claims, names, why testnet only); the limits list in "What is not solved" now covers the holder gate, selling after a withdrawal, unenforced replies, the shared storage balance and the unit-level sale test. CLAIMS: 55 contract tests, new "Not claimed" rows.
 
