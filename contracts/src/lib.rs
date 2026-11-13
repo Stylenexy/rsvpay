@@ -37,7 +37,7 @@ pub const MAX_DATE_CHARS: usize = 32;
 pub const MAX_SEED_BPS: u16 = 1000;
 /// A transfer lock holds until the resolver runs. The resolver is scheduled with the transfer, but this contract
 /// has no keys and can never be repaired, so if a resolver ever failed the amplop and every guest's seed would
-/// freeze for good. This bound only exists for that case: about twelve days, far past the few thousand blocks
+/// freeze for good. This bound only exists for that case: 1,000,000 blocks, about seven days, far past the few thousand
 /// that yields chained within one transaction's gas could stretch a transfer.
 pub const LOCK_MAX_BLOCKS: u64 = 1_000_000;
 const GAS_FOR_PAYOUT_CALLBACK: Gas = Gas::from_tgas(10);

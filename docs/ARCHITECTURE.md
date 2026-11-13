@@ -25,7 +25,7 @@ flowchart LR
 | `scripts/` | Testnet scripts: attacks, full cycle, demo seed | Throwaway accounts, in-memory keys |
 | `docs/` | Design, threat model, evidence | `docs/evidence/` holds run reports and screenshots |
 
-There is no `backend/` on purpose. A backend would be one more thing that holds keys and can go down in the 5–20 years this promise has to last. The cost is that gas and account funding are not sponsored; see [Roadmap](ROADMAP.md).
+There is no `backend/` on purpose; the only server code is one function, `frontend/api/dana.ts`, that holds a testnet purse key and funds throwaway accounts. A backend would be one more thing that holds keys and can go down in the 5–20 years this promise has to last. The cost is that gas and account funding are not sponsored; see [Roadmap](ROADMAP.md).
 
 ## Contract
 

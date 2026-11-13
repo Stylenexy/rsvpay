@@ -44,9 +44,7 @@ Contract: [`rsvpay-v2.testnet`](https://testnet.nearblocks.io/address/rsvpay-v2.
 - **Access control on the holder page.** The book is hidden on screen from every browser account except the NFT's holder. The holder comes from the account name stored in the browser, and the same data is readable through RPC, so this is a screen, not a gate. The contract methods that move money check the NEP-171 owner on chain.
 - **A sub-account per NFT.** The money of each NFT is a record keyed by token id inside one contract with no access keys. Transfers and settled locks use storage that a shared spare balance pays.
 - **Enforceable replies.** A locked share can only be sent to the guest who gave it, but nothing forces the holder to send it, it never expires, and the guest cannot claim it.
-- **A correct delivery message after a failed payout.** If a payout fails, the contract refunds the envelope and the transaction still succeeds, so the page can say "reached your account" wrongly. Reloading shows the right balance. Not fixed.
 - **Every attack check on every run.** `attacks.mjs` check L13 and `transfer-checks.mjs` check P5 print `SKIP` when their race is lost; a skip does not fail the run.
-- **A lock comment that matches the constant.** The source comment on the lock bound says about twelve days; the constant is 1,000,000 blocks, about seven. The contract has no keys, so the comment stays.
 
 - **Real money.** Testnet only, play money.
 - **An audit.** There has been no formal audit. A fellow builder read the code and filed issues on this repository (T18 in the threat model came from that review), and the builder ran AI code reviewers against it. Neither is an audit.

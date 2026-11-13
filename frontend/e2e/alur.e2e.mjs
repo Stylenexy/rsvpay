@@ -143,8 +143,8 @@ try {
 
   // 6. withdraw
   await host.getByRole('button', { name: 'Tarik dana bebas' }).click();
-  await host.getByText(/masuk ke akunmu/).waitFor({ timeout: 60_000 });
-  say(true, 'E11 host withdraws free money', await host.getByText(/masuk ke akunmu/).innerText());
+  await host.getByText(/dikirim ke akunmu/).waitFor({ timeout: 60_000 });
+  say(true, 'E11 host withdraws free money', await host.getByText(/dikirim ke akunmu/).innerText());
 
   // 429 is a rate limit the page handles: the purse says "enough from this address this hour" and the page
   // falls back to the public helper; the keyless indexer says "slow down" and history retries. Counted, not hidden.

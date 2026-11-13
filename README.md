@@ -24,32 +24,32 @@ Tracks: **NFTs That Do Something** + **Open Innovation**. Built at NEAR HACKATHO
 
 | The example prompt asks for | What RSVPay does | Consequence |
 |---|---|---|
-| Each NFT maps to its own sub-account | No sub-account. Each NFT's money is a record keyed by token id inside one contract with no access keys (`contracts/src/lib.rs`, `Hajatan`) | Transfer moves the right by changing the NEP-171 owner; there is nothing else to hand over. Cost: transfers and settled locks use storage paid from a shared spare balance ([threat model](docs/THREAT-MODEL.md)) |
+| Each NFT maps to its own sub-account | No sub-account. Each NFT's money is a record keyed by token id inside one contract with no access keys (`contracts/src/lib.rs`, `Hajatan`) | Transfer moves the right by changing the NEP-171 owner; nothing else has to be handed over. Cost: transfers and settled locks use storage paid from a shared spare balance ([threat model](docs/THREAT-MODEL.md)) |
 | A page only current holders can open | A screen that shows the book only to the browser account that holds the NFT. **Not access control**: the same data is readable by anyone through RPC (`hajatan(token_id)`), and the screen trusts the account name stored in the browser | The money methods `withdraw`, `reciprocate` and `set_open` do check the NEP-171 owner on chain at call time |
 | Tests for a sale in the middle of a payout | Unit tests (the payout result is injected into the callback helper), plus on-chain checks that a failed payout is refunded to the envelope (P5) and that a transfer held open for 34,986 blocks moves no coin | A sale racing a payout that really fails is covered by unit tests only, not reproduced on chain |
 
 **Limits a careful reader will find anyway:**
-- The seller can withdraw the free money right up to the moment of sale. Read `hajatan(token_id)` before buying. Locked shares cannot be withdrawn by anyone.
+- The seller can withdraw the free money right up to the moment of sale, and no method enforces a minimum balance for the buyer. Read `hajatan(token_id)` before buying. Locked shares cannot be withdrawn by anyone.
 - A locked share is a promise only in where it can go. Nothing forces the holder to send it, it has no expiry, and the guest has no way to claim it ([threat model](docs/THREAT-MODEL.md#not-defended)).
-- After **Withdraw** the page says the money "reached your account" when the transaction succeeds. If the payout itself fails, the contract refunds the envelope and the transaction still succeeds, so the page would say so wrongly; the balance shown after reload is right. Found by an AI screening run on 14 November, not fixed yet.
 - `attacks.mjs` check L13 and `transfer-checks.mjs` check P5 print `SKIP` when their race is lost, and a skip does not fail the run. Count the `PASS` lines: 14 for the attacks.
-- The code-hash match below holds only on Windows with cargo home `C:\Users\MSI\.cargo` and Rust 1.99.1 (GitHub's Windows job does this). A Linux build gives different bytes for the same source.
-- An owner's envelopes past the first 100 are not seen, and the source comment on the lock bound says about twelve days where the constant (1,000,000 blocks) is about seven. A new deployment would fix both; this contract has no keys to accept one.
+- The code-hash match holds only on Windows with cargo home `C:\Users\MSI\.cargo` and Rust 1.99.1 (GitHub's Windows job does this). A Linux build gives different bytes for the same source, for example 499,524 bytes in the Sandbox log against 497,654 on chain.
+- An owner's envelopes past the first 100 are not seen. A new deployment would fix that; this contract has no keys to accept one.
+- Fixed on 14 November (site text only): the book's visitor message no longer calls the book "private", and the message after **Withdraw** no longer says the money "reached your account", because a failed payout is refunded and the transaction still succeeds.
 
-**Names and numbers.** RSVPay is the product. *Amplop Balas* ("reply envelope") is its first name and the contract crate; *Kado* is our own spike from the first days of this hackathon (2 November) whose escrow-per-token-id engine it reuses (see [ARCHITECTURE](docs/ARCHITECTURE.md)). Maya and Sam are Siti and Budi in the Indonesian interface and the tests. Amounts show as dollars at a demo rate of 1 NEAR = $500, so "$100" in the story is 0.2 testnet NEAR of play money. Before this revision the public history had 123 commits by one author, the first on 2 November 2026 (19:30 UTC); a shallow clone shows fewer.
+**Names and numbers.** RSVPay is the product. *Amplop Balas* ("reply envelope") is its first name and the contract crate; *Kado* is our own spike from the first days of this hackathon (2 November) whose escrow-per-token-id engine it reuses (see [ARCHITECTURE](docs/ARCHITECTURE.md)). Maya and Sam are Siti and Budi in the Indonesian interface and the tests. Amounts show as dollars at a demo rate of 1 NEAR = $500, so "$100" in the story is 0.2 testnet NEAR of play money. On a full clone, `git log --reverse --format='%h %ad %s' | head -1` shows the first commit (2 November 2026, 19:30 UTC); a shallow clone starts later. The web tests read `README.md`, `docs/` and `contracts/src/tests.rs`, so run them from a clone of the whole repository, not a copied `frontend/` folder.
 
 **Check it without taking our word** (no wallet, no testnet account needed):
 
 | Claim | Command | Expected |
 |---|---|---|
 | Zero access keys | the `curl` in [Try it](#try-it) | `"keys":[]` |
-| Code on chain is this source | `curl -s https://test.rpc.fastnear.com -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","id":1,"method":"query","params":{"request_type":"view_account","finality":"final","account_id":"rsvpay-v2.testnet"}}'` then `node scripts/code-hash.mjs <wasm>` | `code_hash` `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`; the script prints `MATCH` on Windows |
+| Code on chain is this source | `view_account` on `rsvpay-v2.testnet` (same `curl`, with `"request_type":"view_account"`), then `node scripts/code-hash.mjs <wasm>` | `code_hash` `8cKSDEx2G7FqNL5xVspweV5fYC2LWtoeMdKEDngarduw`; the script prints `MATCH` on Windows |
 | 55 contract tests | `cd contracts && cargo test` | `test result: ok. 55 passed` |
 | 85 web tests | `cd frontend && npm ci && npm test` | `85 passed`, `4 skipped` |
-| The attacks pass on a local chain, independent of our deployment | open the latest [Sandbox run](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) | green; log shows 14 attacks, 21 hold checks, 6 transfer lines |
+| Attacks pass on a local chain, independent of our deployment | latest [Sandbox run](https://github.com/Stylenexy/rsvpay/actions/workflows/sandbox.yml) | green; 14 attacks, 21 hold checks, 6 transfer lines |
 | CI is green on the head commit | `curl -s "https://api.github.com/repos/Stylenexy/rsvpay/actions/runs?branch=master&per_page=3"` | `"conclusion": "success"` |
 
-**Why testnet only.** The rules allow it for every track (HACKATHON.md Q-010) and nothing here needs a mainnet-only integration. A mainnet deployment of this contract would cost about 5.1 NEAR, of which 4.98 NEAR is storage for the 497,654-byte wasm (1 NEAR per 100 KB), about $18 at $3.49 per NEAR on 14 November. Because the contract has no keys, that storage could never be recovered, and a mistake could never be patched. The demo's account purse would also hand out real money to anyone who presses the button. We chose to prove the contract on a network where every check can be repeated freely.
+**Why testnet only.** The rules allow it for every track: HACKATHON.md Q-010, "Testnet-only projects eligible? Yes, all tracks. Mainnet only where the integration is mainnet-only" (https://nearhackathon.com/HACKATHON.md). Nothing here needs a mainnet-only integration. A mainnet deployment of this contract would cost about 5.1 NEAR, of which 4.98 NEAR is storage for the 497,654-byte wasm (1 NEAR per 100 KB), about $18 at $3.49 per NEAR on 14 November. Because the contract has no keys, that storage could never be recovered and a mistake could never be patched, and the demo's account purse would hand out real money to anyone who presses the button. We prove the contract on a network where every check can be repeated freely.
 
 ## One family's story, in about 40 seconds
 
@@ -175,7 +175,7 @@ Track **NFTs That Do Something**, from its [official prompt](https://github.com/
 | README explains how control passes and what stops the old owner | Done | [How control moves](#how-control-moves-when-the-nft-is-transferred); test `old_owner_cannot_withdraw_after_transfer`; live attack L9 |
 | Gated page only current holders can open | **Partial. Not access control.** The book is hidden on screen from every account except the NFT's holder, but the holder is read from the account name stored in the browser, and the same data is readable by anyone through RPC | Steps E6b and E7 in [`e2e-report.txt`](docs/evidence/e2e-report.txt) test the screen only |
 | History per NFT: earned, paid out, who held it | Implemented with partial-source disclosure. Gifts and linked replies come from chain views; payouts and holder changes come from Nearblocks v3, and every row is checked against its receipt on archival RPC | [`history.ts`](frontend/src/chain/history.ts), book history, [source checks](docs/evidence/history-source-check.txt) |
-| Tests for the transfer path, including a sale in the middle of a payout | Done at unit level (the payout result is injected into the callback helper); on chain: a failed payout is refunded (P5) and a held-open transfer moves no coin | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
+| Tests for the transfer path, including a sale in the middle of a payout | Partial: unit level (the payout result is injected into the callback helper, no purchase payment changes hands); on chain, a failed payout is refunded (P5) and a held-open transfer moves no coin | Tests `sale_during_a_payout_in_flight_keeps_every_coin_with_the_token`, `withdraw_blocked_while_sale_settles`, `sale_reverted_by_receiver_returns_amplop_and_unlocks` |
 | Threat model: every way a seller could keep the money | Done | [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) |
 
 ## Why an NFT, not a database
@@ -259,7 +259,7 @@ The money lives inside the contract, booked per token id, not in anyone's accoun
 - A failed payout goes back into the amplop, not to the void.
 - The contract account has no access keys. There is no admin, no upgrade and no pause, for us or anyone.
 
-**Before buying an amplop**, read `hajatan(token_id)`: the seller may withdraw free money up to the moment of sale. Seeds cannot be withdrawn by anyone; they only leave as a reply to the guest who gave them.
+**Before buying an amplop**, read `hajatan(token_id)`: it is only a snapshot. The seller may withdraw free money up to the moment of sale, and no method enforces a minimum inherited balance. Seeds cannot be withdrawn by anyone; they only leave as a reply to the guest who gave them.
 
 ## What we attacked
 
@@ -329,7 +329,7 @@ scripts/     Testnet scripts: attacks, full cycle, demo seed
 docs/        Architecture, threat model, design, roadmap, evidence
 ```
 
-There is no `backend/` on purpose; see [Architecture](docs/ARCHITECTURE.md). See also [CONTRIBUTING](CONTRIBUTING.md) and [SECURITY](SECURITY.md).
+There is no `backend/` on purpose; the only server code is one function, `frontend/api/dana.ts`, that funds throwaway testnet accounts from a purse. See [Architecture](docs/ARCHITECTURE.md). See also [CONTRIBUTING](CONTRIBUTING.md) and [SECURITY](SECURITY.md).
 
 ## Tools and libraries
 

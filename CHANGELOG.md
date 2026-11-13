@@ -2,6 +2,15 @@
 
 What changed, by day. The project started on 3 November 2026. Commit messages are in Indonesian; this file is the English summary.
 
+## 2026-11-14
+
+### Changed
+- README: a "Read this first" box (how the project differs from the track's example prompt, known limits, names, commands to check the claims, why testnet only). CLAIMS: 55 contract tests, new "Not claimed" rows.
+
+### Fixed
+- Site text: the visitor message on a book no longer says the book is "private to the couple" (it is hidden on screen; the data is public on chain), and the message after Withdraw no longer says the money "reached your account", because a failed payout is refunded and the transaction still succeeds. Six languages. Text only, no layout change.
+- A source comment on the lock bound said about twelve days; the constant (1,000,000 blocks) is about seven. Comment only, same line count, so the compiled code and its hash are unchanged.
+
 ## 2026-11-13
 
 ### Changed
